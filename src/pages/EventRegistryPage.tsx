@@ -269,8 +269,12 @@ export function EventRegistryPage() {
         </div>
       </div>
 
+      <h2 className="mt-7 text-sm font-semibold uppercase tracking-[0.14em] text-foreground">
+        Event Lists
+      </h2>
+
       {/* Table */}
-      <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
+      <div className="mt-3 overflow-hidden rounded-xl border border-border bg-card">
         <CompactStatStrip
           stats={[
             { label: 'Total Events', value: metrics.total },
