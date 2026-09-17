@@ -661,7 +661,41 @@ const seedEvents: PortalEvent[] = [
     status: 'Completed',
     moodPlan: 'High-tech modular displays and aviation-grade flooring.',
   },
+  {
+    id: 'e-111', refId: 'PRT-2026-0155', title: 'Meridian Art Foundation Biennale Preview', client: 'Meridian Art Foundation', tier: 'Tier-1 VIP (Bespoke Logistics)', venue: 'Ayala Museum North Gallery, Makati', targetDate: '2026-11-02', installationStart: '2026-10-31', installationEnd: '2026-11-02', budget: 1850000, status: 'Initialized', moodPlan: 'Quiet gallery lighting, archival plinths, and museum-grade wayfinding.', progress: 12,
+  },
+  {
+    id: 'e-112', refId: 'PRT-2026-0156', title: 'Northstar Healthcare Leadership Forum', client: 'Northstar Health Systems', tier: 'Tier-2 Premium', venue: 'Makati Shangri-La Rizal Ballroom', targetDate: '2026-11-06', installationStart: '2026-11-05', installationEnd: '2026-11-06', budget: 1420000, status: 'Initialized', moodPlan: 'Warm timber stage, clear sightlines, and accessible registration zones.', progress: 24,
+  },
+  {
+    id: 'e-113', refId: 'PRT-2026-0157', title: 'Paloma Heritage Hotel Opening', client: 'Paloma Hospitality Group', tier: 'Tier-2 Premium', venue: 'Paloma Heritage Hotel Courtyard, Intramuros', targetDate: '2026-11-12', installationStart: '2026-11-10', installationEnd: '2026-11-12', budget: 2650000, status: 'In Production', moodPlan: 'Lantern canopy, rattan lounge clusters, and heritage brass details.', progress: 38,
+  },
+  {
+    id: 'e-114', refId: 'PRT-2026-0158', title: 'Vela Contemporary Dance Premiere', client: 'Vela Arts Collective', tier: 'Tier-3 Standard', venue: 'Theatre at Solaire, Parañaque', targetDate: '2026-11-18', installationStart: '2026-11-16', installationEnd: '2026-11-18', budget: 980000, status: 'In Production', moodPlan: 'Black box staging, low haze, and precise side lighting.', progress: 52,
+  },
+  {
+    id: 'e-115', refId: 'PRT-2026-0159', title: 'Crown & Coast Bridal Atelier', client: 'Crown & Coast Bridal', tier: 'Tier-1 VIP (Bespoke Logistics)', venue: 'The Bellevue Manila Grand Salon', targetDate: '2026-11-21', installationStart: '2026-11-20', installationEnd: '2026-11-21', budget: 2250000, status: 'In Production', moodPlan: 'Ivory draping, mirrored styling stations, and soft rose lighting.', progress: 66,
+  },
+  {
+    id: 'e-116', refId: 'PRT-2026-0160', title: 'Pacific Rim Climate Assembly', client: 'Pacific Rim Policy Council', tier: 'Tier-2 Premium', venue: 'SMX Convention Center Hall 1, Pasay', targetDate: '2026-11-27', installationStart: '2026-11-26', installationEnd: '2026-11-27', budget: 3180000, status: 'In Production', moodPlan: 'Modular conference sets, bilingual wayfinding, and sustainable scenic flats.', progress: 74,
+  },
+  {
+    id: 'e-117', refId: 'PRT-2026-0161', title: 'Lucent Watchmakers Collector Evening', client: 'Lucent Watchmakers', tier: 'Tier-1 VIP (Bespoke Logistics)', venue: 'The Peninsula Manila Ballroom', targetDate: '2026-12-03', installationStart: '2026-12-02', installationEnd: '2026-12-03', budget: 2760000, status: 'In Production', moodPlan: 'Dark walnut vitrines, precision spotlights, and champagne service points.', progress: 81,
+  },
+  {
+    id: 'e-118', refId: 'PRT-2026-0162', title: 'Harborline Year-End Partner Summit', client: 'Harborline Logistics', tier: 'Tier-2 Premium', venue: 'Okada Manila Coral Wing', targetDate: '2026-12-09', installationStart: '2026-12-08', installationEnd: '2026-12-09', budget: 1920000, status: 'In Production', moodPlan: 'Navy stage architecture, port-inspired graphics, and flexible dining layouts.', progress: 87,
+  },
+  {
+    id: 'e-119', refId: 'PRT-2026-0163', title: 'Orchid House Holiday Benefit', client: 'Orchid House Foundation', tier: 'Tier-3 Standard', venue: 'The Fifth at Rockwell Clubhouse', targetDate: '2026-12-14', installationStart: '2026-12-13', installationEnd: '2026-12-14', budget: 1260000, status: 'Completed', moodPlan: 'Botanical centerpieces, candlelit tables, and a compact acoustic stage.', progress: 94,
+  },
+  {
+    id: 'e-120', refId: 'PRT-2026-0164', title: 'Atlas Private Capital Year-End Dinner', client: 'Atlas Private Capital', tier: 'Tier-1 VIP (Bespoke Logistics)', venue: 'Shangri-La The Fort High Street Lounge', targetDate: '2026-12-18', installationStart: '2026-12-17', installationEnd: '2026-12-18', budget: 3480000, status: 'Completed', moodPlan: 'Sculptural florals, smoked glass dining, and discreet executive hospitality.', progress: 100,
+  },
+  {
+    id: 'e-121', refId: 'PRT-2026-0165', title: 'Solara Design Week Closing Night', client: 'Solara Design Council', tier: 'Tier-2 Premium', venue: 'BGC Arts Center Roof Deck, Taguig', targetDate: '2026-12-22', installationStart: '2026-12-21', installationEnd: '2026-12-22', budget: 2380000, status: 'Initialized', moodPlan: 'Modular outdoor lounges, projection surfaces, and terracotta accents.', progress: 31,
+  },
 ]
+
 
 const seedLogs: ActivityLog[] = [
   {

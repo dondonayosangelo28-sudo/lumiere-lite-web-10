@@ -171,6 +171,7 @@ export interface PortalEvent {
   budget: number
   status: EventStatus
   moodPlan: string
+  progress?: number
 }
 
 /* ---------- Dispatch & Batches ---------- */

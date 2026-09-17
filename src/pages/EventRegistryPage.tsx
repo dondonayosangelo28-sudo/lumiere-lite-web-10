@@ -183,7 +183,7 @@ export function EventRegistryPage() {
             <p className="px-3 py-4 text-xs text-muted-foreground">No active events match your search.</p>
           ) : (
             progressEvents.slice(0, 7).map((e) => {
-                const pct = dispatchProgress[e.status] ?? 0
+                const pct = e.progress ?? dispatchProgress[e.status] ?? 0
                 const shortStatus = e.status === 'In Production' ? 'In Progress' : e.status === 'Initialized' ? 'Planning' : e.status
                 return (
                   <button type="button" key={e.id} onClick={() => openView(e)} className="grid w-full gap-2 border-t border-border/60 px-3 py-3 text-left first:border-t-0 transition hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] sm:items-center sm:gap-4">
