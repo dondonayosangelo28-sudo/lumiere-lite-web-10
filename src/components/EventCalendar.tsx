@@ -126,7 +126,7 @@ export function EventCalendar({
   }, [booked, view.year, view.month, daysInMonth])
 
   return (
-    <div className={cn('rounded-xl border border-border bg-card p-4 shadow-sm', className)}>
+    <div className={cn('executive-calendar rounded-xl border border-border bg-card p-4 shadow-sm', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <button

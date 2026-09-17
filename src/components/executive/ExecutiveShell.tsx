@@ -44,9 +44,9 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
         <ExecutiveTopBar />
 
         {/* Only this region scrolls. The bottom padding clears the mobile rail. */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden pb-24 md:pb-0">
+        <div className="executive-mobile-shell flex-1 overflow-x-hidden overflow-y-auto pb-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:pb-0">
           {stickyHeader && (
-            <div className="sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur max-sm:px-3 max-sm:py-3 sm:px-8">
+            <div className="executive-mobile-sticky sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur max-sm:px-3 max-sm:py-3 sm:px-8">
               {stickyHeader}
             </div>
           )}

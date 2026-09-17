@@ -92,6 +92,48 @@
   --sidebar-border: #2e2b26;
 }
 
+@media (max-width: 639px) {
+  .executive-mobile-sticky h1 {
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .executive-mobile-sticky > div {
+    gap: 0.5rem;
+  }
+
+  .executive-mobile-sticky p {
+    display: none;
+  }
+
+  .executive-mobile-shell h2,
+  .executive-mobile-shell h3 {
+    font-size: 0.8rem;
+    line-height: 1.25;
+  }
+
+  .executive-mobile-shell {
+    -ms-overflow-style: none;
+  }
+
+  .executive-calendar {
+    padding: 0.75rem;
+  }
+
+  .executive-calendar .mt-4 {
+    margin-top: 0.65rem;
+  }
+
+  .executive-calendar .mt-4.border-t {
+    margin-top: 0.65rem;
+    padding-top: 0.6rem;
+  }
+
+  .executive-calendar button.group {
+    height: 2.25rem;
+  }
+}
+
 @layer base {
   * {
     border-color: var(--border);
