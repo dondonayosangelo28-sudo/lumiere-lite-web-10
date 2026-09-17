@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import {
   LayoutGrid,
+  ClipboardList,
+  PackageSearch,
   Boxes,
+  Warehouse,
+  Truck,
   LogOut,
   X,
   PenTool,
@@ -27,6 +31,12 @@ type NavItem = {
 
 const warehouseNavItems: NavItem[] = [
   { label: 'Dashboard', blurb: 'Operations metrics & activity dashboard', icon: LayoutGrid, route: 'overview' },
+  { label: 'Inventory Stock', blurb: 'Category-specific asset levels and stock tracking', icon: Boxes, route: 'inventory', moduleId: 'assets' },
+  { label: 'Asset Allocation', blurb: 'Allocate catalog assets to events and spaces', icon: Boxes, route: 'assets', moduleId: 'assets' },
+  { label: 'Replenishment', blurb: 'Deficit tracking & reorder requisitions', icon: PackageSearch, route: 'replenishment', moduleId: 'replenishment' },
+  { label: 'Warehouse Logs', blurb: 'Audit trail and ledger entries', icon: Warehouse, route: 'warehouse-logs' },
+  { label: 'Task Deployments', blurb: 'Active event task force deployments', icon: ClipboardList, route: 'deployments' },
+  { label: 'Dispatch Records', blurb: 'Fleet manifests and transit checkpoints', icon: Truck, route: 'dispatch', moduleId: 'dispatch' },
 ]
 
 const plannerNavItems: NavItem[] = [
@@ -85,26 +95,23 @@ export function ConsoleSidebar({
           L
         </span>
 
-        {isPlanner && (
-          <>
-            {/* Companion Drawer Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setCompanionOpen((prev) => !prev)}
-              aria-label={companionOpen ? 'Close companion panel' : 'Open companion panel'}
-              title={companionOpen ? 'Close companion panel' : 'Open companion panel'}
-              className={cn(
-                'mt-4 flex size-10 items-center justify-center rounded-lg transition-colors',
-                companionOpen
-                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-              )}
-            >
-              <PanelLeft className="size-4" aria-hidden="true" />
-            </button>
-            <div className="my-3 h-px w-8 bg-sidebar-border" aria-hidden="true" />
-          </>
-        )}
+        {/* Companion Drawer Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setCompanionOpen((prev) => !prev)}
+          aria-label={companionOpen ? 'Close companion panel' : 'Open companion panel'}
+          title={companionOpen ? 'Close companion panel' : 'Open companion panel'}
+          className={cn(
+            'mt-4 flex size-10 items-center justify-center rounded-lg transition-colors',
+            companionOpen
+              ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+              : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+          )}
+        >
+          <PanelLeft className="size-4" aria-hidden="true" />
+        </button>
+
+        <div className="my-3 h-px w-8 bg-sidebar-border" aria-hidden="true" />
 
         {/* Icon Navigation Rail */}
         <nav className="flex flex-1 flex-col items-center gap-2" aria-label="Console destinations">
@@ -156,8 +163,8 @@ export function ConsoleSidebar({
         </div>
       </aside>
 
-      {/* Planner-only companion panel; WOM stays on the focused Dashboard shell. */}
-      {isPlanner && companionOpen && (
+      {/* ── Companion Panel Drawer (Desktop slide-over next to Icon Rail) ── */}
+      {companionOpen && (
         <aside
           className="fixed inset-y-0 left-16 z-40 hidden w-72 flex-col border-r border-border bg-card shadow-2xl transition-all duration-200 lg:flex"
           aria-label="Companion Panel"
