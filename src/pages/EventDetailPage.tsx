@@ -5,12 +5,15 @@ import { EventPipelinePanel } from '@/components/EventPipelinePanel'
 import { useNav } from '@/lib/nav'
 import { useAuth } from '@/lib/auth'
 import { usePlanner } from '@/lib/planner'
+import { usePortal } from '@/lib/store'
+import { getEventDispatchSummaries } from '@/lib/warehouse-dispatch'
 import { cn } from '@/lib/utils'
 import { exportEventAssetLogisticsPdf } from '@/lib/pdf-exporter'
 
 export function EventDetailPage() {
   const { navigate } = useNav()
   const { adminName } = useAuth()
+  const { staff, procurement } = usePortal()
   const { events, selectedEventId, eventMaterials, eventChecklist, hasDesignForEvent, addDesign } = usePlanner()
   const event = events.find((e) => e.id === selectedEventId) ?? events[0]
 
@@ -51,10 +54,24 @@ export function EventDetailPage() {
       sku: item.sku,
       image: item.image,
     }))
+    const dispatch = getEventDispatchSummaries(events, staff, procurement).find((summary) => summary.eventId === event.id)
     exportEventAssetLogisticsPdf({
-      event,
+      event: { ...event, phase: event.phase, pipelineStage: event.pipelineStage },
       materials: materialsForExport,
       checklist: (eventChecklist[event.id] ?? []).map((item) => ({ name: item.name, quantity: item.quantity })),
+      logistics: dispatch ? {
+        handshakePercent: dispatch.handshakePercent,
+        batches: dispatch.batches.map((batch) => ({
+          vehicleType: batch.vehicleType,
+          plateNumber: batch.plateNumber,
+          driverName: batch.driverName,
+          direction: batch.direction,
+          stage: batch.stage,
+          crew: batch.crew,
+          handoffNote: batch.handoffNote,
+          reconciliation: batch.reconciliation.map((row) => ({ itemName: row.itemName, expected: row.expected, actual: row.actual, status: row.status })),
+        })),
+      } : undefined,
       generatedBy: adminName,
       filename: `${event.recordId}-event-asset-logistics-report.pdf`,
     })
