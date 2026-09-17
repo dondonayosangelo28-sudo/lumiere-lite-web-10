@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Download } from 'lucide-react'
+import { downloadPdfReport } from '@/lib/pdf-report'
 import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
@@ -52,7 +53,7 @@ export function ActivityLogsPage() {
     })
   }, [logs, query, statusFilter, isSystemAudit])
 
-  const exportCsv = () => {
+  const downloadPdf = () => {
     let exportRows = filtered
     if (fromDate) {
       const fromTime = new Date(fromDate).getTime()
@@ -62,21 +63,14 @@ export function ActivityLogsPage() {
       const toTime = new Date(toDate).getTime() + 86400000
       exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() <= toTime)
     }
-
-    const header = 'Timestamp,Log ID,Employee ID,Role,Action,IP\n'
-    const rows = exportRows
-      .map(
-        (l) =>
-          `"${l.timestamp} ${l.date}","${l.logId}","${l.account}","${l.initiatorRole}","${l.action}","${l.ip}"`,
-      )
-      .join('\n')
-    const blob = new Blob([header + rows], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'lumiere-activity-logs.csv'
-    a.click()
-    URL.revokeObjectURL(url)
+    const range = fromDate || toDate ? `${fromDate || 'Beginning'} – ${toDate || 'Present'}` : 'All available records'
+    downloadPdfReport({
+      filename: 'lumiere-activity-logs.pdf',
+      title: 'System Audit Trail & Security Logs',
+      subtitle: `Filter range: ${range} · Status: ${statusFilter}`,
+      columns: ['Timestamp', 'Log ID', 'Account', 'Role', 'Action', 'IP'],
+      rows: exportRows.map((l) => [`${l.timestamp} ${l.date}`, l.logId, l.account, l.initiatorRole, l.action, l.ip]),
+    })
   }
 
   const destination = (id: ExecutiveDestinationId) => navigate(id)
@@ -185,11 +179,11 @@ export function ActivityLogsPage() {
           )}
           <button
             type="button"
-            onClick={exportCsv}
+            onClick={downloadPdf}
             className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-neutral-800"
           >
             <Download className="size-3.5" />
-            Export CSV
+            Download PDF
           </button>
         </div>
       </div>

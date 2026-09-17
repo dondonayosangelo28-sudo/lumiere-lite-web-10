@@ -8,6 +8,7 @@ import { useNav } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 import type { AdminDestinationId } from '@/lib/admin-destinations'
 import { SECURITY_EVENTS } from '@/lib/security-events'
+import { downloadPdfReport } from '@/lib/pdf-report'
 
 /* ----------------------------- Domain ----------------------------- */
 
@@ -227,43 +228,24 @@ export function AdminSecurityAuditPage() {
     })
   }, [query, status, account])
 
-  const exportCsv = () => {
+  const downloadPdf = () => {
     let exportRows = rows
     if (fromDate) {
       const fromTime = new Date(fromDate).getTime()
       exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() >= fromTime)
     }
     if (toDate) {
-      const toTime = new Date(toDate).getTime() + 86400000 // full day end
+      const toTime = new Date(toDate).getTime() + 86400000
       exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() <= toTime)
     }
-
-    const header = 'Timestamp,Date,Log ID,Employee ID,Role,Action,Status,IP,Terminal,Token\n'
-    const body = exportRows
-      .map((r) =>
-        [
-          r.timestamp,
-          r.date,
-          r.logId,
-          r.employeeId,
-          r.role,
-          r.action,
-          r.status,
-          r.ip,
-          r.terminal,
-          r.token,
-        ]
-          .map((field) => `"${field}"`)
-          .join(','),
-      )
-      .join('\n')
-    const blob = new Blob([header + body], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'lumiere-security-audit-logs.csv'
-    a.click()
-    URL.revokeObjectURL(url)
+    const range = fromDate || toDate ? `${fromDate || 'Beginning'} – ${toDate || 'Present'}` : 'All available records'
+    downloadPdfReport({
+      filename: 'lumiere-security-audit-logs.pdf',
+      title: 'Security Audit Logs',
+      subtitle: `Filter range: ${range} · Status: ${status} · Account: ${account}`,
+      columns: ['Timestamp', 'Date', 'Log ID', 'Employee ID', 'Role', 'Action', 'Status', 'IP', 'Terminal', 'Token'],
+      rows: exportRows.map((r) => [r.timestamp, r.date, r.logId, r.employeeId, r.role, r.action, r.status, r.ip, r.terminal, r.token]),
+    })
   }
 
   const railSelect = (id: AdminDestinationId) => {
@@ -379,11 +361,11 @@ export function AdminSecurityAuditPage() {
             )}
             <button
               type="button"
-              onClick={exportCsv}
+              onClick={downloadPdf}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
             >
               <Download className="size-3.5" aria-hidden="true" />
-              Export CSV
+              Download PDF
             </button>
           </div>
         </div>
