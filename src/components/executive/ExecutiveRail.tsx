@@ -8,10 +8,8 @@ interface ExecutiveRailProps {
   onToggle: () => void
 }
 
-// Constant left icon rail for the Executive console — matches AdminRail
-// exactly (same dimensions, brand mark, and button styling). Every Executive
-// screen sits at the same level, so the rail never hides or collapses, and it
-// lives outside the scroll container so it stays fixed.
+// Fixed navigation rail for the Executive console. It stays outside the
+// scroll container so the navigation remains available while content scrolls.
 export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveRailProps) {
   return (
     <aside
