@@ -63,7 +63,8 @@ export function ConsoleSidebar({
   const { dark, toggle } = useDarkMode()
   const [companionOpen, setCompanionOpen] = useState(false)
 
-  const navItems = isPlanner ? plannerNavItems : isWarehouse ? warehouseNavItems : warehouseNavItems
+  const navItems = isPlanner ? plannerNavItems : warehouseNavItems
+  const hasCompanionPanel = isPlanner || isWarehouse
 
   const activeItem = navItems.find((item) => route === item.route || routeParent[route] === item.route) ?? navItems[0]
 
@@ -73,7 +74,6 @@ export function ConsoleSidebar({
       setCompanionOpen((prev) => !prev)
     } else {
       navigate(r)
-      setCompanionOpen(true)
     }
   }
 
@@ -91,7 +91,7 @@ export function ConsoleSidebar({
           L
         </span>
 
-        {isPlanner && (
+        {hasCompanionPanel && (
           <>
             {/* Companion Drawer Toggle Button */}
             <button
@@ -162,8 +162,8 @@ export function ConsoleSidebar({
         </div>
       </aside>
 
-      {/* Planner-only companion panel; WOM stays on the focused Dashboard shell. */}
-      {isPlanner && companionOpen && (
+      {/* Companion panel for planner and WOM account shells. */}
+      {hasCompanionPanel && companionOpen && (
         <aside
           className="fixed inset-y-0 left-16 z-40 hidden w-72 flex-col border-r border-border bg-card shadow-2xl transition-all duration-200 lg:flex"
           aria-label="Companion Panel"
@@ -218,9 +218,7 @@ export function ConsoleSidebar({
                   <button
                     key={item.label}
                     type="button"
-                    onClick={() => {
-                      navigate(item.route)
-                    }}
+                    onClick={() => go(item.route)}
                     className={cn(
                       'flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-xs font-semibold transition-colors',
                       active
