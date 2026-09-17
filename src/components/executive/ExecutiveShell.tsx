@@ -50,7 +50,7 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
               {stickyHeader}
             </div>
           )}
-          <div className="px-5 py-6 max-sm:px-3 max-sm:py-3 sm:px-8">{children}</div>
+          <div className="px-5 pt-[15px] pb-6 max-sm:px-3 max-sm:pt-[15px] max-sm:pb-3 sm:px-8">{children}</div>
         </div>
       </div>
     </div>

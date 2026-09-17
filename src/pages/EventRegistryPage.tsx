@@ -165,7 +165,7 @@ export function EventRegistryPage() {
       ) : (
         <>
           {/* Operational Progress — dispatch readiness per active event */}
-      <div className="mx-2 mt-1 rounded-xl border border-border bg-card p-5">
+      <div className="mx-2 mt-0 rounded-xl border border-border bg-card p-5">
         <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-foreground">
           Operational Progress
         </h3>
