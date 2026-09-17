@@ -86,7 +86,6 @@ function SectionHeading({
 export function RegisterEventDrawer({ open, onClose, event = null, mode = 'create' }: Props) {
   const { addEvent, updateEvent, events, settleEvent } = usePortal()
   const { adminRole } = useAuth()
-  const { navigate } = useNav()
   const [draft, setDraft] = useState<NewEventDraft>(emptyDraft)
   const [showCalendar, setShowCalendar] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
