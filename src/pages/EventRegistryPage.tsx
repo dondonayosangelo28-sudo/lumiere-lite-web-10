@@ -24,6 +24,17 @@ const dispatchProgress: Record<string, number> = {
   Cancelled: 0,
 }
 
+const matchesEventQuery = (event: PortalEvent, rawQuery: string) => {
+  const normalizedQuery = rawQuery.trim().toLowerCase()
+  return (
+    !normalizedQuery ||
+    event.title.toLowerCase().includes(normalizedQuery) ||
+    event.client.toLowerCase().includes(normalizedQuery) ||
+    event.refId.toLowerCase().includes(normalizedQuery) ||
+    event.venue.toLowerCase().includes(normalizedQuery)
+  )
+}
+
 const statusStyles: Record<string, string> = {
   Initialized: 'text-amber-700',
   'In Production': 'text-sky-700',
@@ -92,17 +103,13 @@ export function EventRegistryPage() {
     [events],
   )
 
-  const matchesEvent = (e: PortalEvent, rawQuery: string) => {
-    const q = rawQuery.toLowerCase()
-    return !q || e.title.toLowerCase().includes(q) || e.client.toLowerCase().includes(q) || e.refId.toLowerCase().includes(q) || e.venue.toLowerCase().includes(q)
-  }
-
-  const filtered = useMemo(() => {
-    return events.filter((e) => matchesEvent(e, listQuery) && (statusFilter === 'All' || e.status === statusFilter))
-  }, [events, listQuery, statusFilter])
+  const filtered = useMemo(
+    () => events.filter((event) => matchesEventQuery(event, listQuery) && (statusFilter === 'All' || event.status === statusFilter)),
+    [events, listQuery, statusFilter],
+  )
 
   const progressEvents = useMemo(
-    () => events.filter((e) => e.status !== 'Cancelled' && matchesEvent(e, progressQuery)),
+    () => events.filter((event) => event.status !== 'Cancelled' && matchesEventQuery(event, progressQuery)),
     [events, progressQuery],
   )
 
