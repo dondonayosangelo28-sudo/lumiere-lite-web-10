@@ -13,7 +13,7 @@ import { AdminSystemDashboardPage } from '@/pages/AdminSystemDashboardPage'
 import { AdminWorkforcePage } from '@/pages/AdminWorkforcePage'
 import { AdminSecurityAuditPage } from '@/pages/AdminSecurityAuditPage'
 import { AdminRolesPage } from '@/pages/AdminRolesPage'
-import { WarehouseDashboardPage } from '@/pages/WarehouseDashboardPage'
+import { WarehouseHomePage } from '@/pages/WarehouseHomePage'
 import { EventDashboardPage } from '@/pages/EventDashboardPage'
 import { EventRegistryPage } from '@/pages/EventRegistryPage'
 import { ReplenishmentPage } from '@/pages/ReplenishmentPage'
@@ -69,8 +69,6 @@ function Router() {
   if (portal && ((portal === 'pwa') !== isPwaRoute)) return <PortalAccessError portal={portal} />
 
   switch (route) {
-    case 'warehouse-dashboard':
-      return <WarehouseDashboardPage />
     case 'dashboard':
       return <EventDashboardPage />
     case 'registry':
@@ -152,7 +150,7 @@ function Gate() {
   const hasWorkforceHighlight =
     new URLSearchParams(window.location.search).has('highlight') || Boolean(window.history.state?.highlight)
   const urlParamRoute = (new URLSearchParams(window.location.search).get('route') || window.location.pathname.replace('/', '')) as Route | null
-  const validRoutes = new Set(['warehouse-dashboard', 'dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets'])
+  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets'])
   const targetUrlRoute = urlParamRoute && validRoutes.has(urlParamRoute) ? urlParamRoute : null
 
   const initialRoute = targetUrlRoute || (isManningOfficer
@@ -170,7 +168,7 @@ function Gate() {
             : isPlanner
             ? 'canvas'
             : isWarehouse
-              ? 'warehouse-dashboard'
+              ? 'overview'
               : hasWorkforceHighlight
                 ? 'workforce'
                 : isExecutive
