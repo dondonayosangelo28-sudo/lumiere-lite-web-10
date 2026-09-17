@@ -1,23 +1,19 @@
-import { useState } from 'react'
 import {
   LayoutGrid,
   Boxes,
   PackageSearch,
   Truck,
   LogOut,
-  X,
   PenTool,
   Sun,
   Moon,
-  PanelLeft,
-  ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useNav } from '@/lib/nav'
 import { useAuth } from '@/lib/auth'
 import { useDarkMode } from '@/lib/theme'
 import type { Route } from '@/lib/types'
-import { getWarehouseModule, type WarehouseModuleId } from '@/lib/warehouse-modules'
+import type { WarehouseModuleId } from '@/lib/warehouse-modules'
 
 type NavItem = {
   label: string
@@ -59,25 +55,13 @@ export function ConsoleSidebar({
   onCloseMobile,
 }: ConsoleSidebarProps) {
   const { route, navigate } = useNav()
-  const { adminName, adminRole, isWarehouse, isPlanner, setConfirmLogout } = useAuth()
+  const { adminName, adminRole, isPlanner, setConfirmLogout } = useAuth()
   const { dark, toggle } = useDarkMode()
-  const [companionOpen, setCompanionOpen] = useState(false)
-
   const navItems = isPlanner ? plannerNavItems : warehouseNavItems
-  const hasCompanionPanel = isPlanner || isWarehouse
-
-  const activeItem = navItems.find((item) => route === item.route || routeParent[route] === item.route) ?? navItems[0]
 
   const go = (r: Route) => {
-    const isActive = route === r || routeParent[route] === r
-    if (isActive) {
-      setCompanionOpen((prev) => !prev)
-    } else {
-      navigate(r)
-    }
+    if (route !== r && routeParent[route] !== r) navigate(r)
   }
-
-  const moduleDetail = activeItem.moduleId ? getWarehouseModule(activeItem.moduleId) : null
 
   return (
     <>
@@ -90,27 +74,6 @@ export function ConsoleSidebar({
         >
           L
         </span>
-
-        {hasCompanionPanel && (
-          <>
-            {/* Companion Drawer Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setCompanionOpen((prev) => !prev)}
-              aria-label={companionOpen ? 'Close companion panel' : 'Open companion panel'}
-              title={companionOpen ? 'Close companion panel' : 'Open companion panel'}
-              className={cn(
-                'mt-4 flex size-10 items-center justify-center rounded-lg transition-colors',
-                companionOpen
-                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-              )}
-            >
-              <PanelLeft className="size-4" aria-hidden="true" />
-            </button>
-            <div className="my-3 h-px w-8 bg-sidebar-border" aria-hidden="true" />
-          </>
-        )}
 
         {/* Icon Navigation Rail */}
         <nav className="flex flex-1 flex-col items-center gap-2" aria-label="Console destinations">
@@ -161,98 +124,6 @@ export function ConsoleSidebar({
           </button>
         </div>
       </aside>
-
-      {/* Companion panel for planner and WOM account shells. */}
-      {hasCompanionPanel && companionOpen && (
-        <aside
-          className="fixed inset-y-0 left-16 z-40 hidden w-72 flex-col border-r border-border bg-card shadow-2xl transition-all duration-200 lg:flex"
-          aria-label="Companion Panel"
-        >
-          {/* Header */}
-          <div className="flex items-start justify-between border-b border-border px-5 py-5">
-            <div>
-              <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-primary">
-                {isPlanner ? 'Planner Console' : 'Warehouse Module'}
-              </p>
-              <h2 className="mt-1 font-serif text-xl font-medium text-card-foreground">
-                {activeItem.label}
-              </h2>
-              <p className="mt-1 text-xs text-muted-foreground">{activeItem.blurb}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setCompanionOpen(false)}
-              aria-label="Close companion panel"
-              className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              <X className="size-4" aria-hidden="true" />
-            </button>
-          </div>
-
-          {/* Module preview / sub-navigation items */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-            {moduleDetail && (
-              <div className="rounded-lg border border-border bg-muted/30 p-3.5 space-y-2">
-                <p className="text-[0.56rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                  Module Capabilities
-                </p>
-                <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  {moduleDetail.previewPoints.map((point) => (
-                    <li key={point} className="flex items-center gap-2">
-                      <span className="size-1.5 rounded-full bg-primary" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="space-y-1">
-              <p className="px-2 text-[0.56rem] font-bold uppercase tracking-[0.16em] text-muted-foreground mb-2">
-                Console Navigation
-              </p>
-              {navItems.map((item) => {
-                const Icon = item.icon
-                const active = route === item.route || routeParent[route] === item.route
-                return (
-                  <button
-                    key={item.label}
-                    type="button"
-                    onClick={() => go(item.route)}
-                    className={cn(
-                      'flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-xs font-semibold transition-colors',
-                      active
-                        ? 'bg-primary text-primary-foreground shadow-sm'
-                        : 'text-foreground hover:bg-muted',
-                    )}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon className="size-4 shrink-0" aria-hidden="true" />
-                      <span className="truncate">{item.label}</span>
-                    </div>
-                    <ChevronRight className="size-3.5 opacity-60" />
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* User footer */}
-          <div className="border-t border-border p-4 bg-muted/20 flex items-center justify-between">
-            <div className="min-w-0">
-              <p className="truncate text-xs font-semibold text-foreground">{adminName}</p>
-              <p className="truncate text-[0.62rem] uppercase tracking-wider text-muted-foreground">{adminRole}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setConfirmLogout(true)}
-              className="text-xs font-semibold text-destructive hover:underline"
-            >
-              Sign out
-            </button>
-          </div>
-        </aside>
-      )}
 
       {/* ── Mobile Bottom Navigation ── */}
       <nav
