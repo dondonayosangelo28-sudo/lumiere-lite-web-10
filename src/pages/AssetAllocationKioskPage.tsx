@@ -38,15 +38,17 @@ const STATE_BADGE: Record<string, string> = {
   InMaintenance: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
 }
 
+const SAMPLE_IMAGE_URL = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-HaVoy4xxC2tABJbWavCPExvDdnNDQD.png'
+
 const SAMPLE_ASSETS: AssetResponse[] = [
-  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetTier: 2, assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'] },
-  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 3, assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'] },
-  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 1, assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'] },
-  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 2, assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'] },
-  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetTier: 3, assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'] },
-  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetTier: 4, assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'] },
-  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetTier: 5, assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'] },
-  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 2, assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'] },
+  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetTier: 2, assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 3, assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 1, assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 2, assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetTier: 3, assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetTier: 4, assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetTier: 5, assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 2, assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'], thumbnailUrl: SAMPLE_IMAGE_URL },
 ]
 
 /* ---- Procurement step modal ---- */
