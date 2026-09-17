@@ -1,4 +1,3 @@
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EXECUTIVE_DESTINATIONS, type ExecutiveDestinationId } from '@/lib/executive-destinations'
 
@@ -34,17 +33,6 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
         >
           {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
         </button>
-        {open && (
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-label="Collapse navigation"
-            aria-expanded={open}
-            className="flex size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            <PanelLeftClose className="size-4" aria-hidden="true" />
-          </button>
-        )}
       </div>
 
       <div className="hidden md:mb-3 md:block md:h-px md:w-8 md:bg-sidebar-border" aria-hidden="true" />

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   Search, Sparkles, ChevronRight,
-  AlertTriangle, ShoppingCart, ArrowRight, RotateCcw, X,
+  AlertTriangle, ShoppingCart, ArrowRight, X,
   Boxes, CheckCircle2, Loader2,
 } from 'lucide-react'
 import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
@@ -432,15 +432,6 @@ export function AssetAllocationKioskPage() {
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-muted-foreground hover:text-foreground">✕</button>
           )}
         </div>
-        {(query || tierFilter != null || activeCategory !== ALL_CATEGORY) && (
-          <button
-            type="button"
-            onClick={() => { setQuery(''); setTierFilter(null); setActiveCategory(ALL_CATEGORY) }}
-            className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium text-muted-foreground transition hover:bg-muted"
-          >
-            <RotateCcw className="size-3.5" /> Reset
-          </button>
-        )}
       </div>
     </div>
   )
