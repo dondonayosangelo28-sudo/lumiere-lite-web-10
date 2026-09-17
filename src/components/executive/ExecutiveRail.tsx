@@ -15,10 +15,15 @@ interface ExecutiveRailProps {
 // lives outside the scroll container so it stays fixed.
 export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveRailProps) {
   return (
-    <aside className={cn(
-      'fixed inset-x-0 bottom-0 z-40 flex w-full shrink-0 items-center justify-center border-t border-sidebar-border bg-sidebar px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 transition-all duration-200 md:static md:h-full md:flex-col md:justify-start md:border-r md:border-t-0 md:px-0 md:py-4',
-      open ? 'md:w-64' : 'md:w-12',
-    )}>
+    <aside
+      onClick={(event) => {
+        if (window.matchMedia('(min-width: 768px)').matches && !event.target.closest('nav')) onToggle()
+      }}
+      className={cn(
+        'fixed inset-x-0 bottom-0 z-40 flex w-full shrink-0 cursor-pointer items-center justify-center border-t border-sidebar-border bg-sidebar px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 transition-all duration-200 md:static md:h-full md:flex-col md:justify-start md:border-r md:border-t-0 md:px-0 md:py-4',
+        open ? 'md:w-64' : 'md:w-12',
+      )}
+    >
       <div className={cn('mb-3 hidden items-center md:flex', open ? 'w-full justify-between px-4' : 'justify-center')}>
         <button
           type="button"
