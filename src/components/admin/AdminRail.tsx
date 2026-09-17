@@ -15,6 +15,15 @@ interface AdminRailProps {
 export function AdminRail({ activeId, onSelect }: AdminRailProps) {
   const [open, setOpen] = useState(false)
 
+  const handleSelect = (id: AdminDestinationId) => {
+    if (id === activeId) {
+      setOpen((value) => !value)
+      return
+    }
+
+    onSelect(id)
+  }
+
   return (
     <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
@@ -45,7 +54,7 @@ export function AdminRail({ activeId, onSelect }: AdminRailProps) {
             <button
               key={destination.id}
               type="button"
-              onClick={() => onSelect(destination.id)}
+              onClick={() => handleSelect(destination.id)}
               aria-label={destination.label}
               aria-current={active ? 'true' : undefined}
               title={destination.label}
@@ -57,7 +66,10 @@ export function AdminRail({ activeId, onSelect }: AdminRailProps) {
                   : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
               )}
             >
-              <Icon className="size-4" aria-hidden="true" />
+              <Icon className="size-4 shrink-0" aria-hidden="true" />
+              <span className={cn('truncate text-sm font-medium', !open && 'sr-only')}>
+                {destination.label}
+              </span>
             </button>
           )
         })}

@@ -12,6 +12,15 @@ interface WarehouseRailProps {
 export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: WarehouseRailProps) {
   const [open, setOpen] = useState(false)
 
+  const handleSelect = (id: WarehouseModuleId) => {
+    if (id === activeModuleId) {
+      setOpen((value) => !value)
+      return
+    }
+
+    onSelectModule(id)
+  }
+
   return (
     <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
@@ -52,7 +61,7 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
             <button
               key={module.id}
               type="button"
-              onClick={() => onSelectModule(module.id)}
+              onClick={() => handleSelect(module.id)}
               aria-label={module.label}
               aria-current={active ? 'true' : undefined}
               title={module.label}
@@ -64,7 +73,10 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
                   : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
               )}
             >
-              <Icon className="size-4" aria-hidden="true" />
+              <Icon className="size-4 shrink-0" aria-hidden="true" />
+              <span className={cn('truncate text-sm font-medium', !open && 'sr-only')}>
+                {module.label}
+              </span>
             </button>
           )
         })}
