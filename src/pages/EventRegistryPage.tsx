@@ -227,8 +227,12 @@ export function EventRegistryPage() {
         </div>
       </div>
 
+      <h2 className="mt-7 text-sm font-semibold uppercase tracking-[0.14em] text-foreground">
+        Event Lists
+      </h2>
+
       {/* Filter bar */}
-      <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {/* Status filter pills */}
           {statuses.map((status) => {
@@ -268,10 +272,6 @@ export function EventRegistryPage() {
           )}
         </div>
       </div>
-
-      <h2 className="mt-7 text-sm font-semibold uppercase tracking-[0.14em] text-foreground">
-        Event Lists
-      </h2>
 
       {/* Table */}
       <div className="mt-3 overflow-hidden rounded-xl border border-border bg-card">
