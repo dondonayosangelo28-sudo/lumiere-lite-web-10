@@ -70,7 +70,7 @@ function Router() {
 
   switch (route) {
     case 'dashboard':
-      return <EventDashboardPage />
+      return isWarehouse ? <WarehouseHomePage /> : <EventDashboardPage />
     case 'registry':
       return <EventRegistryPage />
     case 'replenishment':
@@ -114,6 +114,8 @@ function Router() {
     case 'rbac':
       return <AdminRolesPage />
     case 'overview':
+      if (isWarehouse) return <WarehouseHomePage />
+      // fall through to the role-aware default below
     default:
       // Role-aware home. Admins always land on the icon-rail System Dashboard —
       // never the legacy sidebar shell — even for unknown routes.
