@@ -430,9 +430,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       confirmLogout,
       setConfirmLogout,
-      hasConfirmationPin: true,
-      verifyConfirmationPin: () => true,
-      setConfirmationPin: () => undefined,
+      hasConfirmationPin,
+      verifyConfirmationPin,
+      setConfirmationPin,
       verifyPassword,
     }),
     [
