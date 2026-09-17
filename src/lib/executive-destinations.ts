@@ -12,9 +12,9 @@ export interface ExecutiveDestination {
 
 export const EXECUTIVE_DESTINATIONS: ExecutiveDestination[] = [
   { id: 'dashboard', label: 'Executive Dashboard', icon: LayoutGrid },
+  { id: 'assets', label: 'Asset Allocation Kiosk', icon: Package },
   { id: 'registry', label: 'Event Operations', icon: ClipboardList },
   { id: 'logs', label: 'Operational Audit Logs', icon: ListFilter },
-  { id: 'assets', label: 'Asset Allocation Kiosk', icon: Package },
 ]
 
 export function getExecutiveDestination(id: ExecutiveDestinationId) {
