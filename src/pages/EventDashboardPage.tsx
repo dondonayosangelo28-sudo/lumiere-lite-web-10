@@ -6,7 +6,7 @@ import { RegisterEventDrawer } from '@/components/RegisterEventDrawer'
 import { EmptyState } from '@/components/EmptyState'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
-import { usePortal } from '@/lib/store'
+import { PortalProvider, usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 import type { PortalEvent } from '@/lib/types'
@@ -48,7 +48,7 @@ const statusStyles: Record<string, { badge: string; dot: string }> = {
   },
 }
 
-export function EventDashboardPage() {
+function EventDashboardContent() {
   const { navigate } = useNav()
   const { events } = usePortal()
 
@@ -453,6 +453,14 @@ export function EventDashboardPage() {
         mode={drawerMode}
       />
     </>
+  )
+}
+
+export function EventDashboardPage() {
+  return (
+    <PortalProvider>
+      <EventDashboardContent />
+    </PortalProvider>
   )
 }
 
