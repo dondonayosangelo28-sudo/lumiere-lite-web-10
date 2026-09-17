@@ -27,13 +27,15 @@ const NavContext = createContext<NavContextValue | null>(null)
 export function NavProvider({
   children,
   initialRoute = 'overview',
+  initialExecutiveRailOpen = true,
 }: {
   children: ReactNode
   initialRoute?: Route
+  initialExecutiveRailOpen?: boolean
 }) {
   const [route, setRoute] = useState<Route>(initialRoute)
   const [intent, setIntent] = useState<NavIntent | null>(null)
-  const [executiveRailOpen, setExecutiveRailOpen] = useState(true)
+  const [executiveRailOpen, setExecutiveRailOpen] = useState(initialExecutiveRailOpen)
 
   useEffect(() => {
     const handleLocationChange = () => {

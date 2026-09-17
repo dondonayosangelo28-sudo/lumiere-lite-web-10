@@ -177,7 +177,7 @@ function Gate() {
                   : 'overview')
 
   return (
-    <NavProvider initialRoute={initialRoute}>
+    <NavProvider initialRoute={initialRoute} initialExecutiveRailOpen={!isExecutive}>
       <Router />
       <WelcomeModal />
     </NavProvider>
