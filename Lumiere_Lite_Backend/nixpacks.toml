@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["dotnet-sdk"]
+
+[phases.build]
+cmds = ["dotnet restore Lumiere.sln", "dotnet publish Lumiere.sln -c Release -o out"]
+
+[start]
+cmd = "dotnet out/Lumiere.API/Lumiere.API.dll"

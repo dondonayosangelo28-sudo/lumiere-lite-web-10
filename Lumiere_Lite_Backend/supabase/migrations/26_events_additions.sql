@@ -1,0 +1,4 @@
+-- 26_events_additions.sql
+ALTER TABLE events ADD COLUMN return_date DATE NOT NULL DEFAULT CURRENT_DATE;
+ALTER TABLE events ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Active';
+ALTER TABLE events ADD COLUMN transit_buffer_days INT NOT NULL DEFAULT 1;

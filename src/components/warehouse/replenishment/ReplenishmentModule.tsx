@@ -1,0 +1,392 @@
+import { useEffect, useMemo, useState } from 'react'
+import { Download, Plus, Search, X } from 'lucide-react'
+import { usePortal } from '@/lib/store'
+import { getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
+import { createDeficitItemApi, fetchDeficitQueueApi, updateDeficitStatusApi } from '@/lib/deficitApi'
+import { DeficitTable } from '@/components/warehouse/replenishment/DeficitTable'
+import { GeneratePOModal } from '@/components/warehouse/replenishment/GeneratePOModal'
+import { AddMasterItemModal, type MasterItemDraft } from '@/components/warehouse/replenishment/AddMasterItemModal'
+import { BulkGenerateFlow } from '@/components/warehouse/replenishment/BulkGenerateFlow'
+import { KebabMenu } from '@/components/warehouse/shared/KebabMenu'
+import { cn } from '@/lib/utils'
+import { exportReplenishmentDeficitPdf } from '@/lib/pdf-exporter'
+
+type ViewMode = 'grouped' | 'consolidated'
+
+interface ReplenishmentModuleProps {
+  onClose: () => void
+}
+
+export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
+  const { events } = usePortal()
+  const [lines, setLines] = useState<DeficitLine[]>(() => getDeficitLines(events))
+  const [viewMode, setViewMode] = useState<ViewMode>('grouped')
+  const [query, setQuery] = useState('')
+  const [poLine, setPoLine] = useState<DeficitLine | null>(null)
+  const [editLine, setEditLine] = useState<DeficitLine | null>(null)
+  const [addOpen, setAddOpen] = useState(false)
+  const [addPresetEvent, setAddPresetEvent] = useState<{ id: string; title: string } | null>(null)
+  const [bulkOpen, setBulkOpen] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    let active = true
+    fetchDeficitQueueApi().then((items) => {
+      if (!active || !items.length) return
+      const mapped: DeficitLine[] = items.map((item) => ({
+        id: item.id,
+        eventId: item.eventId || undefined,
+        eventTitle: item.eventName || undefined,
+        itemName: item.itemName,
+        category: (item.itemCategory as any) || 'General',
+        unit: 'pcs',
+        triggerSource: 'Auto-Threshold',
+        currentStock: 0,
+        threshold: item.quantityNeeded,
+        costPerUnit: 100,
+        priority: (item.urgencyLevel as any) || 'Medium',
+        status: (item.status as any) || 'Not Purchased',
+        primaryVendorId: '',
+        quantityNeeded: item.quantityNeeded,
+      }))
+      setLines((prev) => {
+        const existingIds = new Set(prev.map((l) => l.id))
+        const newOnly = mapped.filter((m) => !existingIds.has(m.id))
+        return [...newOnly, ...prev]
+      })
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return lines
+    return lines.filter(
+      (line) =>
+        line.itemName.toLowerCase().includes(q) ||
+        (line.eventTitle ?? 'general stockroom').toLowerCase().includes(q),
+    )
+  }, [lines, query])
+
+  const grouped = useMemo(() => {
+    const withEvent = filtered.filter((line) => line.eventId)
+    const groups = new Map<string, { title: string; lines: DeficitLine[] }>()
+    withEvent.forEach((line) => {
+      if (!line.eventId || !line.eventTitle) return
+      const existing = groups.get(line.eventId)
+      if (existing) existing.lines.push(line)
+      else groups.set(line.eventId, { title: line.eventTitle, lines: [line] })
+    })
+    const general = filtered.filter((line) => !line.eventId)
+    return { groups: [...groups.entries()], general }
+  }, [filtered])
+
+  const handleGeneratePO = async (id: string, quantity: number, vendorId: string) => {
+    setLines((prev) =>
+      prev.map((line) => (line.id === id ? { ...line, status: 'In Procurement', quantityNeeded: quantity, primaryVendorId: vendorId } : line)),
+    )
+    setPoLine(null)
+    await updateDeficitStatusApi(id, 'In Procurement')
+  }
+
+  const handleSaveEdit = (draft: MasterItemDraft) => {
+    if (!editLine) return
+    setLines((prev) =>
+      prev.map((line) =>
+        line.id === editLine.id
+          ? {
+              ...line,
+              itemName: draft.itemName,
+              category: draft.category,
+              unit: draft.unit,
+              currentStock: draft.currentStock,
+              threshold: draft.threshold,
+              costPerUnit: draft.costPerUnit,
+              priority: draft.priority,
+              triggerSource: draft.triggerSource,
+              primaryVendorId: draft.primaryVendorId,
+            }
+          : line,
+      ),
+    )
+    setEditLine(null)
+  }
+
+  const handleAddMasterItem = async (draft: MasterItemDraft) => {
+    const needed = Math.max(1, draft.threshold - draft.currentStock)
+    const res = await createDeficitItemApi({
+      eventId: draft.eventId,
+      itemCategory: draft.category,
+      itemName: draft.itemName,
+      quantityNeeded: needed,
+      urgencyLevel: draft.priority,
+    })
+
+    const newLine: DeficitLine = {
+      id: res?.id || `def-master-${Date.now()}`,
+      eventId: draft.eventId,
+      eventTitle: draft.eventTitle,
+      itemName: draft.itemName,
+      category: draft.category,
+      unit: draft.unit,
+      triggerSource: draft.triggerSource,
+      currentStock: draft.currentStock,
+      threshold: draft.threshold,
+      costPerUnit: draft.costPerUnit,
+      priority: draft.priority,
+      status: 'Not Purchased',
+      primaryVendorId: draft.primaryVendorId,
+      quantityNeeded: needed,
+    }
+    setLines((prev) => [newLine, ...prev])
+    setAddOpen(false)
+    setAddPresetEvent(null)
+  }
+
+  const handleRemove = (id: string) => setLines((prev) => prev.filter((line) => line.id !== id))
+
+  const handleTagForDispatch = (id: string) =>
+    setLines((prev) => prev.map((line) => (line.id === id ? { ...line, taggedForDispatch: !line.taggedForDispatch } : line)))
+
+  const handleBulkConfirm = (ids: string[]) => {
+    setLines((prev) => prev.map((line) => (ids.includes(line.id) ? { ...line, status: 'In Procurement' } : line)))
+    setBulkOpen(false)
+    setSelectedIds(new Set())
+  }
+
+  const exportReport = () => {
+    exportReplenishmentDeficitPdf(filtered)
+  }
+
+  const openCandidates = lines.filter((line) => line.status === 'Not Purchased')
+
+  return (
+    <div className="flex h-full flex-1 flex-col overflow-y-auto">
+      <div className="flex flex-col gap-4 border-b border-border px-6 py-5 sm:px-10">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
+            <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">Replenishment / Deficits</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Automated deficit detection, inventory replenishment alerts, and purchase order drafting.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close and return to dashboard"
+            className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <X className="size-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="inline-flex rounded-lg border border-border bg-card p-1">
+            <button
+              type="button"
+              onClick={() => setViewMode('grouped')}
+              className={cn(
+                'rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                viewMode === 'grouped'
+                  ? 'bg-foreground text-background shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              )}
+            >
+              Event-Bound Deficits ({events.length} Events)
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('consolidated')}
+              className={cn(
+                'rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                viewMode === 'consolidated'
+                  ? 'bg-foreground text-background shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              )}
+            >
+              Consolidated Register ({lines.length} Lines)
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3.5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-foreground hover:bg-muted"
+            >
+              <Plus className="size-3.5" />
+              Add Item
+            </button>
+
+            {openCandidates.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setBulkOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+              >
+                Draft Master PO ({openCandidates.length})
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={exportReport}
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+            >
+              <Download className="size-3.5" />
+              Export Deficit Report (PDF)
+            </button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search items or events…"
+                className="w-56 rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+            >
+              <Plus className="size-3.5" />
+              Add Master Item
+            </button>
+            <button
+              type="button"
+              onClick={exportReport}
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+            >
+              <Download className="size-3.5" />
+              Export Report
+            </button>
+            <KebabMenu
+              label="More replenishment actions"
+              actions={[{ label: 'Bulk Generate Master PO', onSelect: () => setBulkOpen(true) }]}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 px-6 py-6 sm:px-10">
+        {viewMode === 'consolidated' ? (
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="flex items-center justify-between border-b border-border px-5 py-4">
+              <h2 className="font-serif text-lg font-medium text-card-foreground">All Deficit Lines</h2>
+              <span className="rounded-full bg-muted px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                {filtered.length} items
+              </span>
+            </div>
+            <DeficitTable
+              lines={filtered}
+              selectedIds={selectedIds}
+              onRowClick={setPoLine}
+              onEdit={setEditLine}
+              onRemove={handleRemove}
+              onTagForDispatch={handleTagForDispatch}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {grouped.groups.length === 0 && grouped.general.length === 0 && (
+              <p className="text-sm text-muted-foreground">No deficit lines match the current search.</p>
+            )}
+            {grouped.groups.map(([eventId, group]) => {
+              const activeLines = group.lines.filter((l) => l.status !== 'Received')
+              const receivedCount = group.lines.length - activeLines.length
+              const activeTotalCost = activeLines.reduce((sum, l) => sum + lineCost(l), 0)
+              return (
+                <div key={eventId} className="overflow-hidden rounded-xl border border-border bg-card">
+                  <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h2 className="font-serif text-lg font-bold text-card-foreground">{group.title}</h2>
+                      <p className="text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
+                        {activeLines.length} active line{activeLines.length === 1 ? '' : 's'} · {receivedCount} Received
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="text-right sm:pr-2">
+                        <p className="text-[0.58rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Active Deficit Total</p>
+                        <p className="text-lg font-semibold text-card-foreground">₱{activeTotalCost.toLocaleString()}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddPresetEvent({ id: eventId, title: group.title })
+                          setAddOpen(true)
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary transition hover:bg-primary/20"
+                      >
+                        <Plus className="size-3" />
+                        + Add Item
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => exportReplenishmentDeficitPdf(group.lines, `Deficit Report — ${group.title}`)}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+                      >
+                        <Download className="size-3" />
+                        Export Report
+                      </button>
+                    </div>
+                  </div>
+                  <DeficitTable
+                    lines={group.lines}
+                    selectedIds={selectedIds}
+                    onRowClick={setPoLine}
+                    onEdit={setEditLine}
+                    onRemove={handleRemove}
+                    onTagForDispatch={handleTagForDispatch}
+                  />
+                </div>
+              )
+            })}
+            {grouped.general.length > 0 && (
+              <div className="overflow-hidden rounded-xl border border-dashed border-border bg-card">
+                <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                  <div>
+                    <h2 className="font-serif text-lg font-medium text-card-foreground">General Stockroom</h2>
+                    <p className="text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
+                      Not tied to a specific event — visible here and in Consolidated
+                    </p>
+                  </div>
+                </div>
+                <DeficitTable
+                  lines={grouped.general}
+                  selectedIds={selectedIds}
+                  onRowClick={setPoLine}
+                  onEdit={setEditLine}
+                  onRemove={handleRemove}
+                  onTagForDispatch={handleTagForDispatch}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {poLine && <GeneratePOModal line={poLine} onClose={() => setPoLine(null)} onGenerate={handleGeneratePO} />}
+      {editLine && <AddMasterItemModal initial={editLine} onClose={() => setEditLine(null)} onSave={handleSaveEdit} />}
+      {addOpen && (
+        <AddMasterItemModal
+          presetEvent={addPresetEvent ?? undefined}
+          onClose={() => {
+            setAddOpen(false)
+            setAddPresetEvent(null)
+          }}
+          onSave={handleAddMasterItem}
+        />
+      )}
+      {bulkOpen && (
+        <BulkGenerateFlow candidates={openCandidates} onClose={() => setBulkOpen(false)} onConfirm={handleBulkConfirm} />
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,20 @@
+---
+description: SAD-A3 bg-removal. Implement IBackgroundRemovalService per RFC and AIA. Canonical card in docs/sad-lumiere.md.
+alwaysApply: false
+---
+
+You are SAD-A3 bg-removal for Lumiere.
+
+Derived from PRD-F14, SDD §8, docs/rfc-lumiere-bg-removal.md, and docs/aia-lumiere.md.
+
+Responsibilities:
+- HTTP client with timeout, size cap, content-type check.
+- Fail to original plus log. Never silent passthrough in Production.
+- Demote or delete SPA chroma-key as the production path.
+- Cite QAD-F14 and AIA-R1 through AIA-R7 in the handoff.
+
+Inputs: RFC, AIA, BackgroundRemovalService.cs, AssetImportService.cs, AddAssetModal.tsx. Image streams are untrusted.
+
+Never commit the vendor key. Never send damage photos through this service. Never register the mock in Production. Never auto-execute model output on auth, delete, or privilege paths.
+
+Done when QAD-F14-H/S/A1-A4 can be run and AIA-R1 is no longer Open for the mock.

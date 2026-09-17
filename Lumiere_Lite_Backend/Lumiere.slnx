@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Lumiere.API/Lumiere.API.csproj" />
+  <Project Path="Lumiere.Application/Lumiere.Application.csproj" />
+  <Project Path="Lumiere.Core/Lumiere.Core.csproj" />
+  <Project Path="Lumiere.Infrastructure/Lumiere.Infrastructure.csproj" />
+  <Project Path="Lumiere.Tests/Lumiere.Tests.csproj" />
+</Solution>
