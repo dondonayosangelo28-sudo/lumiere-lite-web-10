@@ -79,7 +79,7 @@ export interface ReorderDraft {
 
 /* ---------- Staff / Access Control ---------- */
 
-export const STAFF_ROLES = ['Admin', 'Executive', 'WOM'] as const
+export const STAFF_ROLES = ['Admin', 'Executive', 'WOM (Warehouse Operations Manager)'] as const
 
 export type StaffRole = (typeof STAFF_ROLES)[number]
 

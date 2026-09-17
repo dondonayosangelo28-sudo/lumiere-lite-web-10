@@ -63,7 +63,7 @@ function rowToStaff(row: any): Staff {
     middleName: row.middle_name ?? '',
     email: row.email,
     contact: row.contact ?? '',
-    role: (row.role === 'Admin' || row.role === 'Executive' || row.role === 'WOM' ? row.role : 'WOM') as StaffRole,
+    role: (row.role ?? 'Ground Crew') as StaffRole,
     sessionStatus,
     lastAccess: row.updated_at
       ? new Date(row.updated_at).toLocaleDateString('en-US', {
@@ -89,7 +89,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Santos',
     email: 'juandelacruz@lumiere.com',
     contact: '09123456789',
-    role: 'Executive',
+    role: 'Event Planner',
     sessionStatus: 'Active Session',
     lastAccess: 'May 14, 2026 · 08:42',
     dateAdded: 'Jan 08, 2026',
@@ -102,7 +102,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Marie',
     email: 'warehouse@lumiere.com',
     contact: '09987654321',
-    role: 'WOM',
+    role: 'Warehouse Manager',
     sessionStatus: 'Active Session',
     lastAccess: 'May 27, 2026 · 07:11',
     dateAdded: 'Jan 15, 2026',
@@ -115,7 +115,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Elena',
     email: 'maria.rodriguez@lumiere.com',
     contact: '09111222333',
-    role: 'Executive',
+    role: 'Event Planner',
     sessionStatus: 'Offline Session',
     lastAccess: 'May 26, 2026 · 14:22',
     dateAdded: 'Feb 04, 2026',
@@ -128,7 +128,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Ming',
     email: 'wei.chen@lumiere.com',
     contact: '09222333444',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'May 28, 2026 · 09:15',
     dateAdded: 'Feb 19, 2026',
@@ -141,7 +141,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Chioma',
     email: 'amara.okafor@lumiere.com',
     contact: '09333444555',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'May 28, 2026 · 11:30',
     dateAdded: 'Mar 03, 2026',
@@ -154,7 +154,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Kumar',
     email: 'rajesh.singh@lumiere.com',
     contact: '09444555666',
-    role: 'WOM',
+    role: 'Warehouse Manager',
     sessionStatus: 'Suspended',
     lastAccess: 'May 27, 2026 · 16:45',
     accountStatus: 'Suspended',
@@ -181,7 +181,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'James',
     email: 'david.thompson@lumiere.com',
     contact: '09666777888',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'May 28, 2026 · 10:20',
     dateAdded: 'Apr 17, 2026',
@@ -194,7 +194,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Ho',
     email: 'min.park@lumiere.com',
     contact: '09777888999',
-    role: 'Executive',
+    role: 'Event Planner',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     accountStatus: 'Pending',
@@ -252,7 +252,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'eventadmin@lumiere.com',
     contact: '09833445566',
-    role: 'Admin',
+    role: 'Event Admin',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 01, 2026 · 08:30',
     dateAdded: 'Jun 25, 2026',
@@ -265,7 +265,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'amara.okafor@lumiere.com',
     contact: '09171112233',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 02, 2026 · 10:15',
     dateAdded: 'Jun 26, 2026',
@@ -278,7 +278,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'mateo.santos@lumiere.com',
     contact: '09172223344',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 02, 2026 · 11:20',
     dateAdded: 'Jun 27, 2026',
@@ -291,7 +291,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'camille.dubois@lumiere.com',
     contact: '09173334455',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 03, 2026 · 09:00',
     dateAdded: 'Jun 28, 2026',
@@ -304,7 +304,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'jihoon.kim@lumiere.com',
     contact: '09174445566',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 03, 2026 · 14:10',
     dateAdded: 'Jun 29, 2026',
@@ -317,7 +317,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'lucia.alvarez@lumiere.com',
     contact: '09175556677',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 04, 2026 · 08:45',
     dateAdded: 'Jun 30, 2026',
@@ -330,7 +330,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'antoine.moreau@lumiere.com',
     contact: '09176667788',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 04, 2026 · 13:30',
     dateAdded: 'Jul 01, 2026',
@@ -343,7 +343,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'ren.nakamura@lumiere.com',
     contact: '09177778899',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 02, 2026 · 10:00',
     dateAdded: 'Jul 02, 2026',
@@ -356,7 +356,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'aarav.gupta@lumiere.com',
     contact: '09178889900',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 03, 2026 · 15:45',
     dateAdded: 'Jul 03, 2026',
@@ -369,7 +369,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'freja.larsson@lumiere.com',
     contact: '09179990011',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 04, 2026 · 11:15',
     dateAdded: 'Jul 04, 2026',
@@ -382,7 +382,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'gabriel.silva@lumiere.com',
     contact: '09170001122',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 05, 2026 · 09:30',
     dateAdded: 'Jul 05, 2026',
@@ -395,7 +395,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'matteo.conti@lumiere.com',
     contact: '09171113355',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 06, 2026 · 16:20',
     dateAdded: 'Jul 06, 2026',
@@ -408,7 +408,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'zoe.novak@lumiere.com',
     contact: '09172224466',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 07, 2026 · 08:15',
     dateAdded: 'Jul 07, 2026',
@@ -421,7 +421,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'lukas.fischer@lumiere.com',
     contact: '09173335577',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 08, 2026 · 14:00',
     dateAdded: 'Jul 08, 2026',
@@ -434,7 +434,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'meiling.chen@lumiere.com',
     contact: '09174446688',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 09, 2026 · 10:45',
     dateAdded: 'Jul 09, 2026',
@@ -447,7 +447,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'piotr.kowalski@lumiere.com',
     contact: '09175557799',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 10, 2026 · 12:30',
     dateAdded: 'Jul 10, 2026',
@@ -465,7 +465,7 @@ const seedEmployeeRecords: Staff[] = [
     middleName: '',
     email: '',
     contact: '09211334455',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     recordKind: 'employee-record',
@@ -481,7 +481,7 @@ const seedEmployeeRecords: Staff[] = [
     middleName: '',
     email: '',
     contact: '09455778899',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     recordKind: 'employee-record',
@@ -497,7 +497,7 @@ const seedEmployeeRecords: Staff[] = [
     middleName: '',
     email: '',
     contact: '09677889900',
-    role: 'WOM',
+    role: 'Field & Production Crew',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     recordKind: 'employee-record',
@@ -1621,12 +1621,12 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       }
 
       // Ground crew get a matching roster record linked to their account.
-      if (role === 'WOM') {
+      if (role === 'Ground Crew') {
         await supabase.from('crew_roster').insert({
           account_id: data.id,
           employee_id: draft.employeeId,
           name: fullName,
-          role: 'WOM',
+          role: 'Ground Crew Field',
           status: 'Available',
           week_mon: 1,
           week_tue: 1,
@@ -1676,7 +1676,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   )
 
   const toggleSuspend = useCallback(
-    async (id: string, reason = 'Administrative action approved') => {
+    async (id: string) => {
       const target = staff.find((s) => s.id === id)
       if (!target) return
       const suspending = (target.accountStatus ?? 'Active') !== 'Suspended'
@@ -1696,7 +1696,9 @@ export function PortalProvider({ children }: { children: ReactNode }) {
           account: target.employeeId,
           initiatorRole: 'Admin',
           action: suspending ? 'Employee Record Archived' : 'Employee Record Reactivated',
-          detail: `${fullName} (${target.employmentType ?? 'employee record'}) was ${suspending ? 'archived' : 'reactivated from the archive'}. Reason: ${reason}`,
+          detail: `${fullName} (${target.employmentType ?? 'employee record'}) was ${
+            suspending ? 'archived' : 'reactivated from the archive'
+          }.`,
           ip: randomIp(),
           status: 'Success',
         })
@@ -1724,7 +1726,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         account: target.employeeId,
         initiatorRole: 'Admin',
         action: suspending ? 'Session Privileges Revoked' : 'Session Restored',
-        detail: `${fullName} account status changed to ${suspending ? 'Suspended' : 'Active'}. Reason: ${reason}`,
+        detail: `${fullName} account status changed to ${suspending ? 'Suspended' : 'Active'}.`,
         ip: randomIp(),
         status: 'Success',
       })
@@ -1745,7 +1747,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         middleName: '',
         email: '',
         contact: draft.contact,
-        role: 'WOM',
+        role: 'Field & Production Crew',
         sessionStatus: 'Offline Session',
         lastAccess: '—',
         recordKind: 'employee-record',
@@ -1795,7 +1797,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   )
 
   const forceLogout = useCallback(
-    (id: string, reason = 'Administrative action approved') => {
+    (id: string) => {
       const target = staff.find((s) => s.id === id)
       if (!target) return
       setStaff((prev) =>
@@ -1805,7 +1807,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         account: target.employeeId,
         initiatorRole: 'Admin',
         action: 'Session Force-Terminated',
-        detail: `Active session for ${target.firstName} ${target.surname} was forcibly terminated by Admin. Reason: ${reason}`,
+        detail: `Active session for ${target.firstName} ${target.surname} was forcibly terminated by an administrator.`,
         ip: randomIp(),
         status: 'Success',
       })

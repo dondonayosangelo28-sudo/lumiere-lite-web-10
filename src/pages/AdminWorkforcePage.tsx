@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Plus, Search, UserPlus, Users, ChevronDown, ArrowUpDown } from 'lucide-react'
+import { Plus, Search, UserPlus, Users, ChevronDown, TrendingUp, ArrowUpDown } from 'lucide-react'
 import { AdminShell } from '@/components/admin/AdminShell'
 import { EmployeeModal } from '@/components/EmployeeModal'
 import { ViewAccountModal } from '@/components/ViewAccountModal'
@@ -8,9 +8,9 @@ import { WorkforceTable } from '@/components/admin/workforce/WorkforceTable'
 import type { AdminDestinationId } from '@/lib/admin-destinations'
 import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
+import { useGrowthSummary } from '@/lib/admin-growth-summary'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
-import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { STAFF_ROLES, type AccountStatus, type Staff } from '@/lib/types'
 
 function statusFor(staff: Staff, lockedIds: Set<string>): AccountStatus {
@@ -37,6 +37,7 @@ function parseDateAdded(value: string | undefined): number {
 export function AdminWorkforcePage() {
   const { navigate } = useNav()
   const { staff, userActions, addEmployeeRecord, toggleSuspend, forceLogout, updateStaff } = usePortal()
+  const { openGrowthSummary } = useGrowthSummary()
   const [query, setQuery] = useState('')
   const [role, setRole] = useState('All Roles')
   const [status, setStatus] = useState<StatusFilter>('All')
@@ -47,8 +48,6 @@ export function AdminWorkforcePage() {
   const [selected, setSelected] = useState<Staff | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [tempPassword, setTempPassword] = useState('')
-  const [pendingAction, setPendingAction] = useState<{ kind: 'suspend' | 'logout'; staff: Staff } | null>(null)
-  const [actionReason, setActionReason] = useState('')
   const addMenuRef = useRef<HTMLDivElement | null>(null)
 
   // Deep-linkable highlight, scoped to this feature only: read directly off
@@ -170,6 +169,7 @@ export function AdminWorkforcePage() {
           <div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name, ID, or email" className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary" /></div>
           <div className="flex flex-wrap items-center gap-2">
             <select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2.5 text-xs text-foreground"><option>All Roles</option>{roles.map((r) => <option key={r}>{r}</option>)}</select>
+            <button type="button" onClick={openGrowthSummary} className="button-secondary"><TrendingUp className="size-3.5 text-primary" /> User Growth Summary</button>
             <div className="relative" ref={addMenuRef}>
               <button type="button" onClick={() => setAddMenuOpen((v) => !v)} className="button-primary" aria-haspopup="menu" aria-expanded={addMenuOpen}><Plus className="size-3.5" /> Add New User <ChevronDown className="size-3.5" /></button>
               {addMenuOpen && (
@@ -196,22 +196,12 @@ export function AdminWorkforcePage() {
           </label>
         </div>
         <p className="text-xs text-muted-foreground">Showing {rows.length} of {staff.length} directory entries. Click a row to view details.</p>
-        <WorkforceTable rows={rows} resolveStatus={(s) => statusFor(s, lockedIds)} onRowClick={(s) => { setSelected(s); setEditMode(false); setTempPassword(s.tempPassword ?? '') }} onSuspend={(s) => { setActionReason(''); setPendingAction({ kind: 'suspend', staff: s }) }} onForceLogout={(s) => { setActionReason(''); setPendingAction({ kind: 'logout', staff: s }) }} onEdit={(s) => { setSelected(s); setEditMode(true); setTempPassword(s.tempPassword ?? '') }} highlightId={highlightId} stats={tableStats} />
+        <WorkforceTable rows={rows} resolveStatus={(s) => statusFor(s, lockedIds)} onRowClick={(s) => { setSelected(s); setEditMode(false); setTempPassword(s.tempPassword ?? '') }} onSuspend={(s) => void toggleSuspend(s.id)} onForceLogout={(s) => forceLogout(s.id)} onEdit={(s) => { setSelected(s); setEditMode(true); setTempPassword(s.tempPassword ?? '') }} highlightId={highlightId} stats={tableStats} />
       </div>
       )}
       <EmployeeModal open={createAccountOpen} onClose={() => setCreateAccountOpen(false)} />
       <EmployeeRecordModal open={createRecordOpen} onClose={() => setCreateRecordOpen(false)} onCreate={addEmployeeRecord} />
       <ViewAccountModal open={!!selected} staff={selected} tempPassword={tempPassword} onTempPasswordChange={setTempPassword} onClose={() => setSelected(null)} editable={editMode} onSave={(s) => { updateStaff({ ...s, tempPassword }); setSelected(null) }} />
-      <ConfirmDialog
-        open={pendingAction !== null}
-        eyebrow="Security action"
-        title={pendingAction?.kind === 'logout' ? 'Force logout this account?' : 'Suspend this account?'}
-        description={<div className="space-y-3"><p>This action will be recorded in Security Audit Logs for <strong>{pendingAction?.staff.firstName} {pendingAction?.staff.surname}</strong>.</p><div><label htmlFor="admin-action-reason" className="block text-[0.65rem] font-bold uppercase tracking-[0.1em] text-foreground">Reason / description <span className="text-destructive">*</span></label><textarea id="admin-action-reason" value={actionReason} onChange={(e) => setActionReason(e.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary" placeholder="Explain why this action is required" /></div></div>}
-        confirmLabel="Confirm action"
-        confirmDisabled={!actionReason.trim()}
-        onConfirm={() => { if (!pendingAction || !actionReason.trim()) return; if (pendingAction.kind === 'logout') forceLogout(pendingAction.staff.id, actionReason.trim()); else void toggleSuspend(pendingAction.staff.id, actionReason.trim()); setPendingAction(null); setActionReason('') }}
-        onCancel={() => { setPendingAction(null); setActionReason('') }}
-      />
     </AdminShell>
   )
 }

@@ -5,7 +5,6 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
 import { EmptyState } from '@/components/EmptyState'
 import { useNav } from '@/lib/nav'
-import { usePortal } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import type { AdminDestinationId } from '@/lib/admin-destinations'
 import { SECURITY_EVENTS } from '@/lib/security-events'
@@ -16,7 +15,7 @@ import { SECURITY_EVENTS } from '@/lib/security-events'
 // resets. A cross-account view — every entry carries the account type so the
 // Admin can slice the trail by role alongside the status pills.
 type AuditStatus = 'Success' | 'Failed' | 'Blocked' | 'Warning'
-type AccountType = 'Admin' | 'Executive' | 'WOM' | 'On-call' | 'Seasonal'
+type AccountType = 'Admin' | 'Executive' | 'Event Planner' | 'Warehouse Ops' | 'Ground Crew'
 
 
 
@@ -27,9 +26,9 @@ const ACCOUNT_FILTERS = [
   'All',
   'Admin',
   'Executive',
-  'WOM',
-  'On-call',
-  'Seasonal',
+  'Event Planner',
+  'Warehouse Ops',
+  'Ground Crew',
 ] as const
 type AccountFilter = (typeof ACCOUNT_FILTERS)[number]
 
@@ -44,9 +43,9 @@ const statusStyles: Record<AuditStatus, string> = {
 const roleStyles: Record<AccountType, string> = {
   Admin: 'bg-emerald-500/12 text-emerald-300',
   Executive: 'bg-indigo-500/15 text-indigo-300',
-  WOM: 'bg-amber-500/15 text-amber-300',
-  'On-call': 'bg-sky-500/15 text-sky-300',
-  Seasonal: 'bg-rose-500/15 text-rose-300',
+  'Event Planner': 'bg-sky-500/15 text-sky-300',
+  'Warehouse Ops': 'bg-amber-500/15 text-amber-300',
+  'Ground Crew': 'bg-rose-500/15 text-rose-300',
 }
 
 /* const LEGACY_SECURITY_AUDIT_LOG: SecurityAuditEntry[] = [
@@ -205,7 +204,6 @@ function isValidFilterDate(value: string): boolean {
 
 export function AdminSecurityAuditPage() {
   const { navigate } = useNav()
-  const { logs } = usePortal()
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState<StatusFilter>('All')
   const [account, setAccount] = useState<AccountFilter>('All')
@@ -214,28 +212,9 @@ export function AdminSecurityAuditPage() {
   const [dateError, setDateError] = useState<'from' | 'to' | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
 
-  const allAuditRows = useMemo(() => {
-    const liveRows = logs.map((log) => ({
-      id: log.id,
-      timestamp: log.timestamp,
-      date: log.date,
-      logId: log.logId,
-      employeeId: log.account,
-      role: (log.initiatorRole === 'Admin' ? 'Admin' : log.initiatorRole === 'Executive' ? 'Executive' : 'WOM') as AccountType,
-      action: log.action,
-      status: (log.status === 'Success' || log.status === 'Failed' || log.status === 'Blocked' || log.status === 'Warning' ? log.status : 'Success') as AuditStatus,
-      ip: log.ip,
-      terminal: 'ADMIN-CONSOLE',
-      token: 'AUDIT-LEDGER',
-      note: log.detail,
-      dotColor: 'bg-emerald-400',
-    }))
-    return [...liveRows, ...SECURITY_AUDIT_LOG]
-  }, [logs])
-
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return allAuditRows.filter((entry) => {
+    return SECURITY_AUDIT_LOG.filter((entry) => {
       const matchesStatus = status === 'All' || entry.status === status
       const matchesAccount = account === 'All' || entry.role === account
       const matchesQuery =
@@ -246,7 +225,7 @@ export function AdminSecurityAuditPage() {
         entry.role.toLowerCase().includes(q)
       return matchesStatus && matchesAccount && matchesQuery
     })
-  }, [query, status, account, allAuditRows])
+  }, [query, status, account])
 
   const exportCsv = () => {
     let exportRows = rows
@@ -456,7 +435,7 @@ export function AdminSecurityAuditPage() {
       </div>
 
       <p className="mb-4 text-xs text-muted-foreground">
-        Showing {rows.length} of {allAuditRows.length} security events. Click a row to reveal
+        Showing {rows.length} of {SECURITY_AUDIT_LOG.length} security events. Click a row to reveal
         raw IP, terminal, and token metadata.
       </p>
 
