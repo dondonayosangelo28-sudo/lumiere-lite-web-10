@@ -47,7 +47,6 @@ export interface PortalAccount {
   // sub-role accounts, whose access is bounded by their RBAC scope.
   fullWarehouseAccess?: boolean
   temporaryPassword: boolean
-  confirmationPinHash?: string
   token?: string
 }
 
@@ -198,9 +197,6 @@ interface AuthContextValue {
   logout: () => void
   confirmLogout: boolean
   setConfirmLogout: (value: boolean) => void
-  hasConfirmationPin: boolean
-  verifyConfirmationPin: (pin: string) => boolean
-  setConfirmationPin: (pin: string) => void
   verifyPassword: (password: string) => Promise<boolean>
 }
 
@@ -394,20 +390,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [currentUser],
   )
 
-  // Sets (or overwrites) the confirmation PIN for the current account. Used
-  // by both first-time setup and the post-"Forgot PIN?" reset. This demo
-  // stores the raw PIN under `confirmationPinHash` on the account object
-  // (mirroring how `password_hash` stores a raw demo password today) rather
-  // than a real one-way hash.
-  const setConfirmationPin = useCallback((_pin: string) => {
-    // Kept as a compatibility no-op for older screens; PINs are disabled.
-  }, [])
-
-  // Checks a 6-digit PIN against the current account's stored PIN. Returns
-  // false (never throws) if no PIN has been set yet — callers should gate
-  // on hasConfirmationPin first to route to setup instead of verification.
-  const verifyConfirmationPin = useCallback((_pin: string) => true, [])
-
   const value = useMemo(
     () => ({
       isAuthenticated: Boolean(currentUser),
@@ -439,8 +421,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       confirmLogout,
       setConfirmLogout,
       hasConfirmationPin: true,
-      verifyConfirmationPin,
-      setConfirmationPin,
+      verifyConfirmationPin: () => true,
+      setConfirmationPin: () => undefined,
       verifyPassword,
     }),
     [
@@ -449,8 +431,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       changePassword,
       logout,
       confirmLogout,
-      verifyConfirmationPin,
-      setConfirmationPin,
       verifyPassword,
     ],
   )

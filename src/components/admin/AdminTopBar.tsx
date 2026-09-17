@@ -17,7 +17,7 @@ const ADMIN_NOTIFICATIONS: NotificationEntry[] = [
 // and a profile menu. Sits alongside the rail outside the scroll container so
 // it never scrolls with page content.
 export function AdminTopBar() {
-  const { adminName, adminRole, setConfirmLogout, hasConfirmationPin } = useAuth()
+  const { adminName, adminRole, setConfirmLogout } = useAuth()
   const { dark, toggle } = useDarkMode()
   const [menuOpen, setMenuOpen] = useState(false)
   const [now, setNow] = useState(() => new Date())
@@ -97,23 +97,6 @@ export function AdminTopBar() {
                 </button>
               </div>
               <div className="border-t border-border">
-                <p className="px-4 pt-2.5 pb-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                  Security
-                </p>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuOpen(false)
-                    setPinModalOpen(true)
-                  }}
-                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-xs font-medium text-card-foreground transition-colors hover:bg-accent"
-                >
-                  <KeyRound className="size-3.5" aria-hidden="true" />
-                  {hasConfirmationPin ? 'Change PIN' : 'Set confirmation PIN'}
-                </button>
-              </div>
-              <div className="border-t border-border">
                 <button
                   type="button"
                   role="menuitem"
@@ -132,7 +115,6 @@ export function AdminTopBar() {
         </div>
       </div>
 
-      {pinModalOpen && <ChangePinModal onClose={() => setPinModalOpen(false)} />}
     </header>
   )
 }
