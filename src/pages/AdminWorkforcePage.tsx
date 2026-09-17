@@ -11,7 +11,7 @@ import { usePortal } from '@/lib/store'
 import { useGrowthSummary } from '@/lib/admin-growth-summary'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
-import type { AccountStatus, Staff } from '@/lib/types'
+import { STAFF_ROLES, type AccountStatus, type Staff } from '@/lib/types'
 
 function statusFor(staff: Staff, lockedIds: Set<string>): AccountStatus {
   if (lockedIds.has(staff.email)) return 'Locked'
@@ -111,7 +111,7 @@ export function AdminWorkforcePage() {
     else sorted.sort((a, b) => parseDateAdded(b.dateAdded) - parseDateAdded(a.dateAdded)) // Month & Year: most recent first
     return sorted
   }, [staff, query, role, status, sort, lockedIds])
-  const roles = [...new Set(staff.map((s) => s.role))]
+  const roles = [...STAFF_ROLES]
 
   // These three figures mirror the System Dashboard's stats (minus System Health), but
   // render as a compact inline strip in the table header rather than standalone cards —

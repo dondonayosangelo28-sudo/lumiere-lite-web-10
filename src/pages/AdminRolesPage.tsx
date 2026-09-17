@@ -416,7 +416,7 @@ export function AdminRolesPage() {
 
   /* ----------------------------- Ground Crew tree: delete node ----------------------------- */
 
-  // Deleting a container cascades to every descendant — the PIN modal shows
+  // Deleting a container cascades to every descendant �� the PIN modal shows
   // the count so this is never a silent bulk delete.
   const requestTreeDelete = (node: SubRoleNode) => {
     if (!hasConfirmationPin) {
@@ -593,8 +593,7 @@ export function AdminRolesPage() {
         Roles &amp; Sub-Roles
       </h1>
       <p className="mt-1.5 text-sm text-muted-foreground text-pretty">
-        The five structural account types and their configurable sub-roles. Toggle sub-roles and
-        open any row to edit its full permission scope, grouped by module.
+The three active account roles used across the platform. Existing historical records are preserved, but unused roles cannot be newly assigned.
       </p>
     </div>
   )

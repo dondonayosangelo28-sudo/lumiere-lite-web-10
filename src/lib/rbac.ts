@@ -1,11 +1,7 @@
 // Data model for the Roles & Sub-Roles (RBAC) screen.
 //
-// The platform recognizes five structural account types. Three of them
-// (Admin, Executive, Event Planner) are single-scope structural roles — they
-// exist at the account level and are not configured per company. The remaining
-// two (Warehouse Operations Manager, Ground Crew) fan out into sub-roles that
-// each company can switch on or off, because not every company staffs every
-// function.
+// The platform recognizes three assignable account roles. Historical role data
+// remains readable for existing records, but new assignments use only these roles.
 
 import type { SubRoleEmergencyUnblockMetadata } from '@/lib/types'
 

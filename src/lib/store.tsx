@@ -12,6 +12,7 @@ import {
   type ReactNode,
   type SetStateAction,
 } from 'react'
+import { STAFF_ROLES } from '@/lib/types'
 import type {
   AccountStatus,
   ActivityLog,
@@ -1567,7 +1568,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
   const addStaff = useCallback(
     async (draft: NewStaffDraft) => {
-      const role = (draft.role || 'Ground Crew') as StaffRole
+      const role = STAFF_ROLES.includes(draft.role as StaffRole) ? (draft.role as StaffRole) : 'Executive'
       const fullName = `${draft.firstName} ${draft.surname}`.trim()
       const email = draft.email.trim().toLowerCase()
 
