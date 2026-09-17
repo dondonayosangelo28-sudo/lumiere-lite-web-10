@@ -270,7 +270,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (res.ok) {
           const data = (await res.json()) as { token: string; fullName: string; email: string; userId: string; role: string }
-          const account = mapBackendUserToPortalAccount(data)
+          // A verification PIN is session-specific: every successful login must
+          // require the account to create a fresh PIN before entering the portal.
+          const account = { ...mapBackendUserToPortalAccount(data), confirmationPinHash: undefined }
 
           if (portal && account.portal !== portal) {
             return { ok: false, reason: 'wrong-portal' }
@@ -304,13 +306,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const match = DEMO_ACCOUNTS[normalizedEmail]
       if (match && (password === 'lumiere2026' || password === '246810')) {
-        const account = mapBackendUserToPortalAccount({
+        // Keep demo login behavior aligned with the real API: never carry a
+        // previous verification PIN into a new login session.
+        const account = { ...mapBackendUserToPortalAccount({
           userId: match.userId,
           email: normalizedEmail,
           fullName: match.fullName,
           role: match.role,
           temporaryPassword: normalizedEmail === 'tempadmin@lumiere.com',
-        })
+        }), confirmationPinHash: undefined }
 
         if (portal && account.portal !== portal) {
           return { ok: false, reason: 'wrong-portal' }

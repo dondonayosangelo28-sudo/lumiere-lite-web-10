@@ -30,7 +30,6 @@ import { EventDetailPage } from '@/pages/EventDetailPage'
 import { DesignCanvasHubPage } from '@/pages/DesignCanvasHubPage'
 import { CanvasWorkspacePage } from '@/pages/CanvasWorkspacePage'
 import { GroundCrewPage } from '@/pages/GroundCrewPage'
-import { GroundCrewLoginPage } from '@/pages/GroundCrewLoginPage'
 import { WarehouseLeadPage } from '@/pages/WarehouseLeadPage'
 import { WarehouseMemberPage } from '@/pages/WarehouseMemberPage'
 import { ManningPage } from '@/pages/ManningPage'
@@ -140,16 +139,11 @@ function Router() {
 
 function Gate() {
   const { isAuthenticated, isTempPassword, hasConfirmationPin, isWarehouse, isWarehouseLead, isWarehouseMember, isPlanner, isGroundCrew, isExecutive, isProductionManager, isInventoryOfficer, isManningOfficer, hasFullWarehouseAccess } = useAuth()
-  const [portal, setPortal] = useState<'staff' | 'crew'>('staff')
   const isMobileProductionManager = isProductionManager && !hasFullWarehouseAccess
   const isMobileInventoryOfficer = isInventoryOfficer && !hasFullWarehouseAccess
 
   if (!isAuthenticated) {
-    return portal === 'crew' ? (
-      <GroundCrewLoginPage onStaffPortal={() => setPortal('staff')} />
-    ) : (
-      <LoginPage onCrewPortal={() => setPortal('crew')} />
-    )
+    return <LoginPage />
   }
 
   if (isTempPassword) {

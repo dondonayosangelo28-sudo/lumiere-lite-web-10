@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
-import { User, Lock, Eye, EyeOff, HardHat, Sun, Moon, Monitor } from 'lucide-react'
+import { User, Lock, Eye, EyeOff, Sun, Moon, Monitor } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
 import { useThemeMode, type ThemeMode } from '@/lib/theme'
@@ -110,7 +110,6 @@ export function LoginPage({ onCrewPortal }: { onCrewPortal: () => void }) {
                 setRequestType('request-password')
                 setView('request')
               }}
-              onCrewPortal={onCrewPortal}
             />
           )}
 
@@ -150,7 +149,6 @@ function SignInView(props: {
   onSubmit: (e: FormEvent) => void
   onForgot: () => void
   onRequest: () => void
-  onCrewPortal: () => void
 }) {
   return (
     <form onSubmit={props.onSubmit} className="flex flex-col">
@@ -241,15 +239,6 @@ function SignInView(props: {
       <SubmitButton className="mt-10" disabled={props.signingIn}>
         {props.signingIn ? 'SIGNING IN...' : 'ENTER PORTAL'}
       </SubmitButton>
-
-      <button
-        type="button"
-        onClick={props.onCrewPortal}
-        className="mt-6 inline-flex items-center justify-center gap-2 self-center text-sm font-medium uppercase tracking-[0.15em] text-foreground/70 transition-colors hover:text-foreground"
-      >
-        <HardHat className="size-4" aria-hidden="true" />
-        Ground Crew? Field Login
-      </button>
 
       <DemoAccounts />
     </form>
