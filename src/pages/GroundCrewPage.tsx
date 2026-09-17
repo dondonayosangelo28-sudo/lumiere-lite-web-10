@@ -198,7 +198,7 @@ function DecisionMode({ declarations, accessLevel, adminEventId, events, onEvent
       <section className="paper-card space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="eyebrow">Assigned Role &amp; Access Tier</p>
+            <p className="eyebrow">Assigned Role &amp; Access</p>
             <h2 className="mt-1 font-serif text-lg font-medium">{accessLevel}</h2>
           </div>
           <span className="status status-approved">
@@ -221,7 +221,7 @@ function DecisionMode({ declarations, accessLevel, adminEventId, events, onEvent
           </label>
         ) : (
           <p className="text-xs leading-5 text-muted-foreground">
-            Role tier is assigned through Workforce Management &amp; Manning. Ground crew accounts cannot self-modify access privileges.
+            Access is assigned through Workforce Management &amp; Manning. Ground crew accounts cannot self-modify access privileges.
           </p>
         )}
       </section>

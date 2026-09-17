@@ -821,8 +821,7 @@ const seedVendors: Vendor[] = [
     specialty: 'Florals, greenery & living arches',
     leadTimeHours: 36,
     rating: 4.9,
-    priceTier: 'Premium',
-    preferred: true,
+      preferred: true,
     matches: ['floral', 'floristry', 'greenery', 'eucalyptus', 'garland', 'arch'],
   },
   {
@@ -834,8 +833,7 @@ const seedVendors: Vendor[] = [
     specialty: 'Candles, wax goods & ambiance',
     leadTimeHours: 24,
     rating: 4.7,
-    priceTier: 'Standard',
-    preferred: true,
+      preferred: true,
     matches: ['candle', 'wax', 'ambiance', 'illumination'],
   },
   {
@@ -847,8 +845,7 @@ const seedVendors: Vendor[] = [
     specialty: 'Glassware, mirrors & crystal',
     leadTimeHours: 48,
     rating: 4.8,
-    priceTier: 'Premium',
-    preferred: false,
+      preferred: false,
     matches: ['glass', 'glassware', 'coupe', 'mirror', 'crystal', 'beverage'],
   },
   {
@@ -860,8 +857,7 @@ const seedVendors: Vendor[] = [
     specialty: 'Chairs, tables & banquet furniture',
     leadTimeHours: 72,
     rating: 4.5,
-    priceTier: 'Standard',
-    preferred: false,
+      preferred: false,
     matches: ['chair', 'seating', 'table', 'furniture', 'banquet'],
   },
   {
@@ -873,8 +869,7 @@ const seedVendors: Vendor[] = [
     specialty: 'Linens, runners & table textiles',
     leadTimeHours: 30,
     rating: 4.6,
-    priceTier: 'Standard',
-    preferred: false,
+      preferred: false,
     matches: ['linen', 'textile', 'runner', 'table décor', 'décor'],
   },
   {
@@ -886,8 +881,7 @@ const seedVendors: Vendor[] = [
     specialty: 'General catalog · rapid bulk supply',
     leadTimeHours: 18,
     rating: 4.2,
-    priceTier: 'Economy',
-    preferred: false,
+      preferred: false,
     matches: [],
   },
 ]

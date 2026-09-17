@@ -15,7 +15,6 @@ export interface Asset {
   width: string
   weight: string
   category: string
-  tier: string
   fragile: boolean
   quantity: number
   unit: string

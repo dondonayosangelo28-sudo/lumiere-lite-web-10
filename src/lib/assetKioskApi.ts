@@ -27,7 +27,6 @@ export interface AssetColor {
 
 /**
  * AssetResponse - returned by GET /api/assets.
- * AssetTier is an int 1-5.
  * AssetState is a string (e.g. "Available", "Reserved", "InMaintenance").
  */
 export interface AssetResponse {
@@ -35,7 +34,6 @@ export interface AssetResponse {
   name: string
   assetSubTypeId?: string
   subTypeName?: string
-  assetTier: number
   assetState: string
   quantity: number
   colors?: AssetColor[]
@@ -47,7 +45,6 @@ export interface AssetFilterParams {
   assetTypeId?: string
   tagValue?: string
   hexValue?: string
-  tier?: number
   state?: string
 }
 
@@ -56,7 +53,6 @@ export async function fetchAssetsApi(params: AssetFilterParams = {}): Promise<As
   if (params.assetTypeId) qs.set('assetTypeId', params.assetTypeId)
   if (params.tagValue)    qs.set('tagValue', params.tagValue)
   if (params.hexValue)    qs.set('hexValue', params.hexValue)
-  if (params.tier != null) qs.set('tier', String(params.tier))
   if (params.state)       qs.set('state', params.state)
 
   qs.set('page', '1')

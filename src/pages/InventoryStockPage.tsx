@@ -475,7 +475,6 @@ export function InventoryStockPage() {
                 width: selectedAsset.width ?? '0',
                 weight: selectedAsset.weight ?? '0',
                 category: selectedAsset.category,
-                tier: 'Standard',
                 fragile: selectedAsset.fragile ?? false,
                 quantity: selectedAsset.stock,
                 unit: selectedAsset.unit ?? 'pcs',

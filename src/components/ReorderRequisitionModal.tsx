@@ -61,11 +61,6 @@ function MeterRow({
   )
 }
 
-const priceTierStyles: Record<Vendor['priceTier'], string> = {
-  Economy: 'bg-emerald-100 text-emerald-700',
-  Standard: 'bg-sky-100 text-sky-700',
-  Premium: 'bg-primary/15 text-primary',
-}
 
 function VendorCard({
   vendor,
@@ -132,14 +127,7 @@ function VendorCard({
           <Clock className="size-3" />
           {vendor.leadTimeHours}h lead
         </span>
-        <span
-          className={cn(
-            'rounded-full px-2 py-0.5 text-[0.5rem] font-bold uppercase tracking-[0.08em]',
-            priceTierStyles[vendor.priceTier],
-          )}
-        >
-          {vendor.priceTier}
-        </span>
+
       </div>
 
       {/* Contact, revealed when selected */}

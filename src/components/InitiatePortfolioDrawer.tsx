@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { X, Inbox, Building2, CalendarDays, Check, Crown } from 'lucide-react'
+import { X, Inbox, Building2, CalendarDays, Check } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { usePlanner, type NewPortfolioDraft, type PortfolioTier } from '@/lib/planner'
 import { usePortal } from '@/lib/store'
@@ -16,12 +16,6 @@ function mapTier(tier: ExperienceTier): PortfolioTier {
   if (tier.startsWith('Tier-1')) return 'VIP'
   if (tier.startsWith('Tier-2')) return 'Premium'
   return 'Corporate'
-}
-
-const tierBadge: Record<PortfolioTier, string> = {
-  VIP: 'bg-primary/10 text-primary border-primary/30',
-  Premium: 'bg-amber-100 text-amber-800 border-amber-300',
-  Corporate: 'bg-muted text-muted-foreground border-border',
 }
 
 export function InitiatePortfolioDrawer({ open, onClose }: Props) {
@@ -121,7 +115,6 @@ export function InitiatePortfolioDrawer({ open, onClose }: Props) {
           ) : (
             <div className="space-y-3">
               {availableEvents.map((ev) => {
-                const tier = mapTier(ev.tier)
                 const active = ev.id === selectedId
                 return (
                   <button
@@ -145,12 +138,6 @@ export function InitiatePortfolioDrawer({ open, onClose }: Props) {
                         </p>
                         <p className="mt-0.5 truncate text-xs text-muted-foreground">{ev.client}</p>
                       </div>
-                      <span
-                        className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[0.52rem] font-bold uppercase tracking-[0.1em] ${tierBadge[tier]}`}
-                      >
-                        {tier === 'VIP' && <Crown className="size-2.5" />}
-                        {tier}
-                      </span>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.65rem] text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5">
@@ -204,7 +191,7 @@ export function InitiatePortfolioDrawer({ open, onClose }: Props) {
                 {selected?.title || 'No event selected'}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                {selected?.client} · {selected ? mapTier(selected.tier) : ''}
+                {selected?.client}
               </p>
             </div>
             <p>

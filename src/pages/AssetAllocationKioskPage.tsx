@@ -15,23 +15,6 @@ import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
 import type { PortalEvent } from '@/lib/types'
 
-/* ---- Tier label helpers ---- */
-const TIER_LABELS: Record<number, string> = {
-  1: 'Tier 1 — Essentials',
-  2: 'Tier 2 — Standard',
-  3: 'Tier 3 — Premium',
-  4: 'Tier 4 — Signature',
-  5: 'Tier 5 — Bespoke',
-}
-
-const TIER_BADGE: Record<number, string> = {
-  1: 'bg-muted text-muted-foreground border-border',
-  2: 'bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/20',
-  3: 'bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-500/20',
-  4: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
-  5: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
-}
-
 const STATE_BADGE: Record<string, string> = {
   Available:     'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
   Reserved:      'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
@@ -39,14 +22,14 @@ const STATE_BADGE: Record<string, string> = {
 }
 
 const SAMPLE_ASSETS: AssetResponse[] = [
-  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetTier: 2, assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'], thumbnailUrl: '/assets/aurora-lighting-kit.png' },
-  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 3, assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'], thumbnailUrl: '/assets/marlow-lounge-chair.png' },
-  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 1, assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'], thumbnailUrl: '/assets/modular-display-wall.png' },
-  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 2, assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'], thumbnailUrl: '/assets/oak-plinth-set.png' },
-  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetTier: 3, assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'], thumbnailUrl: '/assets/linen-textile-roll.png' },
-  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetTier: 4, assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'], thumbnailUrl: '/assets/brass-signage-frame.png' },
-  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetTier: 5, assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'], thumbnailUrl: '/assets/ceramic-vessel-set.png' },
-  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 2, assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'], thumbnailUrl: '/assets/canvas-room-divider.png' },
+  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'], thumbnailUrl: '/assets/aurora-lighting-kit.png' },
+  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'], thumbnailUrl: '/assets/marlow-lounge-chair.png' },
+  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'], thumbnailUrl: '/assets/modular-display-wall.png' },
+  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'], thumbnailUrl: '/assets/oak-plinth-set.png' },
+  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'], thumbnailUrl: '/assets/linen-textile-roll.png' },
+  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'], thumbnailUrl: '/assets/brass-signage-frame.png' },
+  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'], thumbnailUrl: '/assets/ceramic-vessel-set.png' },
+  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'], thumbnailUrl: '/assets/canvas-room-divider.png' },
 ]
 
 /* ---- Procurement step modal ---- */
@@ -115,7 +98,7 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-card-foreground">{asset.name}</p>
-                <p className="text-[0.65rem] text-muted-foreground">{asset.subTypeName || 'Unclassified'} &middot; T{asset.assetTier}</p>
+                <p className="text-[0.65rem] text-muted-foreground">{asset.subTypeName || 'Unclassified'}</p>
               </div>
             </div>
           )}
@@ -302,7 +285,6 @@ export function AssetAllocationKioskPage() {
   // Sidebar / filter state
   const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY)
   const [query, setQuery] = useState('')
-  const [tierFilter, setTierFilter] = useState<number | null>(null)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [mobilePage, setMobilePage] = useState(0)
   const [isPhone, setIsPhone] = useState(false)
@@ -325,7 +307,6 @@ export function AssetAllocationKioskPage() {
       const params: AssetFilterParams = {}
       if (activeCategory !== ALL_CATEGORY) params.assetTypeId = activeCategory
       if (query.trim()) params.tagValue = query.trim()
-      if (tierFilter != null) params.tier = tierFilter
       const data = await fetchAssetsApi(params)
       setAssets(data)
       setIsSampleData(false)
@@ -336,7 +317,7 @@ export function AssetAllocationKioskPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [activeCategory, query, tierFilter])
+  }, [activeCategory, query])
 
   useEffect(() => { load() }, [load])
 
@@ -363,7 +344,6 @@ export function AssetAllocationKioskPage() {
     const q = query.trim().toLowerCase()
     return assets.filter((a) => {
       if (activeCategory !== ALL_CATEGORY && a.assetSubTypeId !== activeCategory) return false
-      if (tierFilter != null && a.assetTier !== tierFilter) return false
       if (q) {
         const matchName = a.name.toLowerCase().includes(q)
         const matchTags = (a.tags ?? []).some((t) => t.toLowerCase().includes(q))
@@ -372,7 +352,7 @@ export function AssetAllocationKioskPage() {
       }
       return true
     })
-  }, [assets, activeCategory, tierFilter, query])
+  }, [assets, activeCategory, query])
 
   const mobilePageSize = 48
   const mobilePageCount = Math.max(1, Math.ceil(displayed.length / mobilePageSize))
@@ -382,7 +362,7 @@ export function AssetAllocationKioskPage() {
 
   useEffect(() => {
     setMobilePage(0)
-  }, [activeCategory, query, tierFilter, viewMode])
+  }, [activeCategory, query, viewMode])
 
   const stockInfo = (asset: AssetResponse) => {
     const quantity = Math.max(0, asset.quantity)
@@ -439,33 +419,6 @@ export function AssetAllocationKioskPage() {
   return (
     <>
       <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
-        {/* Tier filter strip */}
-        <div className="mb-5 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setTierFilter(null)}
-            className={cn(
-              'rounded-full px-3 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.12em] transition',
-              tierFilter === null
-                ? 'bg-neutral-900 text-white'
-                : 'border border-border bg-card text-muted-foreground hover:bg-muted',
-            )}
-          >All Tiers</button>
-          {[1, 2, 3, 4, 5].map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTierFilter(tierFilter === t ? null : t)}
-              className={cn(
-                'rounded-full px-3 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.12em] transition border',
-                tierFilter === t
-                  ? 'bg-neutral-900 text-white border-transparent'
-                  : cn(TIER_BADGE[t], 'hover:opacity-80'),
-              )}
-            >T{t}</button>
-          ))}
-        </div>
-
         {/* Two-pane kiosk layout */}
         <div className="grid h-[60vh] grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
           {/* ---- Visual category menu ---- */}
@@ -544,7 +497,7 @@ export function AssetAllocationKioskPage() {
               <div className="rounded-xl border border-border bg-card p-8">
                 <EmptyState
                   title="No assets found"
-                  message="No assets match the current filters. Try adjusting the category, tier, or search query."
+                  message="No assets match the current filters. Try adjusting the category or search query."
                 />
               </div>
             ) : (

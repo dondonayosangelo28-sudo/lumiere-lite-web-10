@@ -65,7 +65,6 @@ export interface Vendor {
   specialty: string
   leadTimeHours: number
   rating: number
-  priceTier: 'Economy' | 'Standard' | 'Premium'
   preferred: boolean
   // Category keywords used to recommend a vendor for a given item.
   matches: string[]
