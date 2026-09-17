@@ -38,17 +38,15 @@ const STATE_BADGE: Record<string, string> = {
   InMaintenance: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
 }
 
-const SAMPLE_IMAGE_URL = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-HaVoy4xxC2tABJbWavCPExvDdnNDQD.png'
-
 const SAMPLE_ASSETS: AssetResponse[] = [
-  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetTier: 2, assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 3, assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 1, assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 2, assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetTier: 3, assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetTier: 4, assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetTier: 5, assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'], thumbnailUrl: SAMPLE_IMAGE_URL },
-  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 2, assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'], thumbnailUrl: SAMPLE_IMAGE_URL },
+  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetTier: 2, assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'] },
+  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 3, assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'] },
+  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 1, assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'] },
+  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 2, assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'] },
+  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetTier: 3, assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'] },
+  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetTier: 4, assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'] },
+  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetTier: 5, assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'] },
+  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 2, assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'] },
 ]
 
 /* ---- Procurement step modal ---- */
@@ -112,14 +110,9 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
           {/* Asset identity row */}
           {step !== 'done' && (
             <div className="mb-5 flex items-center gap-3 rounded-xl border border-border bg-muted/30 p-3">
-              {asset.thumbnailUrl ? (
-                <img src={asset.thumbnailUrl} alt={asset.name}
-                  className="size-12 shrink-0 rounded-lg object-cover" />
-              ) : (
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted">
-                  <Boxes className="size-6 text-muted-foreground" />
-                </div>
-              )}
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <Boxes className="size-6 text-muted-foreground" />
+              </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-card-foreground">{asset.name}</p>
                 <p className="text-[0.65rem] text-muted-foreground">{asset.subTypeName || 'Unclassified'} &middot; T{asset.assetTier}</p>
@@ -556,30 +549,21 @@ export function AssetAllocationKioskPage() {
                   >
                     {/* Thumbnail */}
                     <div className="aspect-square w-full overflow-hidden bg-muted/40">
-                      {asset.thumbnailUrl ? (
-                        <img
-                          src={asset.thumbnailUrl}
-                          alt={asset.name}
-                          className="h-full w-full object-cover transition group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full flex-col items-center justify-center gap-1">
-                          <Boxes className="size-10 text-muted-foreground/40" />
-                          {/* Color swatches from palette */}
-                          {(asset.colors ?? []).length > 0 && (
-                            <div className="flex gap-1 mt-1">
-                              {(asset.colors ?? []).slice(0, 5).map((c, i) => (
-                                <span
-                                  key={i}
-                                  className="size-3 rounded-full border border-border"
-                                  style={{ background: c.hex }}
-                                  title={c.brand || c.hex}
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
+              <div className="flex h-full w-full flex-col items-center justify-center gap-1">
+                <Boxes className="size-10 text-muted-foreground/40" />
+                {(asset.colors ?? []).length > 0 && (
+                  <div className="flex gap-1 mt-1">
+                    {(asset.colors ?? []).slice(0, 5).map((c, i) => (
+                      <span
+                        key={i}
+                        className="size-3 rounded-full border border-border"
+                        style={{ background: c.hex }}
+                        title={c.brand || c.hex}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
                     </div>
 
                     {/* Footer info */}
