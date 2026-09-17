@@ -129,7 +129,7 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
               <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                 Quantity to Allocate
               </label>
-              <div className="flex items-center gap-3">
+<div className="mt-6 flex items-center gap-3 sm:mt-6">
                 <button
                   type="button"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
@@ -400,7 +400,7 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
