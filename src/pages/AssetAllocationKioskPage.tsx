@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
-  Search, Package, Layers, Sparkles, ChevronRight,
+  Search, Sparkles, ChevronRight,
   AlertTriangle, ShoppingCart, ArrowRight, RotateCcw, X,
   Boxes, CheckCircle2, Loader2, Info,
 } from 'lucide-react'
@@ -342,16 +342,20 @@ export function AssetAllocationKioskPage() {
 
   // Derive sidebar categories from loaded assets
   const categories = useMemo(() => {
-    const map = new Map<string, { id: string; label: string; count: number }>()
+    const map = new Map<string, { id: string; label: string; count: number; thumbnailUrl?: string }>()
     for (const a of assets) {
       const id = a.assetSubTypeId
       const label = a.subTypeName || 'Unclassified'
       const existing = map.get(id)
-      if (existing) existing.count++
-      else map.set(id, { id, label, count: 1 })
+      if (existing) {
+        existing.count++
+        if (!existing.thumbnailUrl && a.thumbnailUrl) existing.thumbnailUrl = a.thumbnailUrl
+      } else map.set(id, { id, label, count: 1, thumbnailUrl: a.thumbnailUrl })
     }
     return [...map.values()].sort((a, b) => a.label.localeCompare(b.label))
   }, [assets])
+
+  const allCategoryImage = assets.find((asset) => asset.thumbnailUrl)?.thumbnailUrl
 
   // Client-side filter (fallback to query already passed to API, but also
   // filter in-memory by state as not all params may be server-filtered)
@@ -488,62 +492,44 @@ export function AssetAllocationKioskPage() {
         </div>
 
         {/* Two-pane kiosk layout */}
-        <div className="grid h-[60vh] grid-cols-[minmax(6.5rem,30%)_minmax(0,1fr)] gap-2 sm:h-auto sm:min-h-[60vh] sm:flex sm:gap-5">
-          {/* ---- Left sidebar 20% — category list ---- */}
-          <aside className="h-full min-h-0 w-full shrink-0 space-y-1 overflow-x-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:h-auto sm:w-1/5 sm:max-h-[65vh]">
+        <div className="grid h-[60vh] grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
+          {/* ---- Visual category menu ---- */}
+          <aside className="min-w-0 sm:max-h-[65vh]">
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                Classifications
-              </p>
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Classifications</p>
+              <span className="text-[0.6rem] text-muted-foreground">{categories.length + 1} categories</span>
             </div>
-            <div className="space-y-1">
-              <div>
-            <button
-              type="button"
-              onClick={() => setActiveCategory(ALL_CATEGORY)}
-              className={cn(
-                'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition',
-                activeCategory === ALL_CATEGORY
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                  : 'text-card-foreground hover:bg-muted',
-              )}
-            >
-              <span className="flex items-center gap-2">
-                <Layers className="size-3.5 shrink-0" /> All
-              </span>
-              <span className={cn(
-                'rounded-full px-1.5 py-0.5 text-[0.6rem] font-bold',
-                activeCategory === ALL_CATEGORY ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground',
-              )}>{assets.length}</span>
-            </button>
-
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id === activeCategory ? ALL_CATEGORY : cat.id)}
-                className={cn(
-                  'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition',
-                  activeCategory === cat.id
-                    ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                    : 'text-card-foreground hover:bg-muted',
-                )}
-              >
-                <span className="flex items-center gap-2 min-w-0">
-                  <Package className="size-3.5 shrink-0" />
-                  <span className="truncate">{cat.label}</span>
-                </span>
-                <span className={cn(
-                  'shrink-0 rounded-full px-1.5 py-0.5 text-[0.6rem] font-bold',
-                  activeCategory === cat.id ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground',
-                )}>{cat.count}</span>
-              </button>
-            ))}
-
-            {!isLoading && categories.length === 0 && (
-              <p className="px-3 text-[0.65rem] text-muted-foreground italic">No classifications loaded.</p>
-            )}
-              </div>
+            <div className="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:block sm:space-y-2 sm:overflow-visible sm:pb-0">
+              {[{ id: ALL_CATEGORY, label: 'All', count: assets.length, thumbnailUrl: allCategoryImage }, ...categories].map((cat) => {
+                const isActive = activeCategory === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => setActiveCategory(cat.id === activeCategory ? ALL_CATEGORY : cat.id)}
+                    className={cn(
+                      'group flex min-w-[9.5rem] shrink-0 items-center gap-3 rounded-xl border p-2 text-left transition duration-200 sm:min-w-0 sm:w-full',
+                      isActive
+                        ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                        : 'border-border/70 bg-card text-card-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/60 hover:shadow-sm',
+                    )}
+                  >
+                    <span className={cn('size-11 shrink-0 overflow-hidden rounded-lg bg-muted/60 sm:size-12', isActive && 'ring-2 ring-white/50')}>
+                      {cat.thumbnailUrl ? (
+                        <img src={cat.thumbnailUrl} alt={`${cat.label} classification`} className="size-full object-cover transition duration-300 group-hover:scale-110" />
+                      ) : (
+                        <span className="flex size-full items-center justify-center"><Boxes className="size-4 opacity-40" /></span>
+                      )}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs font-semibold">{cat.label}</span>
+                      <span className={cn('mt-0.5 block text-[0.6rem]', isActive ? 'text-primary-foreground/75' : 'text-muted-foreground')}>Browse collection</span>
+                    </span>
+                    <span className={cn('rounded-full px-1.5 py-0.5 text-[0.6rem] font-bold', isActive ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground')}>{cat.count}</span>
+                  </button>
+                )
+              })}
             </div>
           </aside>
 
