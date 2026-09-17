@@ -166,6 +166,146 @@ function getStatusRGB(statusStr?: string): [number, number, number] {
 }
 
 // ─── 1. Security & System Audit Logs PDF Exporter ───
+export function exportEventAssetLogisticsPdf({
+  event,
+  materials,
+  checklist,
+  generatedBy,
+  filename,
+}: {
+  event: {
+    title: string
+    client: string
+    venue: string
+    galaDate: string
+    date: string
+    recordId: string
+    status: string
+    tier: string
+    attendance: string
+    footprint: string
+  }
+  materials: Array<{ name: string; category: string; quantity: number; sku: string; image?: string }>
+  checklist: Array<{ name: string; quantity: number }>
+  generatedBy?: string
+  filename: string
+}) {
+  const doc = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' })
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 42
+  const width = pageWidth - margin * 2
+  let y = 42
+
+  const section = (number: number, title: string) => {
+    ensure(34)
+    doc.setFillColor(...BRAND.PRIMARY)
+    doc.rect(margin, y, 3, 15, 'F')
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(9)
+    doc.setTextColor(...BRAND.PRIMARY)
+    doc.text(`${number}. ${title.toUpperCase()}`, margin + 10, y + 11)
+    y += 25
+  }
+  const ensure = (height: number) => {
+    if (y + height > pageHeight - 56) {
+      doc.addPage()
+      y = 42
+      drawRunningHeader()
+    }
+  }
+  const drawRunningHeader = () => {
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(...BRAND.MUTED)
+    doc.text('LUMIÈRE  /  EVENT ASSET & LOGISTICS REPORT', margin, 26)
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, 32, pageWidth - margin, 32)
+  }
+  const fieldGrid = (fields: Array<[string, string]>) => {
+    const cols = 2
+    const cellW = width / cols
+    const rows = Math.ceil(fields.length / cols)
+    const rowH = 34
+    ensure(rows * rowH + 8)
+    fields.forEach(([label, value], index) => {
+      const x = margin + (index % cols) * cellW
+      const row = Math.floor(index / cols)
+      const cellY = y + row * rowH
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(6.5)
+      doc.setTextColor(...BRAND.MUTED)
+      doc.text(label.toUpperCase(), x + 8, cellY + 11)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(9)
+      doc.setTextColor(...BRAND.FOREGROUND)
+      doc.text(value || '—', x + 8, cellY + 25, { maxWidth: cellW - 16 })
+      doc.setDrawColor(...BRAND.BORDER)
+      doc.line(x, cellY + rowH, x + cellW, cellY + rowH)
+    })
+    y += rows * rowH + 10
+  }
+  const table = (headers: string[], rows: string[][], widths: number[]) => {
+    const rowH = 25
+    ensure(rowH * (rows.length + 1) + 8)
+    let x = margin
+    doc.setFillColor(...BRAND.CARD_BG)
+    doc.rect(margin, y, width, rowH, 'F')
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(...BRAND.PRIMARY)
+    headers.forEach((header, i) => { doc.text(header.toUpperCase(), x + 6, y + 16, { maxWidth: widths[i] - 12 }); x += widths[i] })
+    y += rowH
+    rows.forEach((row, index) => {
+      ensure(rowH)
+      let rowX = margin
+      if (index % 2 === 1) { doc.setFillColor(...BRAND.ZEBRA_BG); doc.rect(margin, y, width, rowH, 'F') }
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.FOREGROUND)
+      row.forEach((value, i) => { doc.text(value || '—', rowX + 6, y + 16, { maxWidth: widths[i] - 12 }); rowX += widths[i] })
+      doc.setDrawColor(...BRAND.BORDER); doc.line(margin, y + rowH, margin + width, y + rowH)
+      y += rowH
+    })
+    y += 12
+  }
+
+  doc.setDrawColor(...BRAND.BORDER); doc.setLineWidth(0.7); doc.rect(22, 22, pageWidth - 44, pageHeight - 44)
+  doc.setFillColor(...BRAND.PRIMARY); doc.rect(margin, y, 4, 66, 'F')
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...BRAND.PRIMARY); doc.text('LUMIÈRE', margin + 14, y + 14)
+  doc.setFont('times', 'bold'); doc.setFontSize(22); doc.setTextColor(...BRAND.FOREGROUND); doc.text('EVENT ASSET & LOGISTICS REPORT', margin + 14, y + 39)
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...BRAND.MUTED); doc.text(`Event Reference: ${event.recordId}`, margin + 14, y + 55)
+  doc.text(`Generated: ${new Date().toLocaleDateString()}${generatedBy ? ` · ${generatedBy}` : ''}`, pageWidth - margin, y + 55, { align: 'right' })
+  y += 86
+  section(1, 'Event Information')
+  fieldGrid([
+    ['Event name', event.title], ['Client', event.client], ['Venue', event.venue], ['Event date', event.galaDate || event.date],
+    ['Event status', event.status], ['Event reference', event.recordId], ['Experience tier', event.tier], ['Attendance', event.attendance], ['Footprint', event.footprint],
+  ])
+  section(2, 'Event Overview')
+  fieldGrid([['Planning phase', event.status], ['Installation window', event.date], ['Operational record', 'Single event export']])
+  section(3, 'Assets Deployed')
+  const assetRows = (materials.length ? materials : checklist).map((item, index) => [
+    `${index + 1}. ${item.name}`, materials.length ? materials[index]?.category ?? '—' : 'Material requirement', String(item.quantity), '—', '—', '—', '—', 'Planned',
+  ])
+  table(['Asset', 'Classification', 'Planned', 'Deployed', 'Returned', 'Damaged', 'Lost', 'Status'], assetRows, [155, 86, 42, 46, 46, 46, 38, 55])
+  section(4, 'Asset Summary')
+  fieldGrid([['Total planned', String((materials.length ? materials : checklist).reduce((sum, item) => sum + item.quantity, 0))], ['Deployed', 'Not recorded'], ['Returned', 'Not recorded'], ['Pending verification', 'Not recorded']])
+  section(5, 'Logistics & Verification')
+  fieldGrid([['Dispatch', 'Not recorded in event planner'], ['Ingress / setup', 'Not recorded in event planner'], ['Egress / return', 'Not recorded in event planner'], ['Verification status', 'Generated from selected event record']])
+  section(6, 'Audit & Verification')
+  fieldGrid([['Event reference', event.recordId], ['Generated by', generatedBy || 'Lumière system'], ['Generated timestamp', new Date().toLocaleString()], ['Source', 'Selected event and material requirements']])
+
+  const totalPages = doc.getNumberOfPages()
+  for (let page = 1; page <= totalPages; page += 1) {
+    doc.setPage(page)
+    drawRunningHeader()
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.MUTED)
+    doc.line(margin, pageHeight - 39, pageWidth - margin, pageHeight - 39)
+    doc.text('Lumière · Event Asset & Logistics Report', margin, pageHeight - 25)
+    doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 25, { align: 'right' })
+  }
+  doc.save(filename)
+}
+
 export function exportSecurityAuditPdf(
   title: string,
   logs: Array<{

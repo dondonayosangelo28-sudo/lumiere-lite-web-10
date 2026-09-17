@@ -6,11 +6,12 @@ import { useNav } from '@/lib/nav'
 import { useAuth } from '@/lib/auth'
 import { usePlanner } from '@/lib/planner'
 import { cn } from '@/lib/utils'
+import { exportEventAssetLogisticsPdf } from '@/lib/pdf-exporter'
 
 export function EventDetailPage() {
   const { navigate } = useNav()
   const { adminName } = useAuth()
-  const { events, selectedEventId, eventMaterials, hasDesignForEvent, addDesign } = usePlanner()
+  const { events, selectedEventId, eventMaterials, eventChecklist, hasDesignForEvent, addDesign } = usePlanner()
   const event = events.find((e) => e.id === selectedEventId) ?? events[0]
 
   const materials = eventMaterials[event.id] ?? []
@@ -43,6 +44,20 @@ export function EventDetailPage() {
   }
 
   const handleExport = () => {
+    const materialsForExport = materials.map((item) => ({
+      name: item.name,
+      category: item.category,
+      quantity: item.quantity,
+      sku: item.sku,
+      image: item.image,
+    }))
+    exportEventAssetLogisticsPdf({
+      event,
+      materials: materialsForExport,
+      checklist: (eventChecklist[event.id] ?? []).map((item) => ({ name: item.name, quantity: item.quantity })),
+      generatedBy: adminName,
+      filename: `${event.recordId}-event-asset-logistics-report.pdf`,
+    })
     setExported(true)
     window.setTimeout(() => setExported(false), 2600)
   }
@@ -92,7 +107,7 @@ export function EventDetailPage() {
       {exported && (
         <div className="mt-4 flex items-center gap-2 rounded-md border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-xs font-medium text-emerald-800">
           <CheckCircle2 className="size-4" />
-          Record export queued — {event.recordId}.pdf is being prepared for download.
+          Event asset & logistics report downloaded — {event.recordId}.pdf.
         </div>
       )}
 
