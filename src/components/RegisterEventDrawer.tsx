@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { X, FileText, Building2, Palette, CalendarDays, Plus } from 'lucide-react'
+import { X, FileText, Building2, Palette, CalendarDays, Plus, Pencil, ImageIcon } from 'lucide-react'
 import { usePortal } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { EventCalendar } from '@/components/EventCalendar'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { NewEventDraft, PortalEvent } from '@/lib/types'
+import { getCatalogAssets, type CatalogAsset } from '@/lib/warehouse-catalog'
 
 type DrawerMode = 'create' | 'view' | 'edit'
 
@@ -93,8 +94,47 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
   const [customVenues, setCustomVenues] = useState<string[]>([])
   const [addingVenue, setAddingVenue] = useState(false)
   const [newVenue, setNewVenue] = useState('')
+  const [activeTab, setActiveTab] = useState<'details' | 'assets'>('details')
+  const [eventAssets, setEventAssets] = useState<Array<{ asset: CatalogAsset; quantity: number }>>([])
+  const [editingAsset, setEditingAsset] = useState<{ asset: CatalogAsset; quantity: number } | null>(null)
+  const [assetQuantity, setAssetQuantity] = useState('1')
 
   const readOnly = mode === 'view'
+
+  useEffect(() => {
+    if (!open) return
+    setActiveTab('details')
+    setEditingAsset(null)
+    if (event) {
+      const catalog = getCatalogAssets().filter((asset) => (asset.currentStock ?? 0) > 0)
+      const offset = event.id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % Math.max(catalog.length, 1)
+      setEventAssets(catalog.slice(offset, offset + 4).concat(catalog.slice(0, Math.max(0, offset + 4 - catalog.length))).map((asset, index) => ({
+        asset,
+        quantity: Math.min(asset.currentStock ?? 1, index + 1),
+      })))
+    } else {
+      setEventAssets([])
+    }
+  }, [open, event])
+
+  const openAssetEditor = (allocation: { asset: CatalogAsset; quantity: number }) => {
+    setEditingAsset(allocation)
+    setAssetQuantity(String(allocation.quantity))
+  }
+
+  const saveAssetAllocation = () => {
+    if (!editingAsset) return
+    const quantity = Number(assetQuantity)
+    const available = editingAsset.asset.currentStock ?? 0
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > available) return
+    setEventAssets((current) => current.map((item) => item.asset.id === editingAsset.asset.id ? { ...item, quantity } : item))
+    setEditingAsset(null)
+  }
+
+  const addAssetAllocation = () => {
+    const next = getCatalogAssets().find((asset) => !eventAssets.some((item) => item.asset.id === asset.id))
+    if (next) setEventAssets((current) => [...current, { asset: next, quantity: 1 }])
+  }
 
   // Sync the form with the bound event whenever the drawer opens (or the
   // target event changes). Create mode falls back to a blank draft.
@@ -224,7 +264,28 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
           </button>
         </div>
 
-        {/* Body */}
+        {mode === 'view' && (
+          <div className="grid grid-cols-2 border-b border-border px-6" role="tablist" aria-label="View event sections">
+            {[
+              { id: 'details' as const, label: 'Event Details' },
+              { id: 'assets' as const, label: 'Assets' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`border-b-2 px-2 py-3 text-[0.62rem] font-bold uppercase tracking-[0.12em] transition ${activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'details' || mode !== 'view' ? (
+        /* Body */
         <fieldset
           disabled={readOnly}
           className="space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90"
@@ -456,6 +517,45 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             </div>
           </div>
         </fieldset>
+        ) : (
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-card-foreground">Assigned event assets</p>
+                <p className="mt-1 text-[0.68rem] text-muted-foreground">Assets currently planned or reserved for this event.</p>
+              </div>
+              {!readOnly && (
+                <button type="button" onClick={addAssetAllocation} className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-[0.58rem] font-bold uppercase tracking-[0.1em] text-primary-foreground hover:opacity-90">
+                  <Plus className="size-3" /> Add Asset
+                </button>
+              )}
+            </div>
+            <div className="overflow-hidden rounded-lg border border-border">
+              <div className="hidden grid-cols-[3rem_minmax(0,1fr)_4.5rem_4.5rem_5rem_3rem] gap-2 bg-muted/40 px-3 py-2 text-[0.52rem] font-bold uppercase tracking-[0.1em] text-muted-foreground sm:grid">
+                <span>Image</span><span>Asset Name</span><span>Qty</span><span>Available</span><span>Status</span><span>Edit</span>
+              </div>
+              {eventAssets.map((allocation) => (
+                <div key={allocation.asset.id} className="grid grid-cols-[2.5rem_minmax(0,1fr)_3.2rem_3.5rem_4.5rem_2rem] items-center gap-2 border-t border-border/60 px-3 py-2.5 first:border-t-0 sm:grid-cols-[3rem_minmax(0,1fr)_4.5rem_4.5rem_5rem_3rem]">
+                  {allocation.asset.image ? <img src={allocation.asset.image} alt="" className="size-9 rounded-md object-cover" /> : <div className="flex size-9 items-center justify-center rounded-md bg-muted"><ImageIcon className="size-4 text-muted-foreground" /></div>}
+                  <div className="min-w-0"><p className="truncate text-[0.68rem] font-medium text-card-foreground">{allocation.asset.name}</p><p className="text-[0.58rem] text-muted-foreground sm:hidden">{allocation.quantity} assigned · {allocation.asset.currentStock ?? 0} available</p></div>
+                  <span className="text-xs text-card-foreground">{allocation.quantity}</span>
+                  <span className="text-xs text-muted-foreground">{allocation.asset.currentStock ?? 0}</span>
+                  <span className="truncate text-[0.55rem] font-bold uppercase tracking-[0.08em] text-emerald-700">{allocation.asset.status}</span>
+                  {!readOnly ? <button type="button" onClick={() => openAssetEditor(allocation)} aria-label={`Edit ${allocation.asset.name}`} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="size-3.5" /></button> : <span />}
+                </div>
+              ))}
+            </div>
+            {editingAsset && (
+              <div className="mt-4 rounded-lg border border-border bg-muted/30 p-4">
+                <div className="flex items-center justify-between"><p className="text-xs font-semibold text-card-foreground">Edit allocation</p><button type="button" onClick={() => setEditingAsset(null)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button></div>
+                <label className={labelClass} htmlFor="asset-quantity">Assigned quantity</label>
+                <input id="asset-quantity" type="number" min="1" max={editingAsset.asset.currentStock ?? 0} value={assetQuantity} onChange={(e) => setAssetQuantity(e.target.value)} className={inputClass} />
+                <p className="mt-2 text-[0.62rem] text-muted-foreground">Maximum available: {editingAsset.asset.currentStock ?? 0}</p>
+                <button type="button" onClick={saveAssetAllocation} className="mt-3 w-full rounded-md bg-primary px-3 py-2 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground hover:opacity-90">Save Allocation</button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="space-y-3 border-t border-border px-6 py-4">
