@@ -230,6 +230,9 @@ export function EventRegistryPage() {
       <h2 className="mt-7 text-sm font-semibold uppercase tracking-[0.14em] text-foreground">
         Event Lists
       </h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Registered events across the current executive portfolio.
+      </p>
 
       {/* Filter bar */}
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
