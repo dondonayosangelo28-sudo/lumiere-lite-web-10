@@ -706,7 +706,7 @@ export function AdminRolesPage() {
         </section>
 
         {/* Parent roles with toggleable, editable sub-roles */}
-        {PARENT_ROLES.map((parent) => {
+        {[].map((parent) => {
           const subRoles = subRolesByParent[parent.id] ?? []
           return (
             <section key={parent.id}>
@@ -813,8 +813,8 @@ export function AdminRolesPage() {
           )
         })}
 
-        {/* Ground Crew: recursive tree of arbitrary depth */}
-        <section>
+        {/* Deprecated sub-role tree retained in data for backwards compatibility. */}
+        {false && <section>
           <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="font-serif text-xl font-medium text-foreground">{GROUND_CREW_PARENT.name}</h2>
@@ -909,7 +909,7 @@ export function AdminRolesPage() {
               </div>
             )}
           </div>
-        </section>
+        </section>}
       </div>
         </>
       )}

@@ -3,12 +3,11 @@ import { cn } from '@/lib/utils'
 import { usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
 import { useClickFlash } from '@/lib/use-click-flash'
-import { useGrowthSummary } from '@/lib/admin-growth-summary'
 import { AdminShell } from '@/components/admin/AdminShell'
 import { AdminPendingActions, type PendingSubRoleSetup } from '@/components/admin/AdminPendingActions'
 import { AdminSecurityFeed } from '@/components/admin/AdminSecurityFeed'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { UserDistributionCard, TrendAnalyticsCard } from '@/components/admin/AdminAnalytics'
+import { UserDistributionCard } from '@/components/admin/AdminAnalytics'
 import { SystemHealthMethodologyModal } from '@/components/admin/SystemHealthMethodologyModal'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
@@ -90,7 +89,6 @@ function AdminPlaceholder({ id }: { id: AdminDestinationId }) {
 export function AdminSystemDashboardPage() {
   const { navigate } = useNav()
   const { staff, userActions, resolveUserAction, pendingSubRoleSetups } = usePortal()
-  const { openGrowthSummary } = useGrowthSummary()
   const [activeId, setActiveId] = useState<AdminDestinationId>('system-dashboard')
   // Pending-action confirmation state. The action is applied ONLY when the
   // admin confirms — nothing mutates on the initial button click.
@@ -228,20 +226,13 @@ export function AdminSystemDashboardPage() {
             </div>
           </div>
 
-          {/* Row 2: Pending Actions (30%) + Trend Analytics (70%) */}
-          <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-10">
-            <div className="lg:col-span-3">
-              <AdminPendingActions
-                items={pendingItems}
-                onResolve={handleResolve}
-                subRoleSetups={pendingSubRoleSetups}
-                onConfigureSubRole={handleConfigureSubRole}
-              />
-            </div>
-            <div className="lg:col-span-7">
-              <TrendAnalyticsCard onOpenGrowthSummary={openGrowthSummary} />
-            </div>
-          </div>
+          {/* Pending Actions */}
+          <AdminPendingActions
+            items={pendingItems}
+            onResolve={handleResolve}
+            subRoleSetups={pendingSubRoleSetups}
+            onConfigureSubRole={handleConfigureSubRole}
+          />
         </div>
       ) : (
         <AdminPlaceholder id={activeId} />

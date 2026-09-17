@@ -86,11 +86,11 @@ export const STRUCTURAL_ROLES: StructuralRole[] = [
       'Strategic, read-only oversight of every event, portfolio, and analytics surface. Executives observe but do not operate day-to-day workflows.',
   },
   {
-    id: 'event-planner',
-    name: 'Event Planner',
-    scope: 'Event design, canvas & pipeline',
+    id: 'wom',
+    name: 'WOM (Warehouse Operations Manager)',
+    scope: 'Inventory, replenishment & purchasing',
     description:
-      'Owns the event design and planning lifecycle — the design canvas, event registry, and pipeline. A single structural scope shared by all planners.',
+      'Manages warehouse operations across inventory, replenishment, and purchasing workflows.',
   },
 ]
 
