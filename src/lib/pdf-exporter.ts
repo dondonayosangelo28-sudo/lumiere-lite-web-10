@@ -230,8 +230,8 @@ export function exportEventAssetLogisticsPdf({
   const width = pageWidth - margin * 2
   let y = 50
 
-  const section = (number: number, title: string) => {
-    ensure(34)
+  const section = (number: number, title: string, description?: string) => {
+    ensure(description ? 46 : 34)
     doc.setFillColor(...BRAND.PRIMARY)
     doc.rect(margin, y, 3, 15, 'F')
     doc.setFont('helvetica', 'bold')
@@ -239,6 +239,41 @@ export function exportEventAssetLogisticsPdf({
     doc.setTextColor(...BRAND.PRIMARY)
     doc.text(`${number}. ${title.toUpperCase()}`, margin + 10, y + 11)
     y += 25
+    if (description) {
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(7.5)
+      doc.setTextColor(...BRAND.MUTED)
+      doc.text(description, margin + 10, y - 5, { maxWidth: width - 20 })
+      y += 12
+    }
+  }
+  const kpiCards = (cards: Array<{ label: string; value: string; sublabel?: string }>) => {
+    const cardW = width / cards.length
+    const cardH = 56
+    ensure(cardH + 10)
+    cards.forEach((card, index) => {
+      const x = margin + index * cardW + (index > 0 ? 6 : 0)
+      const w = cardW - (index > 0 && index < cards.length - 1 ? 6 : index > 0 ? 0 : 6)
+      doc.setFillColor(...BRAND.CARD_BG)
+      doc.setDrawColor(...BRAND.BORDER)
+      doc.setLineWidth(0.75)
+      doc.roundedRect(x, y, w, cardH, 4, 4, 'FD')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(6.5)
+      doc.setTextColor(...BRAND.MUTED)
+      doc.text(card.label.toUpperCase(), x + 10, y + 15, { maxWidth: w - 20 })
+      doc.setFont('times', 'bold')
+      doc.setFontSize(19)
+      doc.setTextColor(...BRAND.PRIMARY)
+      doc.text(card.value, x + 10, y + 38)
+      if (card.sublabel) {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(6.5)
+        doc.setTextColor(...BRAND.FOREGROUND)
+        doc.text(card.sublabel, x + 10, y + 49, { maxWidth: w - 20 })
+      }
+    })
+    y += cardH + 12
   }
   const ensure = (height: number) => {
     if (y + height > pageHeight - 76) {
@@ -318,23 +353,32 @@ export function exportEventAssetLogisticsPdf({
   doc.setFontSize(6.5); doc.setTextColor(...BRAND.WHITE); doc.text(statusLabel.toUpperCase(), pageWidth - margin - 50, y + 72.5, { align: 'center', maxWidth: 92 })
   y += 96
   doc.setDrawColor(...BRAND.BORDER); doc.line(margin, y - 10, pageWidth - margin, y - 10)
-  section(1, 'Event Information')
+
+  const totalPlanned = (materials.length ? materials : checklist).reduce((sum, item) => sum + item.quantity, 0)
+  const totalReconciled = logistics?.batches.flatMap((batch) => batch.reconciliation) ?? []
+  const totalActual = totalReconciled.reduce((sum, row) => sum + row.actual, 0)
+  kpiCards([
+    { label: 'Assets Planned', value: String(totalPlanned), sublabel: `${materials.length ? materials.length : checklist.length} line item${(materials.length || checklist.length) === 1 ? '' : 's'}` },
+    { label: 'Dispatch Batches', value: String(logistics?.batches.length ?? 0), sublabel: logistics ? `${logistics.handshakePercent}% handshake rate` : 'No dispatch record' },
+    { label: 'Reconciled Qty', value: String(totalActual), sublabel: totalReconciled.length ? `${totalReconciled.length} reconciliation entries` : 'Pending reconciliation' },
+  ])
+
+  section(1, 'Event Information', 'Core identification, scheduling, and classification details for this event record.')
   fieldGrid([
     ['Event name', event.title], ['Client', event.client], ['Venue', event.venue], ['Event date', event.galaDate || event.date],
     ['Event status', event.status], ['Event reference', event.recordId], ['Experience tier', event.tier], ['Attendance', event.attendance], ['Footprint', event.footprint],
   ])
-  section(2, 'Event Overview')
+  section(2, 'Event Overview', 'Current planning phase and pipeline placement within the Lumière production workflow.')
   fieldGrid([['Planning phase', event.phase], ['Pipeline stage', event.pipelineStage], ['Installation window', event.date]])
-  section(3, 'Assets Deployed')
+  section(3, 'Assets Deployed', 'Material and equipment requirements assigned to this event, by classification.')
   const assetRows = (materials.length ? materials : checklist).map((item, index) => [
     `${index + 1}. ${item.name}`, materials.length ? materials[index]?.category : undefined, String(item.quantity), undefined, undefined, undefined, undefined, 'Planned',
   ])
   table(['Asset', 'Classification', 'Planned', 'Deployed', 'Returned', 'Damaged', 'Lost', 'Status'], assetRows, [155, 86, 42, 46, 46, 46, 38, 55])
-  section(4, 'Asset Summary')
-  const totalPlanned = (materials.length ? materials : checklist).reduce((sum, item) => sum + item.quantity, 0)
+  section(4, 'Asset Summary', 'Aggregate planned quantity across all assigned materials and checklist items.')
   fieldGrid([['Total planned', String(totalPlanned)]])
   if (logistics?.batches.length) {
-    section(5, 'Logistics & Reconciliation')
+    section(5, 'Logistics & Reconciliation', 'Dispatch batches, assigned crew, and expected-versus-actual asset reconciliation.')
     const logisticsRows = logistics.batches.map((batch) => [
       batch.direction, batch.vehicleType, batch.plateNumber, batch.driverName, batch.stage, batch.crew.join(', '), batch.handoffNote,
     ])
@@ -346,10 +390,17 @@ export function exportEventAssetLogisticsPdf({
     )
     fieldGrid([['Handshake rate', `${logistics.handshakePercent}%`]])
   }
-  section(logistics?.batches.length ? 6 : 5, 'Audit & Verification')
+  section(logistics?.batches.length ? 6 : 5, 'Audit & Verification', 'Record provenance and generation metadata for this exported report.')
   fieldGrid([['Event reference', event.recordId], ['Generated by', generatedBy], ['Generated timestamp', new Date().toLocaleString()], ['Source', 'Selected event record'], ['Verification status', logistics ? `${logistics.handshakePercent}% handshake recorded` : undefined]])
-  ensure(82)
+  ensure(96)
   doc.setDrawColor(...BRAND.BORDER); doc.line(margin, y, pageWidth - margin, y); y += 14
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.FOREGROUND)
+  const attestation = doc.splitTextToSize(
+    '"I hereby certify that the event details, asset assignments, and logistics records presented in this report have been extracted directly from the verified operations records of the Lumière event management system."',
+    width - 20,
+  )
+  doc.text(attestation, margin, y, { maxWidth: width - 20 })
+  y += attestation.length * 10 + 12
   doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...BRAND.PRIMARY); doc.text('OFFICIAL EVENT RECORD', margin, y)
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...BRAND.MUTED); doc.text('Lumière management system · scan or retain with the event record', margin, y + 12)
   doc.setDrawColor(...BRAND.PRIMARY); doc.setLineWidth(1); doc.circle(pageWidth / 2, y + 14, 22, 'S')
