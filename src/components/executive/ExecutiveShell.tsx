@@ -26,8 +26,8 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
       <div className="flex min-w-0 flex-1 flex-col">
         <ExecutiveTopBar />
 
-        {/* Only this region scrolls. */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Only this region scrolls. The bottom padding clears the mobile rail. */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pb-24 md:pb-0">
           {stickyHeader && (
             <div className="sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur sm:px-8">
               {stickyHeader}

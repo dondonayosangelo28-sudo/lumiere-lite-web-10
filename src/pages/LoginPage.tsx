@@ -62,7 +62,7 @@ export function LoginPage({ onCrewPortal }: { onCrewPortal: () => void }) {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-background">
+    <div className="flex min-h-dvh w-full overflow-x-hidden bg-background">
       {/* Left brand panel */}
       <div className="relative hidden w-[32%] shrink-0 lg:block">
         <img
@@ -84,8 +84,8 @@ export function LoginPage({ onCrewPortal }: { onCrewPortal: () => void }) {
         <div className="absolute right-6 top-6 z-10">
           <ThemeToggle mode={themeMode} onChange={setThemeMode} />
         </div>
-        <div className="flex min-h-full items-center justify-center px-6 py-10">
-          <div className="flex w-full max-w-2xl flex-col rounded-2xl bg-muted/60 px-10 py-14 lg:px-16 lg:py-16">
+        <div className="flex min-h-full items-center justify-center px-4 py-8 sm:px-6 sm:py-10">
+          <div className="flex w-full max-w-2xl flex-col rounded-2xl bg-muted/60 px-5 py-8 sm:px-10 sm:py-14 lg:px-16 lg:py-16">
           {view === 'signin' && (
             <SignInView
               email={email}
@@ -191,7 +191,7 @@ function SignInView(props: {
               type="button"
               onClick={props.onToggleShow}
               aria-label={props.showPassword ? 'Hide password' : 'Show password'}
-              className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+              className="flex size-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
             >
               {props.showPassword ? (
                 <EyeOff className="size-4" aria-hidden="true" />
@@ -251,23 +251,6 @@ function SignInView(props: {
         Ground Crew? Field Login
       </button>
 
-      <div className="mt-6 space-y-1 text-center text-xs text-muted-foreground/70">
-        <p>Demo admin · admin@lumiere.com · lumiere2026</p>
-        <p>Temp password account · tempadmin@lumiere.com · lumiere2026</p>
-        <p>Executive · executive@lumiere.com · lumiere2026</p>
-        <p>Executive (second sign-off) · executive2@lumiere.com · lumiere2026</p>
-        <p>Event planner · planner@lumiere.com · lumiere2026</p>
-        <p>Ground crew · crew@lumiere.com · lumiere2026</p>
-        <p className="pt-2 font-semibold uppercase tracking-[0.12em] text-muted-foreground/60">
-          Warehouse Ops
-        </p>
-        <p>Full access · Warehouse Ops Manager · warehouseops@lumiere.com · lumiere2026 · 246810</p>
-        <p>Sub-role · Manning Officer · manning@lumiere.com · lumiere2026</p>
-        <p>Sub-role · Warehouse Manager · warehouse@lumiere.com · lumiere2026</p>
-        <p>Sub-role · Production Manager · production@lumiere.com · lumiere2026</p>
-        <p>Sub-role · Inventory Officer · inventory@lumiere.com · lumiere2026</p>
-        <p>Sub-role · Purchasing Officer · purchasing@lumiere.com · lumiere2026</p>
-      </div>
     </form>
   )
 }
