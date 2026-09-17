@@ -19,15 +19,28 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
       'fixed inset-x-0 bottom-0 z-40 flex w-full shrink-0 items-center justify-center border-t border-sidebar-border bg-sidebar px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 transition-all duration-200 md:static md:h-full md:flex-col md:justify-start md:border-r md:border-t-0 md:px-0 md:py-4',
       open ? 'md:w-64' : 'md:w-12',
     )}>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-label={open ? 'Collapse navigation' : 'Expand navigation'}
-        aria-expanded={open}
-        className="mb-3 hidden size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground md:flex"
-      >
-        {open ? <PanelLeftClose className="size-4" aria-hidden="true" /> : <PanelLeftOpen className="size-4" aria-hidden="true" />}
-      </button>
+      <div className={cn('mb-3 hidden items-center md:flex', open ? 'w-full justify-between px-4' : 'justify-center')}>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-label={open ? 'Lumiere brand, collapse navigation' : 'Lumiere brand, expand navigation'}
+          aria-expanded={open}
+          className={cn('flex items-center rounded-lg text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'px-1' : 'size-9 justify-center')}
+        >
+          {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
+        </button>
+        {open && (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label="Collapse navigation"
+            aria-expanded={open}
+            className="flex size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <PanelLeftClose className="size-4" aria-hidden="true" />
+          </button>
+        )}
+      </div>
 
       <div className="hidden md:mb-3 md:block md:h-px md:w-8 md:bg-sidebar-border" aria-hidden="true" />
 

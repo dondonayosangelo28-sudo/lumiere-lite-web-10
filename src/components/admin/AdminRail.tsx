@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { PanelLeftClose } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ADMIN_DESTINATIONS, type AdminDestinationId } from '@/lib/admin-destinations'
 
@@ -27,22 +27,27 @@ export function AdminRail({ activeId, onSelect }: AdminRailProps) {
   return (
     <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
-        <span className="flex size-8 items-center justify-center font-serif text-lg font-medium leading-none text-sidebar-primary" aria-hidden="true">L</span>
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Collapse navigation' : 'Expand navigation'}
+          aria-label={open ? 'Lumiere brand, collapse navigation' : 'Lumiere brand, expand navigation'}
           aria-expanded={open}
-          className={cn('flex size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground', !open && 'hidden')}
+          className={cn('flex items-center rounded-lg text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'px-1' : 'size-9 justify-center')}
         >
-          <PanelLeftClose className="size-4" aria-hidden="true" />
+          {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
         </button>
+        {open && (
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="Collapse navigation"
+            aria-expanded={open}
+            className="flex size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <PanelLeftClose className="size-4" aria-hidden="true" />
+          </button>
+        )}
       </div>
-      {!open && (
-        <button type="button" onClick={() => setOpen(true)} aria-label="Expand navigation" className="mt-3 flex size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-          <PanelLeftOpen className="size-4" aria-hidden="true" />
-        </button>
-      )}
 
       <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
 
