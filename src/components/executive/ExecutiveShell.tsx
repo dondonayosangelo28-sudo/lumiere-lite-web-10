@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { ExecutiveRail } from '@/components/executive/ExecutiveRail'
 import { ExecutiveTopBar } from '@/components/executive/ExecutiveTopBar'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
+import { useNav } from '@/lib/nav'
 
 interface ExecutiveShellProps {
   activeId: ExecutiveDestinationId
@@ -19,9 +20,16 @@ interface ExecutiveShellProps {
 // scrolls; the optional sticky header stays pinned while the body slides
 // beneath it.
 export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: ExecutiveShellProps) {
+  const { executiveRailOpen, toggleExecutiveRail } = useNav()
+
   return (
     <div className="fixed inset-0 flex bg-background">
-      <ExecutiveRail activeId={activeId} onSelect={onSelect} />
+      <ExecutiveRail
+        activeId={activeId}
+        onSelect={onSelect}
+        open={executiveRailOpen}
+        onToggle={toggleExecutiveRail}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <ExecutiveTopBar />

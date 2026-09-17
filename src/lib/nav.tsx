@@ -19,6 +19,8 @@ interface NavContextValue {
   navigate: (route: Route, intent?: NavIntent | null) => void
   intent: NavIntent | null
   clearIntent: () => void
+  executiveRailOpen: boolean
+  toggleExecutiveRail: () => void
 }
 
 const NavContext = createContext<NavContextValue | null>(null)
@@ -32,6 +34,7 @@ export function NavProvider({
 }) {
   const [route, setRoute] = useState<Route>(initialRoute)
   const [intent, setIntent] = useState<NavIntent | null>(null)
+  const [executiveRailOpen, setExecutiveRailOpen] = useState(true)
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -57,10 +60,11 @@ export function NavProvider({
   }, [])
 
   const clearIntent = useCallback(() => setIntent(null), [])
+  const toggleExecutiveRail = useCallback(() => setExecutiveRailOpen((open) => !open), [])
 
   const value = useMemo(
-    () => ({ route, navigate, intent, clearIntent }),
-    [route, navigate, intent, clearIntent],
+    () => ({ route, navigate, intent, clearIntent, executiveRailOpen, toggleExecutiveRail }),
+    [route, navigate, intent, clearIntent, executiveRailOpen, toggleExecutiveRail],
   )
   return <NavContext.Provider value={value}>{children}</NavContext.Provider>
 }
