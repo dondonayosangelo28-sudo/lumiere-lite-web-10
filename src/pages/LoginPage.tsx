@@ -263,18 +263,10 @@ function DemoAccounts() {
         Demo accounts and passwords
       </summary>
       <div className="mt-3 space-y-1.5 font-mono text-[0.7rem] leading-relaxed">
-        <p>admin@lumiere.com — lumiere2026</p>
-        <p>tempadmin@lumiere.com — lumiere2026</p>
-        <p>executive@lumiere.com — lumiere2026</p>
-        <p>executive2@lumiere.com — lumiere2026</p>
-        <p>planner@lumiere.com — lumiere2026</p>
-        <p>warehouseops@lumiere.com — lumiere2026 or 246810</p>
-        <p>warehouse@lumiere.com — lumiere2026</p>
-        <p>manning@lumiere.com — lumiere2026</p>
-        <p>production@lumiere.com — lumiere2026</p>
-        <p>inventory@lumiere.com — lumiere2026</p>
-        <p>purchasing@lumiere.com — lumiere2026</p>
-        <p>crew@lumiere.com — lumiere2026</p>
+        <p>Admin · admin@lumiere.com — lumiere2026</p>
+        <p>Executive · executive@lumiere.com — lumiere2026</p>
+        <p>WOM · warehouseops@lumiere.com — lumiere2026</p>
+        <p className="pt-1 text-muted-foreground/70">WOM manages purchasing, inventory, and replenishments.</p>
       </div>
     </details>
   )

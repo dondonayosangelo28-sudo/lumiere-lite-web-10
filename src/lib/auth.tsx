@@ -299,16 +299,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const DEMO_ACCOUNTS: Record<string, { role: string; fullName: string; userId: string }> = {
         'admin@lumiere.com': { role: 'Admin', fullName: 'System Administrator', userId: 'demo-admin' },
         'executive@lumiere.com': { role: 'Executive', fullName: 'Executive User', userId: 'demo-exec-1' },
-        'executive2@lumiere.com': { role: 'Executive', fullName: 'Executive Approver 2', userId: 'demo-exec-2' },
-        'planner@lumiere.com': { role: 'Event Planner', fullName: 'Lead Event Planner', userId: 'demo-planner' },
-        'warehouseops@lumiere.com': { role: 'Warehouse Operations Manager', fullName: 'Warehouse Ops Manager', userId: 'demo-wom-full' },
-        'warehouse@lumiere.com': { role: 'Warehouse Manager', fullName: 'Warehouse Manager', userId: 'demo-wom-mgr' },
-        'manning@lumiere.com': { role: 'Manning Officer', fullName: 'Manning Officer', userId: 'demo-wom-manning' },
-        'production@lumiere.com': { role: 'Production Manager', fullName: 'Production Manager', userId: 'demo-wom-prod' },
-        'inventory@lumiere.com': { role: 'Inventory Officer', fullName: 'Inventory Officer', userId: 'demo-wom-inv' },
-        'purchasing@lumiere.com': { role: 'Purchasing Officer', fullName: 'Purchasing Officer', userId: 'demo-wom-purch' },
-        'crew@lumiere.com': { role: 'Ground Crew', fullName: 'Ground Crew Member', userId: 'demo-crew' },
-        'tempadmin@lumiere.com': { role: 'Admin', fullName: 'Pending Admin', userId: 'demo-temp' },
+        'warehouseops@lumiere.com': { role: 'Warehouse Operations Manager', fullName: 'Warehouse Operations Manager', userId: 'demo-wom' },
       }
 
       const match = DEMO_ACCOUNTS[normalizedEmail]
