@@ -57,7 +57,7 @@ export function ConsoleLayout({ children }: Props) {
           <span className="size-9" aria-hidden="true" />
         </header>
 
-        <main className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-24 pt-6 sm:px-6 sm:pb-24 sm:pt-8 lg:px-12 lg:py-10">
           <div className="flex justify-end">
             <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
               {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}

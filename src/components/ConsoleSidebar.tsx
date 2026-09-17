@@ -261,6 +261,38 @@ export function ConsoleSidebar({
         </aside>
       )}
 
+      {/* ── Mobile Bottom Navigation ── */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-30 flex items-stretch gap-1 overflow-x-auto border-t border-sidebar-border bg-sidebar/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_24px_rgba(0,0,0,0.12)] backdrop-blur lg:hidden"
+        aria-label="Console destinations"
+      >
+        {navItems.map((item) => {
+          const Icon = item.icon
+          const active = route === item.route || routeParent[route] === item.route
+          return (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => {
+                go(item.route)
+                onCloseMobile()
+              }}
+              aria-label={item.label}
+              aria-current={active ? 'page' : undefined}
+              className={cn(
+                'flex min-w-[4.75rem] flex-1 flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-[0.58rem] font-semibold leading-tight transition-colors',
+                active
+                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              )}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+              <span className="max-w-full truncate">{item.label}</span>
+            </button>
+          )
+        })}
+      </nav>
+
       {/* ── Mobile Drawer ── */}
       <div
         className={cn(
