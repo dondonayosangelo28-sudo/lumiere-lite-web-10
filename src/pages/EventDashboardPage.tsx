@@ -203,7 +203,7 @@ function EventDashboardContent() {
           className="flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-[0.98] cursor-pointer max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
         >
           <Plus className="size-4" />
-          <span>+ Event</span>
+          <span>Event</span>
         </button>
       </div>
     </div>
