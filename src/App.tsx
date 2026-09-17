@@ -197,15 +197,19 @@ function AppContent() {
   )
 }
 
-function App() {
+function AppWithAuth() {
   useEffect(() => {
     // Load the crew roster from the database on app initialization
     loadRosterFromDatabase()
   }, [])
 
+  return <AppContent />
+}
+
+function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <AppWithAuth />
     </AuthProvider>
   )
 }
