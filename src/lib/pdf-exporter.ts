@@ -325,22 +325,34 @@ export function exportEventAssetLogisticsPdf({
     y += rows * rowH + 10
   }
   const table = (headers: string[], rows: Array<Array<string | undefined>>, widths: number[]) => {
-    const rowH = 25
-    ensure(rowH * (rows.length + 1) + 8)
+    const headerH = 25
+    const fontSize = widths.length > 6 ? 7 : 7.5
+    const lineH = fontSize + 2
+    const wrap = (value: string | undefined, maxWidth: number) => {
+      doc.setFontSize(fontSize)
+      return doc.splitTextToSize(value || '—', Math.max(18, maxWidth))
+    }
+    ensure(headerH + 8)
     let x = margin
     doc.setFillColor(...BRAND.CARD_BG)
-    doc.rect(margin, y, width, rowH, 'F')
+    doc.rect(margin, y, width, headerH, 'F')
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(7)
     doc.setTextColor(...BRAND.PRIMARY)
-    headers.forEach((header, i) => { doc.text(header.toUpperCase(), x + 6, y + 16, { maxWidth: widths[i] - 12 }); x += widths[i] })
-    y += rowH
+    headers.forEach((header, i) => {
+      doc.text(doc.splitTextToSize(header.toUpperCase(), Math.max(18, widths[i] - 12)), x + 6, y + 10, { maxWidth: widths[i] - 12 })
+      x += widths[i]
+    })
+    doc.setDrawColor(...BRAND.BORDER); doc.line(margin, y + headerH, margin + width, y + headerH)
+    y += headerH
     rows.forEach((row, index) => {
+      const lines = row.map((value, i) => wrap(String(value ?? '—'), widths[i] - 12))
+      const rowH = Math.max(25, Math.min(58, Math.max(...lines.map((cell) => cell.length)) * lineH + 10))
       ensure(rowH)
       let rowX = margin
       if (index % 2 === 1) { doc.setFillColor(...BRAND.ZEBRA_BG); doc.rect(margin, y, width, rowH, 'F') }
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.FOREGROUND)
-      row.forEach((value, i) => { doc.text(value || '—', rowX + 6, y + 16, { maxWidth: widths[i] - 12 }); rowX += widths[i] })
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(fontSize); doc.setTextColor(...BRAND.FOREGROUND)
+      lines.forEach((cell, i) => { doc.text(cell, rowX + 6, y + 12, { maxWidth: widths[i] - 12, lineHeightFactor: 1.15 }); rowX += widths[i] })
       doc.setDrawColor(...BRAND.BORDER); doc.line(margin, y + rowH, margin + width, y + rowH)
       y += rowH
     })

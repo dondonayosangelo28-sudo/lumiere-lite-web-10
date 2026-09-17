@@ -75,21 +75,32 @@ export function downloadPdfReport({
   }
 
   const drawRow = (row: PdfRow, index: number) => {
+    const fontSize = columns.length > 8 ? 6.5 : 7.5
+    const lineH = fontSize + 2
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(fontSize)
+    const cells = row.map((value, cellIndex) => doc.splitTextToSize(String(value ?? '—'), Math.max(18, widths[cellIndex] - 12)))
+    const height = Math.max(rowHeight, Math.min(58, Math.max(...cells.map((cell) => cell.length)) * lineH + 10))
+    if (y + height > pageHeight - 76) {
+      doc.addPage()
+      y = 50
+      drawRunningHeader()
+      y += 20
+      drawTableHeader()
+    }
     if (index % 2 === 1) {
       doc.setFillColor(...BRAND.ZEBRA_BG)
-      doc.rect(margin, y, width, rowHeight, 'F')
+      doc.rect(margin, y, width, height, 'F')
     }
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(columns.length > 8 ? 6.5 : 7.5)
     doc.setTextColor(...BRAND.FOREGROUND)
     let x = margin
-    row.forEach((value, cellIndex) => {
-      doc.text(String(value ?? '—'), x + 6, y + rowHeight - 9, { maxWidth: widths[cellIndex] - 12 })
+    cells.forEach((cell, cellIndex) => {
+      doc.text(cell, x + 6, y + 12, { maxWidth: widths[cellIndex] - 12, lineHeightFactor: 1.15 })
       x += widths[cellIndex]
     })
     doc.setDrawColor(...BRAND.BORDER)
-    doc.line(margin, y + rowHeight, margin + width, y + rowHeight)
-    y += rowHeight
+    doc.line(margin, y + height, margin + width, y + height)
+    y += height
   }
 
   doc.setDrawColor(...BRAND.BORDER)
@@ -116,7 +127,7 @@ export function downloadPdfReport({
   drawTableHeader()
 
   rows.forEach((row, index) => {
-    if (y + rowHeight > pageHeight - 55) {
+    if (y + Math.max(rowHeight, 34) > pageHeight - 76) {
       doc.addPage()
       y = 42
       drawRunningHeader()
