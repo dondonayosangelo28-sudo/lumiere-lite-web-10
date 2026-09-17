@@ -34,6 +34,7 @@ type NavItem = {
 const warehouseNavItems: NavItem[] = [
   { label: 'Overview', blurb: 'Operations metrics & activity dashboard', icon: LayoutGrid, route: 'overview' },
   { label: 'Inventory Stock', blurb: 'Category-specific asset levels and stock tracking', icon: Boxes, route: 'inventory', moduleId: 'assets' },
+  { label: 'Asset Allocation', blurb: 'Allocate catalog assets to events and spaces', icon: Boxes, route: 'assets', moduleId: 'assets' },
   { label: 'Damage Validation', blurb: 'Item damage history and inspection reports', icon: AlertTriangle, route: 'damage', moduleId: 'incidents' },
   { label: 'Replenishment', blurb: 'Deficit tracking & reorder requisitions', icon: PackageSearch, route: 'replenishment', moduleId: 'replenishment' },
   { label: 'Warehouse Logs', blurb: 'Audit trail and ledger entries', icon: Warehouse, route: 'warehouse-logs' },
