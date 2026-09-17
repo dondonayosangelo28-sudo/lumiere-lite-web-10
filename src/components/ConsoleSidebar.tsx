@@ -55,8 +55,6 @@ export interface ConsoleSidebarProps {
 }
 
 export function ConsoleSidebar({
-  collapsed,
-  onToggleCollapse,
   mobileOpen,
   onCloseMobile,
 }: ConsoleSidebarProps) {
@@ -83,25 +81,15 @@ export function ConsoleSidebar({
 
   return (
     <>
-      {/* ── Desktop Collapsible Sidebar ── */}
-      <aside className={cn(
-        'fixed inset-y-0 left-0 z-30 hidden shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-300 ease-in-out lg:flex',
-        collapsed ? 'w-16 items-center' : 'w-64',
-      )}>
+      {/* ── Desktop Fixed Icon Rail (w-16) ── */}
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-16 shrink-0 flex-col items-center border-r border-sidebar-border bg-sidebar py-4 lg:flex">
         {/* Brand Mark */}
-        <div className={cn('flex w-full items-center px-4', collapsed ? 'justify-center' : 'justify-between')}>
-          <span className="flex size-8 items-center justify-center font-serif text-lg font-medium leading-none text-sidebar-primary" aria-hidden="true">L</span>
-          {!collapsed && <span className="font-serif text-sm font-medium tracking-[0.25em] text-sidebar-primary">LUMIÈRE</span>}
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="flex size-8 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            <PanelLeft className={cn('size-4 transition-transform', collapsed && 'rotate-180')} aria-hidden="true" />
-          </button>
-        </div>
+        <span
+          className="flex size-8 items-center justify-center font-serif text-lg font-medium leading-none text-sidebar-primary"
+          aria-hidden="true"
+        >
+          L
+        </span>
 
         {isPlanner && (
           <>
@@ -124,8 +112,8 @@ export function ConsoleSidebar({
           </>
         )}
 
-        {/* Navigation */}
-        <nav className={cn('flex flex-1 flex-col gap-2', collapsed ? 'items-center' : 'w-full px-3')} aria-label="Console destinations">
+        {/* Icon Navigation Rail */}
+        <nav className="flex flex-1 flex-col items-center gap-2" aria-label="Console destinations">
           {navItems.map((item) => {
             const Icon = item.icon
             const active = route === item.route || routeParent[route] === item.route
@@ -138,22 +126,20 @@ export function ConsoleSidebar({
                 aria-current={active ? 'true' : undefined}
                 title={item.label}
                 className={cn(
-                  'flex h-10 items-center rounded-lg transition-colors',
-                  collapsed ? 'size-10 justify-center' : 'w-full gap-3 px-3',
+                  'flex size-10 items-center justify-center rounded-lg transition-colors',
                   active
                     ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
                     : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                 )}
               >
-                <Icon className="size-4 shrink-0" aria-hidden="true" />
-                {!collapsed && <span className="truncate text-xs font-semibold">{item.label}</span>}
+                <Icon className="size-4" aria-hidden="true" />
               </button>
             )
           })}
         </nav>
 
         {/* Bottom Actions: Theme + Logout */}
-        <div className={cn('flex gap-2 border-t border-sidebar-border pt-2', collapsed ? 'w-full flex-col items-center' : 'w-full flex-row justify-center px-3')} >
+        <div className="flex flex-col items-center gap-2 pt-2 border-t border-sidebar-border w-full">
           <button
             type="button"
             onClick={toggle}
