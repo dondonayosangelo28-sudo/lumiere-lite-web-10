@@ -400,7 +400,7 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="flex flex-col gap-3">
       <div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
@@ -417,8 +417,8 @@ export function AssetAllocationKioskPage() {
       </div>
 
       {/* Search */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 sm:w-72">
+      <div className="flex w-full justify-end">
+        <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
