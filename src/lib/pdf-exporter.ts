@@ -310,8 +310,8 @@ class PdfReportBuilder {
       this.doc.setTextColor(...BRAND.MUTED)
       this.doc.setLineWidth(0.5)
 
-      this.doc.text('Lumière Management System · Confidential Operations Report', this.margin, this.pageHeight - 22)
-      this.doc.text(`Page ${i} of ${totalPages}`, this.pageWidth - this.margin, this.pageHeight - 22, { align: 'right' })
+this.doc.text('Lumière Management System · Confidential Operations Report', this.margin, this.pageHeight - 12)
+    this.doc.text(`Page ${i} of ${totalPages}`, this.pageWidth - this.margin, this.pageHeight - 12, { align: 'right' })
     }
   }
 
@@ -583,8 +583,8 @@ export function exportEventAssetLogisticsPdf({
     doc.setPage(page)
     drawRunningHeader()
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.MUTED)
-  doc.text('Lumière · Event Asset & Logistics Report', margin, pageHeight - 25)
-    doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 25, { align: 'right' })
+doc.text('Lumière · Event Asset & Logistics Report', margin, pageHeight - 12)
+  doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 12, { align: 'right' })
   }
   doc.save(filename)
 }
