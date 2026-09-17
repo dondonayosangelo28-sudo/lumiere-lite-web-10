@@ -2,8 +2,6 @@ import { useState } from 'react'
 import {
   LayoutGrid,
   Boxes,
-  PackageSearch,
-  Truck,
   LogOut,
   X,
   PenTool,
@@ -29,10 +27,6 @@ type NavItem = {
 
 const warehouseNavItems: NavItem[] = [
   { label: 'Dashboard', blurb: 'Operations metrics & activity dashboard', icon: LayoutGrid, route: 'overview' },
-  { label: 'Asset Catalog', blurb: 'Browse venue décor and asset catalog', icon: Boxes, route: 'inventory', moduleId: 'assets' },
-  { label: 'Replenishment & Deficits', blurb: 'Deficit tracking and reorder requisitions', icon: PackageSearch, route: 'replenishment', moduleId: 'replenishment' },
-  { label: 'Vendor Management', blurb: 'Manage supplier records and purchasing partners', icon: Boxes, route: 'warehouse-logs', moduleId: 'vendors' },
-  { label: 'Dispatch & Logistics', blurb: 'Fleet manifests and transit checkpoints', icon: Truck, route: 'dispatch', moduleId: 'dispatch' },
 ]
 
 const plannerNavItems: NavItem[] = [
