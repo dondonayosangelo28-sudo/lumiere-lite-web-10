@@ -48,7 +48,7 @@ namespace Lumiere.Application.Services
             }
 
             // Expiry logic: 12 hours for Admin/Executive/WOM, 8 hours default
-            double expiryHours = (role.Name == "Admin" || role.Name == "SystemAdmin" || role.Name == "Executive" || role.Name == "Warehouse Operations Manager") ? 12 : 8;
+            double expiryHours = (role.Name == "Admin" || role.Name == "SystemAdmin" || role.Name == "Executive" || (role.Name == "Warehouse Operations Manager" || role.Name == "WOM")) ? 12 : 8;
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

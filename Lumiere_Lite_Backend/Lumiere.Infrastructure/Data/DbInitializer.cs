@@ -21,22 +21,13 @@ namespace Lumiere.Infrastructure.Data
                 await context.Database.EnsureCreatedAsync();
             }
 
-            // 2. Define canonical 14-role model
+            // 2. Define the three active account types. Existing legacy role rows are
+            // intentionally left untouched so this initializer never deletes real data.
             var requiredRoles = new List<(string Name, string Description, bool AllowSelfVal)>
             {
                 ("Admin", "Full administrative control", true),
                 ("Executive", "Executive insights and portfolio overview", false),
-                ("Event Planner", "Event canvas planning and design", false),
-                ("Warehouse Operations Manager", "Full warehouse operations authority", true),
-                ("Warehouse Manager", "Warehouse log dynamics and stock ops", true),
-                ("Inventory Officer", "Inventory catalog and threshold ops", true),
-                ("Manning Officer", "Crew assignments and rosters", false),
-                ("Production Manager", "Production runs and quotas", false),
-                ("Purchasing Officer", "Procurement and reorders", false),
-                ("Warehouse Lead", "PWA lead operations", true),
-                ("Warehouse Member", "PWA assigned warehouse tasks", false),
-                ("Ground Crew", "PWA field crew operations", false),
-                ("Event Admin", "PWA event administration", false)
+                ("WOM", "Warehouse operations, inventory, replenishment and purchasing", true)
             };
 
             foreach (var r in requiredRoles)
@@ -62,14 +53,7 @@ namespace Lumiere.Infrastructure.Data
             {
                 ("admin@lumiere.com", "Admin User", "Admin"),
                 ("executive@lumiere.com", "Executive User", "Executive"),
-                ("warehouseops@lumiere.com", "Warehouse Ops Manager", "Warehouse Operations Manager"),
-                ("planner@lumiere.com", "Event Planner User", "Event Planner"),
-                ("manning@lumiere.com", "Manning Officer User", "Manning Officer"),
-                ("warehouse@lumiere.com", "Warehouse Manager User", "Warehouse Manager"),
-                ("production@lumiere.com", "Production Manager User", "Production Manager"),
-                ("inventory@lumiere.com", "Inventory Officer User", "Inventory Officer"),
-                ("purchasing@lumiere.com", "Purchasing Officer User", "Purchasing Officer"),
-                ("crew@lumiere.com", "Ground Crew User", "Ground Crew")
+                ("warehouseops@lumiere.com", "WOM User", "WOM")
             };
 
             var allRoles = await context.Roles.ToListAsync();

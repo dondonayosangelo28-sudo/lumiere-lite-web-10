@@ -62,12 +62,12 @@ export function mapBackendUserToPortalAccount(data: {
   const isTemp = Boolean(data.temporaryPassword ?? data.email?.toLowerCase().includes('temp'))
 
   // 1. Structural WOM Parent Super-Account ("Warehouse Operations Manager")
-  if (rawRole === 'Warehouse Operations Manager') {
+  if (rawRole === 'Warehouse Operations Manager' || rawRole === 'WOM') {
     return {
       id: data.userId,
       email: data.email,
       name: data.fullName,
-      role: 'Warehouse Manager',
+      role: 'WOM',
       fullWarehouseAccess: true,
       subRole: undefined,
       portal: 'web',
@@ -409,7 +409,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       portal: currentUser?.portal ?? null,
       isAdmin: currentUser?.role === 'Admin',
       isExecutive: currentUser?.role === 'Executive',
-      isWarehouse: currentUser?.role === 'Warehouse Manager',
+      isWarehouse: currentUser?.role === 'WOM' || currentUser?.role === 'Warehouse Manager',
       isPlanner: currentUser?.role === 'Event Planner',
       isGroundCrew: currentUser?.role === 'Ground Crew',
       isWarehouseLead: currentUser?.role === 'Warehouse Lead',

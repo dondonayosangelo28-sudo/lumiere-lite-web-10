@@ -48,7 +48,7 @@ namespace Lumiere.API.Controllers
         }
 
         [HttpPost("event/{eventId}/approve")]
-        [RequireRole("Event Planner")]
+        [RequireRole("WOM")]
         public async Task<IActionResult> ApproveCanvas(Guid eventId)
         {
             try

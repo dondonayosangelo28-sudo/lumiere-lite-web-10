@@ -23,7 +23,7 @@ namespace Lumiere.API.Controllers
         }
 
         [HttpGet("event/{eventId}/packing-list")]
-        [RequireRole("Warehouse Operations Manager")]
+        [RequireRole("WOM")]
         public async Task<IActionResult> GetPackingList(Guid eventId)
         {
             var result = await _dispatchService.GetPackingListAsync(eventId);
@@ -31,7 +31,7 @@ namespace Lumiere.API.Controllers
         }
 
         [HttpPost("event/{eventId}/prepare")]
-        [RequireRole("Warehouse Operations Manager")]
+        [RequireRole("WOM")]
         public async Task<IActionResult> PrepareDispatch(Guid eventId)
         {
             try
@@ -47,7 +47,7 @@ namespace Lumiere.API.Controllers
         }
 
         [HttpPost("event/{eventId}/verify-item")]
-        [RequireRole("Warehouse Operations Manager")]
+        [RequireRole("WOM")]
         public async Task<IActionResult> VerifyItem(Guid eventId, [FromBody] VerifyItemRequest request)
         {
             try
@@ -67,7 +67,7 @@ namespace Lumiere.API.Controllers
         }
 
         [HttpPost("event/{eventId}/force-dispatch")]
-        [RequireRole("Warehouse Operations Manager")]
+        [RequireRole("WOM")]
         public async Task<IActionResult> ForceDispatch(Guid eventId)
         {
             try

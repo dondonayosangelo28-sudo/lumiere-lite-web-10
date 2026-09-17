@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { KeyRound, Lock } from 'lucide-react'
 import { ConsoleLayout } from '@/components/ConsoleLayout'
 import { PendingUserActions, type PendingActionItem } from '@/components/PendingUserActions'
 import { SecurityIncidents } from '@/components/SecurityIncidents'
-import { TrendChart } from '@/components/TrendChart'
 import { usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
 
@@ -38,9 +37,7 @@ function MetricCard({ label, value, caption, accent }: MetricCardProps) {
 const ROLE_SEGMENTS = [
   { label: 'Admin', color: 'text-emerald-500', dot: 'bg-emerald-500' },
   { label: 'Executive', color: 'text-sky-500', dot: 'bg-sky-500' },
-  { label: 'Warehouse Ops Manager', color: 'text-amber-500', dot: 'bg-amber-500' },
-  { label: 'Event Planner', color: 'text-rose-500', dot: 'bg-rose-500' },
-  { label: 'Field & Production Crew', color: 'text-indigo-500', dot: 'bg-indigo-500' },
+  { label: 'WOM', color: 'text-amber-500', dot: 'bg-amber-500' },
 ]
 
 function UserDistributionChart({ counts }: { counts: Record<string, number> }) {
@@ -102,16 +99,13 @@ function UserDistributionChart({ counts }: { counts: Record<string, number> }) {
 
 // Map a staff role onto the donut segment label it belongs to.
 function roleToSegment(role: string): string {
-  if (role === 'Warehouse Manager') return 'Warehouse Ops Manager'
-  if (role === 'Ground Crew') return 'Field & Production Crew'
-  return role
+  if (role === 'Admin' || role === 'Executive' || role === 'WOM') return role
+  return 'WOM'
 }
 
 export function OverviewPage() {
   const { navigate } = useNav()
   const { staff, userActions } = usePortal()
-  const [chartMode, setChartMode] = useState('users')
-
   const totalUsers = staff.length
   const lockedAccounts = userActions.filter(
     (a) => a.status === 'pending' && a.type === 'account-locked',
@@ -196,21 +190,9 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* Row 3: User Distribution + Trend Analytics (side-by-side) */}
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div>
-          <UserDistributionChart counts={roleCounts} />
-        </div>
-        <div>
-          <TrendChart
-            mode={chartMode}
-            onModeChange={setChartMode}
-            options={[
-              { value: 'users', label: 'User Growth' },
-              { value: 'audit', label: 'Security Audit' },
-            ]}
-          />
-        </div>
+      {/* User distribution is intentionally limited to the three active account types. */}
+      <div className="mt-6">
+        <UserDistributionChart counts={roleCounts} />
       </div>
     </ConsoleLayout>
   )
