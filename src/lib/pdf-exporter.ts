@@ -62,13 +62,11 @@ class PdfReportBuilder {
   }
 
   drawRunningHeader() {
-    const { doc, margin, pageWidth } = this
+    const { doc, margin } = this
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(7)
     doc.setTextColor(...BRAND.MUTED)
     doc.text(`LUMIÈRE  /  ${this.title.toUpperCase()}`, margin, 26)
-    doc.setDrawColor(...BRAND.BORDER)
-    doc.line(margin, 32, pageWidth - margin, 32)
   }
 
   // Draw standardized brand header banner with a Document Reference / Date / Classification meta strip
@@ -311,8 +309,6 @@ class PdfReportBuilder {
       this.doc.setFontSize(7.5)
       this.doc.setTextColor(...BRAND.MUTED)
       this.doc.setLineWidth(0.5)
-      this.doc.setDrawColor(...BRAND.BORDER)
-      this.doc.line(this.margin, this.pageHeight - 35, this.pageWidth - this.margin, this.pageHeight - 35)
 
       this.doc.text('Lumière Management System · Confidential Operations Report', this.margin, this.pageHeight - 22)
       this.doc.text(`Page ${i} of ${totalPages}`, this.pageWidth - this.margin, this.pageHeight - 22, { align: 'right' })
@@ -453,8 +449,6 @@ export function exportEventAssetLogisticsPdf({
     doc.setFontSize(7)
     doc.setTextColor(...BRAND.MUTED)
     doc.text('LUMIÈRE  /  EVENT ASSET & LOGISTICS REPORT', margin, 26)
-    doc.setDrawColor(...BRAND.BORDER)
-    doc.line(margin, 32, pageWidth - margin, 32)
   }
   const fieldGrid = (fields: Array<[string, string | undefined]>) => {
     const cols = 3
@@ -588,9 +582,8 @@ export function exportEventAssetLogisticsPdf({
   for (let page = 1; page <= totalPages; page += 1) {
     doc.setPage(page)
     drawRunningHeader()
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.MUTED)
-    doc.line(margin, pageHeight - 39, pageWidth - margin, pageHeight - 39)
-    doc.text('Lumière · Event Asset & Logistics Report', margin, pageHeight - 25)
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...BRAND.MUTED)
+  doc.text('Lumière · Event Asset & Logistics Report', margin, pageHeight - 25)
     doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 25, { align: 'right' })
   }
   doc.save(filename)

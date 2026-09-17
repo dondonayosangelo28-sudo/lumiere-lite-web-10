@@ -61,13 +61,9 @@ export function downloadPdfReport({
     doc.setFontSize(7)
     doc.setTextColor(...BRAND.MUTED)
     doc.text(`LUMIÈRE  /  ${title.toUpperCase()}`, margin, 26)
-    doc.setDrawColor(...BRAND.BORDER)
-    doc.line(margin, 32, pageWidth - margin, 32)
   }
 
   const drawFooter = (page: number, totalPages: number) => {
-    doc.setDrawColor(...BRAND.BORDER)
-    doc.line(margin, pageHeight - 39, pageWidth - margin, pageHeight - 39)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(7.5)
     doc.setTextColor(...BRAND.MUTED)
