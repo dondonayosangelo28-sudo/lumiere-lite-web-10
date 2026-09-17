@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   Search, Sparkles, ChevronRight,
   AlertTriangle, ShoppingCart, ArrowRight, RotateCcw, X,
-  Boxes, CheckCircle2, Loader2, Info,
+  Boxes, CheckCircle2, Loader2,
 } from 'lucide-react'
 import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
 import { EmptyState } from '@/components/EmptyState'
@@ -448,22 +448,6 @@ export function AssetAllocationKioskPage() {
   return (
     <>
       <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
-        {isSampleData && (
-          <div className="mb-5 flex items-center justify-between gap-3 rounded-xl border border-sky-500/25 bg-sky-500/5 px-4 py-3 text-xs text-sky-800 dark:text-sky-300">
-            <span><strong>Sample catalog data</strong> — the API is unavailable, so you can still preview the allocation workflow.</span>
-            <button type="button" onClick={load} className="shrink-0 rounded-md border border-current/20 px-2.5 py-1 font-semibold hover:bg-sky-500/10">Retry API</button>
-          </div>
-        )}
-        {/* Blocked crossdock notice */}
-        <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3">
-          <Info className="size-4 shrink-0 text-amber-600 mt-0.5" />
-          <div className="text-xs text-amber-800 dark:text-amber-300">
-            <span className="font-semibold">Step 2 — Crossdock branch is blocked.</span>{' '}
-            VendorAssetController.cs and DispatchDTOs.cs have not been audited yet. Only the Procure branch
-            (POST /api/deficit-queue) is wired. See Production SHALL §6 in 04-asset-allocation-kiosk.md.
-          </div>
-        </div>
-
         {/* Tier filter strip */}
         <div className="mb-5 flex flex-wrap gap-2">
           <button
