@@ -39,7 +39,13 @@ builder.Services.AddControllers(options =>
 }).AddApplicationPart(typeof(Lumiere.API.Controllers.AuthController).Assembly);
 
 // Configure CORS for React frontend
-var defaultOrigins = new[] { "http://localhost:5173", "https://lumieredemo-seven.vercel.app" };
+var defaultOrigins = new[]
+{
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://lumieredemo-seven.vercel.app",
+    "https://lumiere-lite.vercel.app"
+};
 var envOrigins = builder.Configuration["Cors:AllowedOrigins"] ?? builder.Configuration["CORS_ALLOWED_ORIGINS"];
 var allowedOrigins = string.IsNullOrWhiteSpace(envOrigins)
     ? defaultOrigins

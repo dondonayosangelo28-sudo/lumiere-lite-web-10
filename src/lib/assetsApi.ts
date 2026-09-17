@@ -30,12 +30,16 @@ function getAuthHeaders(): HeadersInit {
 
 export async function fetchAssetsApi(): Promise<Partial<CatalogAsset>[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/assets`, {
+    const res = await fetch(`${API_BASE_URL}/api/assets?page=1&pageSize=100`, {
       headers: getAuthHeaders(),
     })
     if (!res.ok) return []
-    return await res.json()
-  } catch (err) {
+
+    const payload = await res.json()
+    // The backend returns PaginatedList<AssetResponse>, while the catalog
+    // consumes the item collection directly.
+    return Array.isArray(payload) ? payload : Array.isArray(payload.items) ? payload.items : []
+  } catch (err){
     console.warn('[assetsApi] Fetch assets API call skipped/fallback:', err)
     return []
   }

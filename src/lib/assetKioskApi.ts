@@ -16,6 +16,8 @@
  * VendorAssetController.cs / DispatchDTOs.cs are audited.
  */
 
+import { API_BASE_URL, getAuthToken } from './apiConfig'
+
 /* ---- DTO shapes (mirrors BE) ---- */
 
 export interface AssetColor {
@@ -31,13 +33,13 @@ export interface AssetColor {
 export interface AssetResponse {
   id: string
   name: string
-  assetSubTypeId: string
+  assetSubTypeId?: string
   subTypeName?: string
   assetTier: number
   assetState: string
   quantity: number
-  colors: AssetColor[]
-  tags: string[]
+  colors?: AssetColor[]
+  tags?: string[]
   thumbnailUrl?: string
 }
 
@@ -57,14 +59,19 @@ export async function fetchAssetsApi(params: AssetFilterParams = {}): Promise<As
   if (params.tier != null) qs.set('tier', String(params.tier))
   if (params.state)       qs.set('state', params.state)
 
-  const url = import.meta.env.VITE_API_URL + '/api/assets' + (qs.toString() ? '?' + qs : '')
-  const token = localStorage.getItem('token') ?? ''
+  qs.set('page', '1')
+  qs.set('pageSize', '100')
+
+  const url = `${API_BASE_URL}/api/assets?${qs.toString()}`
+  const token = getAuthToken()
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: 'Bearer ' + token } : {}),
-    }
+    },
   })
   if (!res.ok) throw new Error('GET /api/assets failed: ' + res.status)
-  return res.json()
+
+  const payload = await res.json()
+  return Array.isArray(payload) ? payload : payload.items ?? []
 }
