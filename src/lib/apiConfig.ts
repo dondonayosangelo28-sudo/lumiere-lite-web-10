@@ -1,11 +1,14 @@
 /**
  * Central configuration for backend REST API base URL.
  * Uses `import.meta.env.VITE_API_URL` when specified.
- * Defaults to 'http://localhost:8080' in development mode only — never in production builds.
+ * Uses the deployed Lumiere API as the production fallback so a missing Vercel
+ * build variable cannot silently turn API calls into same-origin `/api/*` calls.
  */
+const PRODUCTION_API_URL = 'https://lumiere-production-f6a1.up.railway.app'
+
 export const API_BASE_URL: string =
   (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/+$/, '') ||
-  (import.meta.env.DEV ? 'http://localhost:8080' : '')
+  (import.meta.env.DEV ? 'http://localhost:8080' : PRODUCTION_API_URL)
 
 /**
  * Retrieves stored JWT auth token from localStorage or sessionStorage.
