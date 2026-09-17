@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Search, MoreVertical } from 'lucide-react'
+import { ChevronDown, Search, MoreVertical } from 'lucide-react'
 import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
 import { RegisterEventDrawer } from '@/components/RegisterEventDrawer'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
@@ -175,8 +175,9 @@ export function EventRegistryPage() {
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
         </div>
-        <div className="mt-3 max-h-[25rem] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-lg border border-border/70">
-          <div className="hidden grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] gap-4 bg-muted/40 px-3 py-2 text-[0.55rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
+        <div className="relative mt-3">
+          <div className="max-h-[23rem] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-lg border border-border/70" aria-label="Operational progress events">
+            <div className="hidden grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] gap-4 bg-muted/40 px-3 py-2 text-[0.55rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
             <span>Event</span><span>Date</span><span>Progress</span><span>Status</span>
           </div>
           {progressEvents.length === 0 ? (
@@ -202,6 +203,15 @@ export function EventRegistryPage() {
                   </button>
                 )
               })
+          )}
+          </div>
+          {progressEvents.length > 7 && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
+              <div className="flex items-center gap-1.5 rounded-t-md border border-b-0 border-border/70 bg-card/95 px-3 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground shadow-sm backdrop-blur-sm">
+                <span>Scroll for more events</span>
+                <ChevronDown className="size-3 animate-bounce" aria-hidden="true" />
+              </div>
+            </div>
           )}
         </div>
       </div>
