@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { usePortal } from '@/lib/store'
 import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
-import { ModuleEntryRow } from '@/components/warehouse/ModuleEntryRow'
 import { WarehouseCalendarEventsView } from '@/components/warehouse/WarehouseCalendarEventsView'
 import { WomInputSummaryModal } from '@/components/warehouse/WomInputSummaryModal'
 import { WarehouseDrilldown, type DrilldownEntry } from '@/components/warehouse/WarehouseDrilldown'
@@ -52,9 +51,6 @@ export function WarehouseHomePage() {
       <div className="mx-auto flex max-w-[90rem] w-full flex-col gap-8 sm:gap-10 px-6 py-8 sm:px-10 sm:py-12">
         {/* Header section — untouched */}
         <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-
-        {/* 4-per-row Restructured Module Grid */}
-        <ModuleEntryRow onOpenModule={openModule} />
 
         {/* Month Calendar + Upcoming Events Side Panel */}
         <WarehouseCalendarEventsView
