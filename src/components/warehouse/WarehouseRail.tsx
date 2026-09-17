@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, PanelLeftClose } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
@@ -33,17 +33,6 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         >
           {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
         </button>
-        {open && (
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Collapse navigation"
-            aria-expanded={open}
-            className="flex size-9 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            <PanelLeftClose className="size-4" aria-hidden="true" />
-          </button>
-        )}
       </div>
 
       <button
