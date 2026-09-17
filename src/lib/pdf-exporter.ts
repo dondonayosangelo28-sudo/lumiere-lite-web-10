@@ -39,7 +39,17 @@ class PdfReportBuilder {
   // Draw standardized brand header banner
   drawHeader(title: string, subheaderLines: string[]) {
     const { doc, margin, pageWidth } = this
-    this.y = margin
+    this.y = 50
+
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.setLineWidth(0.7)
+    doc.roundedRect(22, 28, pageWidth - 44, this.pageHeight - 56, 5, 5, 'S')
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(...BRAND.MUTED)
+    doc.text(`LUMIÈRE  /  ${title.toUpperCase()}`, margin, 26)
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, 32, pageWidth - margin, 32)
 
     // Top Brand Gold Accent Bar
     doc.setFillColor(...BRAND.PRIMARY)
@@ -119,7 +129,10 @@ class PdfReportBuilder {
     if (this.y + requiredHeight > this.pageHeight - 50) {
       this.doc.addPage()
       this.currentPage += 1
-      this.y = this.margin
+      this.y = 50
+      this.doc.setDrawColor(...BRAND.BORDER)
+      this.doc.setLineWidth(0.7)
+      this.doc.roundedRect(22, 28, this.pageWidth - 44, this.pageHeight - 56, 5, 5, 'S')
       if (columns) {
         this.drawTableHeader(columns)
       }
@@ -301,7 +314,7 @@ export function exportEventAssetLogisticsPdf({
   doc.setFontSize(7); doc.setTextColor(...BRAND.MUTED); doc.text('ISSUED / GENERATED', pageWidth - margin - 112, y + 42)
   doc.setFontSize(8); doc.setTextColor(...BRAND.FOREGROUND); doc.text(new Date().toLocaleDateString(), pageWidth - margin, y + 54, { align: 'right' })
   const statusLabel = event.status || 'STATUS NOT RECORDED'
-  doc.setFillColor(...statusColor(statusLabel)); doc.roundedRect(pageWidth - margin - 100, y + 63, 100, 14, 3, 3, 'F')
+  doc.setFillColor(...getStatusRGB(statusLabel)); doc.roundedRect(pageWidth - margin - 100, y + 63, 100, 14, 3, 3, 'F')
   doc.setFontSize(6.5); doc.setTextColor(...BRAND.WHITE); doc.text(statusLabel.toUpperCase(), pageWidth - margin - 50, y + 72.5, { align: 'center', maxWidth: 92 })
   y += 96
   doc.setDrawColor(...BRAND.BORDER); doc.line(margin, y - 10, pageWidth - margin, y - 10)
