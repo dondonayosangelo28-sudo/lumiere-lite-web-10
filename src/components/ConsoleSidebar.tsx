@@ -63,7 +63,7 @@ export function ConsoleSidebar({
   const { dark, toggle } = useDarkMode()
   const [companionOpen, setCompanionOpen] = useState(false)
 
-  const navItems = isPlanner ? plannerNavItems : warehouseNavItems
+  const navItems = isPlanner ? plannerNavItems : isWarehouse ? warehouseNavItems : warehouseNavItems
 
   const activeItem = navItems.find((item) => route === item.route || routeParent[route] === item.route) ?? navItems[0]
 
@@ -91,7 +91,7 @@ export function ConsoleSidebar({
           L
         </span>
 
-        {(isPlanner || isWarehouse) && (
+        {isPlanner && (
           <>
             {/* Companion Drawer Toggle Button */}
             <button
@@ -162,8 +162,8 @@ export function ConsoleSidebar({
         </div>
       </aside>
 
-      {/* Expanded account navigation panel for planner and WOM accounts. */}
-      {(isPlanner || isWarehouse) && companionOpen && (
+      {/* Planner-only companion panel; WOM stays on the focused Dashboard shell. */}
+      {isPlanner && companionOpen && (
         <aside
           className="fixed inset-y-0 left-16 z-40 hidden w-72 flex-col border-r border-border bg-card shadow-2xl transition-all duration-200 lg:flex"
           aria-label="Companion Panel"
@@ -172,7 +172,7 @@ export function ConsoleSidebar({
           <div className="flex items-start justify-between border-b border-border px-5 py-5">
             <div>
               <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-primary">
-                {isPlanner ? 'Planner Console' : 'WOM Console'}
+                {isPlanner ? 'Planner Console' : 'Warehouse Module'}
               </p>
               <h2 className="mt-1 font-serif text-xl font-medium text-card-foreground">
                 {activeItem.label}
