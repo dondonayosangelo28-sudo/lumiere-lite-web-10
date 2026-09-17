@@ -44,7 +44,8 @@ export function EventRegistryPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [drawerMode, setDrawerMode] = useState<'create' | 'view' | 'edit'>('create')
   const [activeEvent, setActiveEvent] = useState<PortalEvent | null>(null)
-  const [query, setQuery] = useState('')
+  const [progressQuery, setProgressQuery] = useState('')
+  const [listQuery, setListQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
@@ -91,19 +92,19 @@ export function EventRegistryPage() {
     [events],
   )
 
+  const matchesEvent = (e: PortalEvent, rawQuery: string) => {
+    const q = rawQuery.toLowerCase()
+    return !q || e.title.toLowerCase().includes(q) || e.client.toLowerCase().includes(q) || e.refId.toLowerCase().includes(q) || e.venue.toLowerCase().includes(q)
+  }
+
   const filtered = useMemo(() => {
-    const q = query.toLowerCase()
-    return events.filter((e) => {
-      const matchesQuery =
-        !q ||
-        e.title.toLowerCase().includes(q) ||
-        e.client.toLowerCase().includes(q) ||
-        e.refId.toLowerCase().includes(q) ||
-        e.venue.toLowerCase().includes(q)
-      const matchesStatus = statusFilter === 'All' || e.status === statusFilter
-      return matchesQuery && matchesStatus
-    })
-  }, [events, query, statusFilter])
+    return events.filter((e) => matchesEvent(e, listQuery) && (statusFilter === 'All' || e.status === statusFilter))
+  }, [events, listQuery, statusFilter])
+
+  const progressEvents = useMemo(
+    () => events.filter((e) => e.status !== 'Cancelled' && matchesEvent(e, progressQuery)),
+    [events, progressQuery],
+  )
 
   const destination = (id: ExecutiveDestinationId) => navigate(id)
 
@@ -119,15 +120,6 @@ export function EventRegistryPage() {
               ? 'Portfolio registry oversight — event concepts, venues, timelines, and production status.'
               : 'Register and orchestrate event portfolios across venues, timelines, and production stages.'}
           </p>
-        </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search title, client, ref ID, venue..."
-            className="w-64 rounded-md border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-          />
         </div>
       </div>
     </div>
@@ -172,20 +164,22 @@ export function EventRegistryPage() {
         <p className="mt-1 text-xs text-muted-foreground">
           Asset dispatch readiness across active event portfolios.
         </p>
-        <div className="mt-4 overflow-hidden rounded-lg border border-border/70">
+        <div className="relative mt-4 max-w-sm">
+          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
+        </div>
+        <div className="mt-3 max-h-[25rem] overflow-y-auto rounded-lg border border-border/70">
           <div className="hidden grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] gap-4 bg-muted/40 px-3 py-2 text-[0.55rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
             <span>Event</span><span>Date</span><span>Progress</span><span>Status</span>
           </div>
-          {events.filter((e) => e.status !== 'Cancelled').length === 0 ? (
-            <p className="px-3 py-4 text-xs text-muted-foreground">No active events to track.</p>
+          {progressEvents.length === 0 ? (
+            <p className="px-3 py-4 text-xs text-muted-foreground">No active events match your search.</p>
           ) : (
-            events
-              .filter((e) => e.status !== 'Cancelled')
-              .map((e) => {
+            progressEvents.slice(0, 7).map((e) => {
                 const pct = dispatchProgress[e.status] ?? 0
                 const shortStatus = e.status === 'In Production' ? 'In Progress' : e.status === 'Initialized' ? 'Planning' : e.status
                 return (
-                  <div key={e.id} className="grid gap-2 border-t border-border/60 px-3 py-3 first:border-t-0 sm:grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] sm:items-center sm:gap-4">
+                  <button type="button" key={e.id} onClick={() => openView(e)} className="grid w-full gap-2 border-t border-border/60 px-3 py-3 text-left first:border-t-0 transition hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] sm:items-center sm:gap-4">
                     <div className="min-w-0">
                       <p className="truncate text-xs font-medium text-card-foreground">{e.title}</p>
                       <p className="mt-0.5 text-[0.62rem] text-muted-foreground sm:hidden">{e.targetDate || 'Date unavailable'}</p>
@@ -198,7 +192,7 @@ export function EventRegistryPage() {
                       <span className="text-[0.65rem] font-semibold text-muted-foreground">{pct}%</span>
                     </div>
                     <span className={cn('text-[0.62rem] font-bold uppercase tracking-[0.1em]', statusStyles[e.status])}>{shortStatus}</span>
-                  </div>
+                  </button>
                 )
               })
           )}
@@ -230,7 +224,12 @@ export function EventRegistryPage() {
             )
           })}
         </div>
-        {!readOnly && (
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input value={listQuery} onChange={(e) => setListQuery(e.target.value)} placeholder="Search all events..." aria-label="Search all events" className="w-full rounded-md border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30 sm:w-56" />
+          </div>
+          {!readOnly && (
           <button
             type="button"
             onClick={openCreate}
@@ -238,7 +237,8 @@ export function EventRegistryPage() {
           >
             Register New Event
           </button>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Table */}
