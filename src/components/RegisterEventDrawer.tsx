@@ -154,9 +154,20 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
     onClose()
   }
 
+  const requiredFieldsComplete = Boolean(
+    draft.title.trim() &&
+      draft.client.trim() &&
+      draft.venue.trim() &&
+      draft.targetDate &&
+      draft.ingressDate &&
+      draft.ingressTime &&
+      draft.fullStop &&
+      draft.installationStart &&
+      draft.installationEnd,
+  )
+
   const submit = () => {
-    // Client is now optional — only the title is required.
-    if (!draft.title) return
+    if (!requiredFieldsComplete) return
     if (mode === 'edit' && event) {
       updateEvent(event.id, draft, adminRole || 'Executive')
     } else {
@@ -242,7 +253,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             <SectionHeading icon={FileText}>Core Portfolio Characteristics</SectionHeading>
             <div>
               <label className={labelClass} htmlFor="ev-title">
-                Event Concept / Title
+                Event Concept / Title <span className="text-destructive">*</span>
               </label>
               <input
                 id="ev-title"
@@ -254,7 +265,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             </div>
             <div>
               <label className={labelClass} htmlFor="ev-client">
-                Client / Organizer Name (optional)
+                Client / Organizer Name <span className="text-destructive">*</span>
               </label>
               <input
                 id="ev-client"
@@ -271,7 +282,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             <SectionHeading icon={Building2}>Venue &amp; Timeline Matrices</SectionHeading>
             <div>
               <label className={labelClass} htmlFor="ev-venue">
-                Bind to Registry Venue
+                  Bind to Registry Venue <span className="text-destructive">*</span>
+
               </label>
               {addingVenue ? (
                 <div className="mt-2 flex gap-2">
@@ -319,7 +331,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
 
             <div>
               <label className={labelClass} htmlFor="ev-date">
-                Event Date
+                  Event Date <span className="text-destructive">*</span>
+
               </label>
               <button
                 id="ev-date"
@@ -337,7 +350,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelClass} htmlFor="ev-start">
-                  Event Start Time
+                  Event Start Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-start"
@@ -349,7 +362,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
               </div>
               <div>
                 <label className={labelClass} htmlFor="ev-end">
-                  Event End Time
+                  Event End Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-end"
@@ -380,7 +393,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelClass} htmlFor="ev-ingress-date">
-                  Ingress Date
+                  Ingress Date <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-ingress-date"
@@ -392,7 +405,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
               </div>
               <div>
                 <label className={labelClass} htmlFor="ev-return-date">
-                  Egress / Return Date
+                  Egress / Return Date <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-return-date"
@@ -407,7 +420,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelClass} htmlFor="ev-ingress-time">
-                  Ingress Time
+                  Ingress Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-ingress-time"
@@ -419,7 +432,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
               </div>
               <div>
                 <label className={labelClass} htmlFor="ev-fullstop">
-                  Full Stop Time
+                  Full Stop Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-fullstop"
@@ -536,7 +549,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
             <button
               type="button"
               onClick={() => setConfirmOpen(true)}
-              disabled={!draft.title}
+              disabled={!requiredFieldsComplete}
               className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Plus className="size-3.5" />

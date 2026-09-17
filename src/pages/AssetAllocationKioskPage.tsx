@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
-  Search, Package, Layers, Tag, Sparkles, ChevronRight,
+  Search, Package, Layers, Sparkles, ChevronRight,
   AlertTriangle, ShoppingCart, ArrowRight, RotateCcw, X,
   Boxes, CheckCircle2, Loader2, Info,
 } from 'lucide-react'
@@ -303,6 +303,7 @@ export function AssetAllocationKioskPage() {
   const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY)
   const [query, setQuery] = useState('')
   const [tierFilter, setTierFilter] = useState<number | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   // Kiosk action modal
   const [selectedAsset, setSelectedAsset] = useState<AssetResponse | null>(null)
@@ -452,12 +453,18 @@ export function AssetAllocationKioskPage() {
         </div>
 
         {/* Two-pane kiosk layout */}
-        <div className="flex gap-5 min-h-[60vh]">
+        <div className="flex min-h-[60vh] flex-col gap-4 sm:flex-row sm:gap-5">
           {/* ---- Left sidebar 20% — category list ---- */}
-          <aside className="w-1/5 shrink-0 space-y-1">
-            <p className="mb-2 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-              Classifications
-            </p>
+          {sidebarOpen && (
+          <aside className="w-full shrink-0 space-y-1 sm:w-1/5 sm:max-h-[65vh] sm:overflow-y-auto sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                Classifications
+              </p>
+              <button type="button" onClick={() => setSidebarOpen(false)} className="text-[0.6rem] font-semibold text-primary sm:hidden">Hide</button>
+            </div>
+            <div className="flex gap-1 overflow-x-auto pb-1 sm:block sm:overflow-visible">
+              <div className="sm:contents">
             <button
               type="button"
               onClick={() => setActiveCategory(ALL_CATEGORY)}
@@ -503,10 +510,17 @@ export function AssetAllocationKioskPage() {
             {!isLoading && categories.length === 0 && (
               <p className="px-3 text-[0.65rem] text-muted-foreground italic">No classifications loaded.</p>
             )}
+              </div>
+            </div>
           </aside>
+          )}
 
           {/* ---- Right pane 80% — thumbnail grid ---- */}
           <div className="min-w-0 flex-1">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
+              {!sidebarOpen && <button type="button" onClick={() => setSidebarOpen(true)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-primary hover:bg-muted">Categories</button>}
+            </div>
             {isLoading ? (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 {Array.from({ length: 12 }).map((_, i) => (
@@ -574,45 +588,10 @@ export function AssetAllocationKioskPage() {
               )}
                     </div>
 
-                    {/* Footer info */}
-                    <div className="p-3">
-                      <p className="truncate text-xs font-semibold text-card-foreground group-hover:text-primary transition-colors">
-                        {asset.name}
-                      </p>
-                      <p className="mt-0.5 truncate text-[0.62rem] text-muted-foreground">
-                        {asset.subTypeName || 'Unclassified'}
-                      </p>
+                    <span className="sr-only">
+                      {asset.name}, {asset.subTypeName || 'Unclassified'}, {asset.assetState}, {asset.quantity} available. Select to allocate.
+                    </span>
 
-                      <div className="mt-2 flex flex-wrap items-center gap-1">
-                        <span className={cn(
-                          'inline-flex items-center rounded-full border px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wider',
-                          TIER_BADGE[asset.assetTier] || 'bg-muted text-muted-foreground border-border',
-                        )}>T{asset.assetTier}</span>
-
-                        <span className={cn(
-                          'inline-flex items-center rounded-full border px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wider',
-                          STATE_BADGE[asset.assetState] || 'bg-muted text-muted-foreground border-border',
-                        )}>{asset.assetState}</span>
-
-                        <span className="ml-auto text-[0.62rem] font-bold text-muted-foreground">
-                          ×{asset.quantity}
-                        </span>
-                      </div>
-
-                      {(asset.tags ?? []).length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {(asset.tags ?? []).slice(0, 3).map((tag) => (
-                            <span key={tag}
-                              className="flex items-center gap-0.5 rounded-full bg-muted px-2 py-0.5 text-[0.55rem] font-medium text-muted-foreground">
-                              <Tag className="size-2.5" />{tag}
-                            </span>
-                          ))}
-                          {(asset.tags ?? []).length > 3 && (
-                            <span className="text-[0.55rem] text-muted-foreground">+{asset.tags.length - 3}</span>
-                          )}
-                        </div>
-                      )}
-                    </div>
 
                     {/* Hover allocate prompt */}
                     <div className="absolute inset-0 flex items-center justify-center bg-primary/80 opacity-0 transition group-hover:opacity-100 rounded-xl">
