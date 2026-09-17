@@ -27,7 +27,11 @@ export function downloadPdfReport({
   const doc = new jsPDF({ orientation: columns.length > 6 ? 'landscape' : 'portrait', unit: 'pt', format: 'a4' })
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 42
+  const margin = 34
+  const frameX = 22
+  const frameY = 28
+  const frameW = pageWidth - 44
+  const frameH = pageHeight - 56
   const width = pageWidth - margin * 2
   const rowHeight = columns.length > 8 ? 30 : 25
   const weights = columns.map((_, index) => (index === 0 ? 1.35 : index === columns.length - 1 ? 1.2 : 1))
@@ -90,7 +94,7 @@ export function downloadPdfReport({
 
   doc.setDrawColor(...BRAND.BORDER)
   doc.setLineWidth(0.7)
-  doc.rect(22, 22, pageWidth - 44, pageHeight - 44)
+  doc.roundedRect(frameX, frameY, frameW, frameH, 5, 5, 'S')
   doc.setFillColor(...BRAND.PRIMARY)
   doc.rect(margin, y, 4, 70, 'F')
   doc.setFont('helvetica', 'bold')
