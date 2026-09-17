@@ -173,7 +173,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="relative order-2 w-full lg:w-64">
+          <div className="relative order-2 w-full self-end lg:w-64">
             <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               value={query}
