@@ -6,7 +6,6 @@ import { PortalProvider } from '@/lib/store'
 import { AuthProvider, useAuth } from '@/lib/auth'
 import { LogoutModal } from '@/components/LogoutModal'
 import { OfflineBanner } from '@/components/OfflineBanner'
-import { WelcomeModal } from '@/components/WelcomeModal'
 import { loadRosterFromDatabase } from '@/lib/roster'
 import { LoginPage } from '@/pages/LoginPage'
 import { OverviewPage } from '@/pages/OverviewPage'
@@ -179,7 +178,6 @@ function Gate() {
   return (
     <NavProvider initialRoute={initialRoute} initialExecutiveRailOpen={!isExecutive}>
       <Router />
-      <WelcomeModal />
     </NavProvider>
   )
 }
