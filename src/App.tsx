@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import type { Route } from '@/lib/types'
 import { NavProvider, useNav } from '@/lib/nav'
 import { PortalProvider } from '@/lib/store'
-import { AdminGrowthSummaryProvider } from '@/lib/admin-growth-summary'
 import { AuthProvider, useAuth } from '@/lib/auth'
 import { LogoutModal } from '@/components/LogoutModal'
 import { OfflineBanner } from '@/components/OfflineBanner'
@@ -179,10 +178,8 @@ function Gate() {
 
   return (
     <NavProvider initialRoute={initialRoute}>
-      <AdminGrowthSummaryProvider>
-        <Router />
-        <WelcomeModal />
-      </AdminGrowthSummaryProvider>
+      <Router />
+      <WelcomeModal />
     </NavProvider>
   )
 }
