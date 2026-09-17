@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ChevronDown, Search, MoreVertical } from 'lucide-react'
+import { Search, MoreVertical } from 'lucide-react'
 import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
 import { RegisterEventDrawer } from '@/components/RegisterEventDrawer'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
@@ -56,6 +56,7 @@ export function EventRegistryPage() {
   const [drawerMode, setDrawerMode] = useState<'create' | 'view' | 'edit'>('create')
   const [activeEvent, setActiveEvent] = useState<PortalEvent | null>(null)
   const [progressQuery, setProgressQuery] = useState('')
+  const [progressScroll, setProgressScroll] = useState(0)
   const [listQuery, setListQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -176,7 +177,15 @@ export function EventRegistryPage() {
           <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
         </div>
         <div className="relative mt-3">
-          <div className="max-h-[23rem] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-lg border border-border/70" aria-label="Operational progress events">
+          <div
+            className="max-h-[23rem] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-lg border border-border/70 pr-1"
+            aria-label="Operational progress events"
+            onScroll={(event) => {
+              const element = event.currentTarget
+              const maxScroll = element.scrollHeight - element.clientHeight
+              setProgressScroll(maxScroll > 0 ? element.scrollTop / maxScroll : 0)
+            }}
+          >
             <div className="hidden grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] gap-4 bg-muted/40 px-3 py-2 text-[0.55rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
             <span>Event</span><span>Date</span><span>Progress</span><span>Status</span>
           </div>
@@ -206,14 +215,22 @@ export function EventRegistryPage() {
           )}
           </div>
           {progressEvents.length > 7 && (
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
-              <div className="flex items-center gap-1.5 rounded-t-md border border-b-0 border-border/70 bg-card/95 px-3 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground shadow-sm backdrop-blur-sm">
-                <span>Scroll for more events</span>
-                <ChevronDown className="size-3 animate-bounce" aria-hidden="true" />
+            <div className="pointer-events-none absolute right-0 top-2 bottom-2 flex w-1.5 justify-center" aria-hidden="true">
+              <div className="relative h-full w-1 rounded-full bg-muted/80">
+                <div
+                  className="absolute left-0 w-1 rounded-full bg-primary transition-[top] duration-150"
+                  style={{ height: '28%', top: `${progressScroll * 72}%` }}
+                />
               </div>
             </div>
           )}
         </div>
+        <h4 className="mt-5 border-t border-border/70 pt-4 text-xs font-semibold uppercase tracking-[0.12em] text-foreground">
+          Event Portfolio Overview
+        </h4>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Active event readiness across the current executive portfolio.
+        </p>
       </div>
 
       {/* Filter bar */}
