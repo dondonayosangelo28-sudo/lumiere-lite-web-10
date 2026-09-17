@@ -281,7 +281,7 @@ export function EventRegistryPage() {
                 <td colSpan={9} className="py-8">
                   <EmptyState
                     title="No events found"
-                    message="No registered events match your search query or status filters."
+                    message="No registered events match the current search or status filters."
                   />
                 </td>
               </tr>
