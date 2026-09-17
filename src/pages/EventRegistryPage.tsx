@@ -175,7 +175,7 @@ export function EventRegistryPage() {
               Asset dispatch readiness across active event portfolios.
             </p>
           </div>
-          <div className="relative w-full max-w-sm sm:-mr-5 sm:w-72">
+          <div className="relative w-full max-w-sm sm:mr-1 sm:w-72">
             <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
           </div>
