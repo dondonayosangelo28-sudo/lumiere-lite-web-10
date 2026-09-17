@@ -38,6 +38,17 @@ const STATE_BADGE: Record<string, string> = {
   InMaintenance: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
 }
 
+const SAMPLE_ASSETS: AssetResponse[] = [
+  { id: 'sample-lighting-kit', name: 'Aurora Lighting Kit', assetSubTypeId: 'lighting', subTypeName: 'Lighting', assetTier: 2, assetState: 'Available', quantity: 12, colors: [{ hex: '#f4c46a', brand: 'Warm Gold' }], tags: ['portable', 'interior'] },
+  { id: 'sample-lounge-chair', name: 'Marlow Lounge Chair', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 3, assetState: 'Available', quantity: 8, colors: [{ hex: '#b48762', brand: 'Cognac' }], tags: ['seating', 'lounge'] },
+  { id: 'sample-display-wall', name: 'Modular Display Wall', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 1, assetState: 'Reserved', quantity: 4, colors: [{ hex: '#ded8cc', brand: 'Stone' }], tags: ['modular', 'backdrop'] },
+  { id: 'sample-plinth-set', name: 'Oak Plinth Set', assetSubTypeId: 'display', subTypeName: 'Display', assetTier: 2, assetState: 'Available', quantity: 16, colors: [{ hex: '#9b6b43', brand: 'Oak' }], tags: ['oak', 'merchandising'] },
+  { id: 'sample-textile-roll', name: 'Linen Textile Roll', assetSubTypeId: 'textiles', subTypeName: 'Textiles', assetTier: 3, assetState: 'Available', quantity: 24, colors: [{ hex: '#e9dfca', brand: 'Natural Linen' }], tags: ['linen', 'neutral'] },
+  { id: 'sample-signage-frame', name: 'Brass Signage Frame', assetSubTypeId: 'signage', subTypeName: 'Signage', assetTier: 4, assetState: 'InMaintenance', quantity: 3, colors: [{ hex: '#b08a4f', brand: 'Antique Brass' }], tags: ['brass', 'wayfinding'] },
+  { id: 'sample-vessel-set', name: 'Ceramic Vessel Set', assetSubTypeId: 'styling', subTypeName: 'Styling', assetTier: 5, assetState: 'Available', quantity: 10, colors: [{ hex: '#6e7774', brand: 'Sage' }], tags: ['ceramic', 'tabletop'] },
+  { id: 'sample-divider', name: 'Canvas Room Divider', assetSubTypeId: 'furniture', subTypeName: 'Furniture', assetTier: 2, assetState: 'Available', quantity: 6, colors: [{ hex: '#c7b8a5', brand: 'Canvas' }], tags: ['divider', 'privacy'] },
+]
+
 /* ---- Procurement step modal ---- */
 type ProcureStep = 'quantity' | 'method' | 'confirming' | 'done'
 
@@ -291,6 +302,7 @@ export function AssetAllocationKioskPage() {
   const [assets, setAssets] = useState<AssetResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isError, setIsError] = useState(false)
+  const [isSampleData, setIsSampleData] = useState(false)
 
   // Sidebar / filter state
   const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY)
@@ -310,8 +322,11 @@ export function AssetAllocationKioskPage() {
       if (tierFilter != null) params.tier = tierFilter
       const data = await fetchAssetsApi(params)
       setAssets(data)
+      setIsSampleData(false)
     } catch {
-      setIsError(true)
+      setAssets(SAMPLE_ASSETS)
+      setIsSampleData(true)
+      setIsError(false)
     } finally {
       setIsLoading(false)
     }
@@ -341,7 +356,7 @@ export function AssetAllocationKioskPage() {
       if (tierFilter != null && a.assetTier !== tierFilter) return false
       if (q) {
         const matchName = a.name.toLowerCase().includes(q)
-        const matchTags = a.tags.some((t) => t.toLowerCase().includes(q))
+        const matchTags = (a.tags ?? []).some((t) => t.toLowerCase().includes(q))
         const matchSub  = (a.subTypeName || '').toLowerCase().includes(q)
         if (!matchName && !matchTags && !matchSub) return false
       }
@@ -398,6 +413,12 @@ export function AssetAllocationKioskPage() {
   return (
     <>
       <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
+        {isSampleData && (
+          <div className="mb-5 flex items-center justify-between gap-3 rounded-xl border border-sky-500/25 bg-sky-500/5 px-4 py-3 text-xs text-sky-800 dark:text-sky-300">
+            <span><strong>Sample catalog data</strong> — the API is unavailable, so you can still preview the allocation workflow.</span>
+            <button type="button" onClick={load} className="shrink-0 rounded-md border border-current/20 px-2.5 py-1 font-semibold hover:bg-sky-500/10">Retry API</button>
+          </div>
+        )}
         {/* Blocked crossdock notice */}
         <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3">
           <Info className="size-4 shrink-0 text-amber-600 mt-0.5" />
@@ -543,9 +564,9 @@ export function AssetAllocationKioskPage() {
                         <div className="flex h-full w-full flex-col items-center justify-center gap-1">
                           <Boxes className="size-10 text-muted-foreground/40" />
                           {/* Color swatches from palette */}
-                          {asset.colors.length > 0 && (
+                          {(asset.colors ?? []).length > 0 && (
                             <div className="flex gap-1 mt-1">
-                              {asset.colors.slice(0, 5).map((c, i) => (
+                              {(asset.colors ?? []).slice(0, 5).map((c, i) => (
                                 <span
                                   key={i}
                                   className="size-3 rounded-full border border-border"
@@ -584,15 +605,15 @@ export function AssetAllocationKioskPage() {
                         </span>
                       </div>
 
-                      {asset.tags.length > 0 && (
+                      {(asset.tags ?? []).length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {asset.tags.slice(0, 3).map((tag) => (
+                          {(asset.tags ?? []).slice(0, 3).map((tag) => (
                             <span key={tag}
                               className="flex items-center gap-0.5 rounded-full bg-muted px-2 py-0.5 text-[0.55rem] font-medium text-muted-foreground">
                               <Tag className="size-2.5" />{tag}
                             </span>
                           ))}
-                          {asset.tags.length > 3 && (
+                          {(asset.tags ?? []).length > 3 && (
                             <span className="text-[0.55rem] text-muted-foreground">+{asset.tags.length - 3}</span>
                           )}
                         </div>
