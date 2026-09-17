@@ -4,7 +4,7 @@ import type { Route } from '@/lib/types'
 import { NavProvider, useNav } from '@/lib/nav'
 import { PortalProvider } from '@/lib/store'
 import { AdminGrowthSummaryProvider } from '@/lib/admin-growth-summary'
-import { AuthProvider, useAuth } from '@/lib/auth'
+import { useAuth } from '@/lib/auth'
 import { LogoutModal } from '@/components/LogoutModal'
 import { OfflineBanner } from '@/components/OfflineBanner'
 import { WelcomeModal } from '@/components/WelcomeModal'
@@ -209,12 +209,4 @@ function App() {
   return <AppContent />
 }
 
-function AppWithAuth() {
-  return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  )
-}
-
-export default AppWithAuth
+export default App
