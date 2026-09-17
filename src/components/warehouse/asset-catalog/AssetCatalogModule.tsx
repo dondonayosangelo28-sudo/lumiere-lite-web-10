@@ -173,7 +173,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="relative order-2 w-full self-end lg:w-64">
+          <div className="order-2 relative w-full self-end lg:w-64">
             <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               value={query}
@@ -182,7 +182,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
             />
           </div>
-          <div className="order-1 flex translate-y-4 items-center gap-2 self-end">
+          <div className="order-1 flex items-center gap-2 self-end">
             <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
                 type="button"
