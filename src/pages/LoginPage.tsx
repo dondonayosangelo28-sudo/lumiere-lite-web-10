@@ -84,8 +84,8 @@ export function LoginPage() {
         <div className="absolute right-6 top-6 z-10">
           <ThemeToggle mode={themeMode} onChange={setThemeMode} />
         </div>
-        <div className="flex min-h-full items-center justify-center px-4 py-8 sm:px-6 sm:py-10">
-          <div className="flex w-full max-w-2xl flex-col rounded-2xl bg-muted/60 px-5 py-8 sm:px-10 sm:py-14 lg:px-16 lg:py-16">
+        <div className="flex min-h-full items-center justify-center px-4 py-8 sm:px-6 sm:py-10 max-sm:py-4">
+          <div className="flex w-full max-w-2xl flex-col rounded-2xl bg-muted/60 px-5 py-8 sm:px-10 sm:py-14 lg:px-16 lg:py-16 max-sm:rounded-xl max-sm:px-4 max-sm:py-5">
           {view === 'signin' && (
             <SignInView
               email={email}
@@ -155,11 +155,11 @@ function SignInView(props: {
       <h2 className="text-center font-serif text-4xl font-medium tracking-[0.25em] text-foreground">
         WELCOME BACK
       </h2>
-      <p className="mt-4 text-center text-base text-muted-foreground">
+      <p className="mt-4 text-center text-base text-muted-foreground max-sm:mt-2 max-sm:text-xs">
         Sign in to illuminate your event vision.
       </p>
 
-      <div className="mt-12 flex flex-col gap-6">
+      <div className="mt-12 flex flex-col gap-6 max-sm:mt-6 max-sm:gap-4">
         <Field label="EMAIL">
           <InputWrap>
             <User className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -169,7 +169,7 @@ function SignInView(props: {
               onChange={(e) => props.onEmail(e.target.value)}
               placeholder="Enter your credentials"
               autoComplete="email"
-              className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground/70"
+              className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground/70 max-sm:text-[15px]"
             />
           </InputWrap>
         </Field>
@@ -183,7 +183,7 @@ function SignInView(props: {
               onChange={(e) => props.onPassword(e.target.value)}
               placeholder="Enter your password"
               autoComplete="current-password"
-              className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground/70"
+              className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground/70 max-sm:text-[15px]"
             />
             <button
               type="button"
@@ -207,7 +207,7 @@ function SignInView(props: {
         </p>
       )}
 
-      <div className="mt-7 flex items-center justify-between text-sm">
+      <div className="mt-7 flex items-center justify-between text-sm max-sm:mt-4 max-sm:gap-2 max-sm:text-[0.7rem]">
         <label className="flex cursor-pointer items-center gap-2.5 text-foreground/80">
           <input
             type="checkbox"
@@ -236,7 +236,7 @@ function SignInView(props: {
         </div>
       </div>
 
-      <SubmitButton className="mt-10" disabled={props.signingIn}>
+      <SubmitButton className="mt-10 max-sm:mt-6" disabled={props.signingIn}>
         {props.signingIn ? 'SIGNING IN...' : 'ENTER PORTAL'}
       </SubmitButton>
 
@@ -247,7 +247,7 @@ function SignInView(props: {
 
 function DemoAccounts() {
   return (
-    <details className="mt-8 rounded-xl border border-border/70 bg-background/40 px-4 py-3 text-xs text-muted-foreground">
+    <details className="mt-8 rounded-xl border border-border/70 bg-background/40 px-4 py-3 text-xs text-muted-foreground max-sm:mt-5 max-sm:px-3 max-sm:py-2.5 max-sm:text-[0.68rem]">
       <summary className="cursor-pointer font-medium uppercase tracking-[0.14em] text-foreground/70">
         Demo accounts and passwords
       </summary>
@@ -295,7 +295,7 @@ function RequestView(props: {
               onChange={(e) => props.onEmail(e.target.value)}
               placeholder="name@lumiere.com"
               autoComplete="email"
-              className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground/70"
+              className="w-full bg-transparent text-foreground outline-none placeholder:text-muted-foreground/70 max-sm:text-[15px]"
             />
           </InputWrap>
         </Field>
@@ -386,8 +386,8 @@ function ThemeToggle({ mode, onChange }: { mode: ThemeMode; onChange: (mode: The
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-2.5">
-      <span className="text-sm font-semibold uppercase tracking-[0.15em] text-foreground/70">
+    <div className="flex flex-col gap-2.5 max-sm:gap-1.5">
+      <span className="text-sm font-semibold uppercase tracking-[0.15em] text-foreground/70 max-sm:text-xs max-sm:tracking-[0.12em]">
         {label}
       </span>
       {children}
@@ -397,7 +397,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 function InputWrap({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-3 rounded-md border border-border bg-card px-5 py-4 shadow-sm focus-within:border-sidebar">
+    <div className="flex items-center gap-3 rounded-md border border-border bg-card px-5 py-4 shadow-sm focus-within:border-sidebar max-sm:gap-2.5 max-sm:px-4 max-sm:py-3">
       {children}
     </div>
   )
@@ -419,7 +419,7 @@ function SubmitButton({
       type={onClick ? 'button' : 'submit'}
       onClick={onClick}
       disabled={disabled}
-      className={`w-full rounded-md border-2 border-foreground bg-transparent py-5 text-center text-base font-medium uppercase tracking-[0.3em] text-foreground transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`w-full rounded-md border-2 border-foreground bg-transparent py-5 text-center text-base font-medium uppercase tracking-[0.3em] text-foreground transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 max-sm:py-3 max-sm:text-sm max-sm:tracking-[0.2em] ${className}`}
     >
       {children}
     </button>

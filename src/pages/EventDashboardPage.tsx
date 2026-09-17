@@ -158,7 +158,7 @@ export function EventDashboardPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-2 max-sm:gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
@@ -166,16 +166,16 @@ export function EventDashboardPage() {
             Operations Console
           </span>
         </div>
-        <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+        <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground max-sm:text-2xl sm:text-4xl">
           Executive Dashboard
         </h1>
-        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+        <p className="mt-1 text-xs text-muted-foreground max-sm:hidden sm:text-sm">
           Event schedule, calendar oversight, and fast portfolio registration.
         </p>
       </div>
 
       {/* Search and + Event Action Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 max-sm:gap-1.5">
         <div className="relative flex-1 sm:w-64">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -183,7 +183,7 @@ export function EventDashboardPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search events, venues, ref..."
-            className="w-full rounded-lg border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30"
+            className="w-full rounded-lg border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30 max-sm:py-1.5 max-sm:pl-8 max-sm:text-[0.72rem]"
           />
           {query && (
             <button
@@ -200,7 +200,7 @@ export function EventDashboardPage() {
           type="button"
           onClick={openCreate}
           data-testid="executive-add-event-button"
-          className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-[0.98] cursor-pointer"
+          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-[0.98] cursor-pointer max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
         >
           <Plus className="size-4" />
           <span>+ Event</span>
@@ -221,14 +221,14 @@ export function EventDashboardPage() {
         ) : isLoading ? (
           <LoadingSkeleton variant="dashboard" />
         ) : (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+          <div className="grid grid-cols-1 gap-6 max-sm:gap-3 lg:grid-cols-12 lg:items-start">
             {/* Left / Top Column: Calendar Widget & Navigation (approx 4.5 cols on lg) */}
-            <div className="space-y-4 lg:col-span-5 xl:col-span-4">
-              <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <div className="space-y-4 max-sm:space-y-3 lg:col-span-5 xl:col-span-4">
+              <div className="rounded-xl border border-border bg-card p-4 shadow-sm max-sm:p-3">
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="size-4 text-primary" />
-                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-card-foreground">
+                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-card-foreground max-sm:text-[0.7rem]">
                       Booking Calendar
                     </span>
                   </div>
@@ -252,7 +252,7 @@ export function EventDashboardPage() {
               </div>
 
               {/* Month Summary Card */}
-              <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+              <div className="rounded-xl border border-border bg-card p-4 shadow-sm max-sm:p-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[0.65rem]">
                     {MONTH_NAMES[currentView.month]} {currentView.year} Summary
