@@ -37,13 +37,13 @@ export function downloadPdfReport({
   const weights = columns.map((_, index) => (index === 0 ? 1.35 : index === columns.length - 1 ? 1.2 : 1))
   const weightTotal = weights.reduce((sum, value) => sum + value, 0)
   const widths = weights.map((value) => (value / weightTotal) * width)
-  let y = 42
+  let y = 50
 
   const drawRunningHeader = () => {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(7)
     doc.setTextColor(...BRAND.MUTED)
-    doc.text('LUMIÈRE  /  OPERATIONS REPORT', margin, 26)
+    doc.text(`LUMIÈRE  /  ${title.toUpperCase()}`, margin, 26)
     doc.setDrawColor(...BRAND.BORDER)
     doc.line(margin, 32, pageWidth - margin, 32)
   }

@@ -25,11 +25,11 @@ interface ColumnDef {
 
 class PdfReportBuilder {
   doc: jsPDF
-  margin = 40
+  margin = 34
   pageWidth = 595.28
   pageHeight = 841.89
   printableWidth = this.pageWidth - this.margin * 2
-  y = 40
+  y = 50
   currentPage = 1
 
   constructor() {
@@ -51,24 +51,32 @@ class PdfReportBuilder {
     doc.setDrawColor(...BRAND.BORDER)
     doc.line(margin, 32, pageWidth - margin, 32)
 
-    // Top Brand Gold Accent Bar
     doc.setFillColor(...BRAND.PRIMARY)
-    doc.rect(margin, this.y, 4, 34, 'F')
+    doc.rect(margin, this.y, 4, 72, 'F')
 
-    // Document Title
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(15)
+    doc.setFontSize(9)
+    doc.setTextColor(...BRAND.PRIMARY)
+    doc.text('LUMIÈRE', margin + 14, this.y + 15)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(...BRAND.MUTED)
+    doc.text('EVENT OPERATIONS & ASSET MANAGEMENT', margin + 14, this.y + 28)
+    doc.setFont('times', 'bold')
+    doc.setFontSize(19)
     doc.setTextColor(...BRAND.FOREGROUND)
-    doc.text(`LUMIÈRE OPERATIONS — ${title.toUpperCase()}`, margin + 12, this.y + 14)
+    doc.text(title.toUpperCase(), margin + 14, this.y + 54, { maxWidth: this.printableWidth - 150 })
 
-    // Generation timestamp
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(6.5)
+    doc.setTextColor(...BRAND.MUTED)
+    doc.text('ISSUED / GENERATED', pageWidth - margin - 112, this.y + 16)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
-    doc.setTextColor(...BRAND.MUTED)
-    const timeStr = `Generated: ${new Date().toLocaleString()}`
-    doc.text(timeStr, pageWidth - margin, this.y + 12, { align: 'right' })
+    doc.setTextColor(...BRAND.FOREGROUND)
+    doc.text(new Date().toLocaleDateString(), pageWidth - margin, this.y + 29, { align: 'right' })
 
-    this.y += 24
+    this.y += 84
 
     // Metadata Subheader Box if provided
     if (subheaderLines.length > 0) {
