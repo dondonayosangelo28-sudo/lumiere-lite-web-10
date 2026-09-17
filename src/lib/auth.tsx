@@ -198,6 +198,10 @@ interface AuthContextValue {
   confirmLogout: boolean
   setConfirmLogout: (value: boolean) => void
   verifyPassword: (password: string) => Promise<boolean>
+  // Deprecated compatibility no-ops. Verification PINs are no longer part of authentication.
+  hasConfirmationPin: boolean
+  verifyConfirmationPin: (pin: string) => boolean
+  setConfirmationPin: (pin: string) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -389,6 +393,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [currentUser],
   )
+
+  // Verification PINs were retired. Keep these no-op compatibility methods so older
+  // admin screens cannot crash while their legacy UI is removed.
+  const hasConfirmationPin = false
+  const verifyConfirmationPin = (_pin: string) => true
+  const setConfirmationPin = (_pin: string) => undefined
 
   const value = useMemo(
     () => ({
