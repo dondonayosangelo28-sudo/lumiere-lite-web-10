@@ -411,14 +411,14 @@ export function AssetAllocationKioskPage() {
         <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
           Asset Allocation
         </h1>
-        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-          Browse, search, and allocate assets by classification. Quantity assignment routes to the deficit queue.
-        </p>
-      </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            Browse, search, and allocate assets by classification. Quantity assignment routes to the deficit queue.
+          </p>
 
-      {/* Search */}
-      <div className="flex w-full justify-end">
-        <div className="relative w-full sm:w-72">
+          {/* Search */}
+          <div className="flex w-full justify-end sm:w-auto">
+            <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
@@ -431,6 +431,8 @@ export function AssetAllocationKioskPage() {
             <button type="button" onClick={() => setQuery('')}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-muted-foreground hover:text-foreground">✕</button>
           )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
