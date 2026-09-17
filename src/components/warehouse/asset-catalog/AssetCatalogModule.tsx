@@ -182,7 +182,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
             />
           </div>
-          <div className="flex translate-y-1 items-center gap-2">
+          <div className="flex translate-y-2 items-center gap-2">
             <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
                 type="button"
