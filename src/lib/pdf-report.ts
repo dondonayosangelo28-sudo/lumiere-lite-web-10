@@ -51,6 +51,10 @@ export function downloadPdfReport({
   let y = 50
 
   const drawFrame = () => {
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.setLineWidth(1.1)
+    doc.line(22, 28, 22, pageHeight - 28)
+    doc.line(pageWidth - 22, 28, pageWidth - 22, pageHeight - 28)
   }
 
   const drawRunningHeader = () => {
@@ -159,17 +163,19 @@ export function downloadPdfReport({
     doc.setTextColor(...BRAND.MUTED)
     doc.text(field.label.toUpperCase(), x + 10, y + 15, { maxWidth: metaCellW - 20 })
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
+    doc.setFontSize(8.5)
     doc.setTextColor(...BRAND.FOREGROUND)
-    doc.text(field.value, x + 10, y + 30, { maxWidth: metaCellW - 20 })
+    const valueLines = doc.splitTextToSize(field.value, metaCellW - 20)
+    doc.text(valueLines.slice(0, 2), x + 10, y + 30, { maxWidth: metaCellW - 20, lineHeightFactor: 1.05 })
   })
   y += metaBoxHeight + 10
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(...BRAND.MUTED)
-  doc.text(subtitle, margin, y, { maxWidth: width })
-  y += 10
+  const subtitleLines = doc.splitTextToSize(subtitle, width - 12)
+  doc.text(subtitleLines, margin + 6, y, { maxWidth: width - 12, lineHeightFactor: 1.15 })
+  y += subtitleLines.length * 9 + 4
   doc.setDrawColor(...BRAND.BORDER)
   doc.line(margin, y, pageWidth - margin, y)
   y += 15

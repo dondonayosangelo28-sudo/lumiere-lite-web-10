@@ -55,6 +55,11 @@ class PdfReportBuilder {
   }
 
   drawFrame() {
+    const { doc, pageWidth, pageHeight } = this
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.setLineWidth(1.1)
+    doc.line(22, 28, 22, pageHeight - 28)
+    doc.line(pageWidth - 22, 28, pageWidth - 22, pageHeight - 28)
   }
 
   drawRunningHeader() {
@@ -100,7 +105,7 @@ class PdfReportBuilder {
       const cols = 3
       const cellW = this.printableWidth / cols
       const rowCount = Math.ceil(meta.length / cols)
-      const rowH = 32
+      const rowH = 38
       const boxHeight = rowCount * rowH + 10
       doc.setFillColor(...BRAND.CARD_BG)
       doc.setDrawColor(...BRAND.BORDER)
@@ -117,9 +122,10 @@ class PdfReportBuilder {
         doc.setTextColor(...BRAND.MUTED)
         doc.text(field.label.toUpperCase(), x + 10, cellY + 8)
         doc.setFont('helvetica', 'normal')
-        doc.setFontSize(9)
+        doc.setFontSize(8.5)
         doc.setTextColor(...BRAND.FOREGROUND)
-        doc.text(field.value, x + 10, cellY + 21, { maxWidth: cellW - 20 })
+        const valueLines = doc.splitTextToSize(field.value, cellW - 20)
+        doc.text(valueLines.slice(0, 2), x + 10, cellY + 21, { maxWidth: cellW - 20, lineHeightFactor: 1.05 })
       })
       this.y += boxHeight + 10
     } else {
