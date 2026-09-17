@@ -36,7 +36,6 @@ import { ManningPage } from '@/pages/ManningPage'
 import { ProductionManagerPage } from '@/pages/ProductionManagerPage'
 import { InventoryOfficerPage } from '@/pages/InventoryOfficerPage'
 import { AssetAllocationKioskPage } from '@/pages/AssetAllocationKioskPage'
-import { PinSetupScreen } from '@/pages/PinSetupScreen'
 import { TempPasswordResetScreen } from '@/pages/TempPasswordResetScreen'
 import { PlannerProvider } from '@/lib/planner'
 import { WarehouseProvider } from '@/lib/warehouse'
@@ -138,7 +137,7 @@ function Router() {
 }
 
 function Gate() {
-  const { isAuthenticated, isTempPassword, hasConfirmationPin, isWarehouse, isWarehouseLead, isWarehouseMember, isPlanner, isGroundCrew, isExecutive, isProductionManager, isInventoryOfficer, isManningOfficer, hasFullWarehouseAccess } = useAuth()
+  const { isAuthenticated, isTempPassword, isWarehouse, isWarehouseLead, isWarehouseMember, isPlanner, isGroundCrew, isExecutive, isProductionManager, isInventoryOfficer, isManningOfficer, hasFullWarehouseAccess } = useAuth()
   const isMobileProductionManager = isProductionManager && !hasFullWarehouseAccess
   const isMobileInventoryOfficer = isInventoryOfficer && !hasFullWarehouseAccess
 
@@ -148,10 +147,6 @@ function Gate() {
 
   if (isTempPassword) {
     return <TempPasswordResetScreen />
-  }
-
-  if (!hasConfirmationPin) {
-    return <PinSetupScreen />
   }
 
   // A deep-linked ?highlight=<staffId> (from the User Growth Summary modal)

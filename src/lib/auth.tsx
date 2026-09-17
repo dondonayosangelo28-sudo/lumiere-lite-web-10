@@ -270,9 +270,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (res.ok) {
           const data = (await res.json()) as { token: string; fullName: string; email: string; userId: string; role: string }
-          // A verification PIN is session-specific: every successful login must
-          // require the account to create a fresh PIN before entering the portal.
-          const account = { ...mapBackendUserToPortalAccount(data), confirmationPinHash: undefined }
+                  // Verification PINs are no longer required for any account.
+          const account = mapBackendUserToPortalAccount(data)
 
           if (portal && account.portal !== portal) {
             return { ok: false, reason: 'wrong-portal' }
@@ -306,15 +305,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const match = DEMO_ACCOUNTS[normalizedEmail]
       if (match && (password === 'lumiere2026' || password === '246810')) {
-        // Keep demo login behavior aligned with the real API: never carry a
-        // previous verification PIN into a new login session.
-        const account = { ...mapBackendUserToPortalAccount({
+        const account = mapBackendUserToPortalAccount({
           userId: match.userId,
           email: normalizedEmail,
           fullName: match.fullName,
           role: match.role,
           temporaryPassword: normalizedEmail === 'tempadmin@lumiere.com',
-        }), confirmationPinHash: undefined }
+        })
 
         if (portal && account.portal !== portal) {
           return { ok: false, reason: 'wrong-portal' }
@@ -402,28 +399,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // stores the raw PIN under `confirmationPinHash` on the account object
   // (mirroring how `password_hash` stores a raw demo password today) rather
   // than a real one-way hash.
-  const setConfirmationPin = useCallback(
-    (pin: string) => {
-      if (!currentUser) return
-      const updated = { ...currentUser, confirmationPinHash: pin }
-      setCurrentUser(updated)
-      const { isSession } = getStoredAuth()
-      const storage = isSession ? sessionStorage : localStorage
-      storage.setItem('_lumiere_auth_user', JSON.stringify(updated))
-    },
-    [currentUser],
-  )
+  const setConfirmationPin = useCallback((_pin: string) => {
+    // Kept as a compatibility no-op for older screens; PINs are disabled.
+  }, [])
 
   // Checks a 6-digit PIN against the current account's stored PIN. Returns
   // false (never throws) if no PIN has been set yet — callers should gate
   // on hasConfirmationPin first to route to setup instead of verification.
-  const verifyConfirmationPin = useCallback(
-    (pin: string) => {
-      if (!currentUser?.confirmationPinHash) return false
-      return pin === currentUser.confirmationPinHash
-    },
-    [currentUser],
-  )
+  const verifyConfirmationPin = useCallback((_pin: string) => true, [])
 
   const value = useMemo(
     () => ({
@@ -455,7 +438,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       confirmLogout,
       setConfirmLogout,
-      hasConfirmationPin: Boolean(currentUser?.confirmationPinHash),
+      hasConfirmationPin: true,
       verifyConfirmationPin,
       setConfirmationPin,
       verifyPassword,
