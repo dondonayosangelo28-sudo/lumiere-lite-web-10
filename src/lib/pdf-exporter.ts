@@ -23,6 +23,23 @@ interface ColumnDef {
   align?: 'left' | 'center' | 'right'
 }
 
+interface MetaField {
+  label: string
+  value: string
+}
+
+interface Signatory {
+  role: string
+  org: string
+  note: string
+}
+
+// Deterministic short reference code for a report, e.g. LUM-AUD-2026-09
+function makeReference(prefix: string): string {
+  const now = new Date()
+  return `LUM-${prefix}-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+}
+
 class PdfReportBuilder {
   doc: jsPDF
   margin = 34
@@ -31,25 +48,36 @@ class PdfReportBuilder {
   printableWidth = this.pageWidth - this.margin * 2
   y = 50
   currentPage = 1
+  title = ''
 
   constructor() {
     this.doc = new jsPDF({ unit: 'pt', format: 'a4' })
   }
 
-  // Draw standardized brand header banner
-  drawHeader(title: string, subheaderLines: string[]) {
-    const { doc, margin, pageWidth } = this
-    this.y = 50
+  drawFrame() {
+    this.doc.setDrawColor(...BRAND.BORDER)
+    this.doc.setLineWidth(0.7)
+    this.doc.roundedRect(22, 28, this.pageWidth - 44, this.pageHeight - 56, 5, 5, 'S')
+  }
 
-    doc.setDrawColor(...BRAND.BORDER)
-    doc.setLineWidth(0.7)
-    doc.roundedRect(22, 28, pageWidth - 44, this.pageHeight - 56, 5, 5, 'S')
+  drawRunningHeader() {
+    const { doc, margin, pageWidth } = this
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(7)
     doc.setTextColor(...BRAND.MUTED)
-    doc.text(`LUMIÈRE  /  ${title.toUpperCase()}`, margin, 26)
+    doc.text(`LUMIÈRE  /  ${this.title.toUpperCase()}`, margin, 26)
     doc.setDrawColor(...BRAND.BORDER)
     doc.line(margin, 32, pageWidth - margin, 32)
+  }
+
+  // Draw standardized brand header banner with a Document Reference / Date / Classification meta strip
+  drawHeader(title: string, meta: MetaField[]) {
+    const { doc, margin, pageWidth } = this
+    this.title = title
+    this.y = 50
+
+    this.drawFrame()
+    this.drawRunningHeader()
 
     doc.setFillColor(...BRAND.PRIMARY)
     doc.rect(margin, this.y, 4, 72, 'F')
@@ -65,35 +93,36 @@ class PdfReportBuilder {
     doc.setFont('times', 'bold')
     doc.setFontSize(19)
     doc.setTextColor(...BRAND.FOREGROUND)
-    doc.text(title.toUpperCase(), margin + 14, this.y + 54, { maxWidth: this.printableWidth - 150 })
-
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(6.5)
-    doc.setTextColor(...BRAND.MUTED)
-    doc.text('ISSUED / GENERATED', pageWidth - margin - 112, this.y + 16)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(...BRAND.FOREGROUND)
-    doc.text(new Date().toLocaleDateString(), pageWidth - margin, this.y + 29, { align: 'right' })
+    doc.text(title.toUpperCase(), margin + 14, this.y + 54, { maxWidth: this.printableWidth - 20 })
 
     this.y += 84
 
-    // Metadata Subheader Box if provided
-    if (subheaderLines.length > 0) {
+    // Metadata strip: Document Reference / Report Date / Classification (+ extra contextual fields)
+    if (meta.length > 0) {
       this.y += 6
-      const boxHeight = 14 + subheaderLines.length * 13
+      const cols = 3
+      const cellW = this.printableWidth / cols
+      const rowCount = Math.ceil(meta.length / cols)
+      const rowH = 32
+      const boxHeight = rowCount * rowH + 10
       doc.setFillColor(...BRAND.CARD_BG)
       doc.setDrawColor(...BRAND.BORDER)
       doc.setLineWidth(0.75)
       doc.roundedRect(margin, this.y, this.printableWidth, boxHeight, 4, 4, 'FD')
 
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(8.5)
-      doc.setTextColor(...BRAND.FOREGROUND)
-      let lineY = this.y + 14
-      subheaderLines.forEach((line) => {
-        doc.text(line, margin + 10, lineY)
-        lineY += 13
+      meta.forEach((field, index) => {
+        const col = index % cols
+        const row = Math.floor(index / cols)
+        const x = margin + col * cellW
+        const cellY = this.y + 10 + row * rowH
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(6.5)
+        doc.setTextColor(...BRAND.MUTED)
+        doc.text(field.label.toUpperCase(), x + 10, cellY + 8)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(9)
+        doc.setTextColor(...BRAND.FOREGROUND)
+        doc.text(field.value, x + 10, cellY + 21, { maxWidth: cellW - 20 })
       })
       this.y += boxHeight + 10
     } else {
@@ -105,6 +134,46 @@ class PdfReportBuilder {
     doc.setDrawColor(...BRAND.BORDER)
     doc.line(margin, this.y, pageWidth - margin, this.y)
     this.y += 15
+  }
+
+  // Executive performance scorecard (matches the Lumière audit template's metric cards)
+  drawScorecard(cards: Array<{ label: string; value: string; bullets?: string[] }>) {
+    const { doc, margin, printableWidth, pageHeight } = this
+    const cardW = printableWidth / cards.length
+    const cardH = 68
+    if (this.y + cardH + 10 > pageHeight - 60) {
+      this.doc.addPage()
+      this.currentPage += 1
+      this.y = 50
+      this.drawFrame()
+      this.drawRunningHeader()
+      this.y += 20
+    }
+    cards.forEach((card, index) => {
+      const x = margin + index * cardW + (index > 0 ? 6 : 0)
+      const w = cardW - (index > 0 && index < cards.length - 1 ? 6 : index > 0 ? 0 : 6)
+      doc.setFillColor(...BRAND.CARD_BG)
+      doc.setDrawColor(...BRAND.BORDER)
+      doc.setLineWidth(0.75)
+      doc.roundedRect(x, this.y, w, cardH, 4, 4, 'FD')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(6.5)
+      doc.setTextColor(...BRAND.MUTED)
+      doc.text(card.label.toUpperCase(), x + 10, this.y + 15, { maxWidth: w - 20 })
+      doc.setFont('times', 'bold')
+      doc.setFontSize(19)
+      doc.setTextColor(...BRAND.PRIMARY)
+      doc.text(card.value, x + 10, this.y + 38)
+      let bulletY = this.y + 50
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(6.5)
+      doc.setTextColor(...BRAND.FOREGROUND)
+      ;(card.bullets || []).slice(0, 2).forEach((bullet) => {
+        doc.text(`•  ${bullet}`, x + 10, bulletY, { maxWidth: w - 20 })
+        bulletY += 9
+      })
+    })
+    this.y += cardH + 14
   }
 
   // Draw structured table header
@@ -119,13 +188,13 @@ class PdfReportBuilder {
     doc.line(margin, this.y + 20, margin + this.printableWidth, this.y + 20)
 
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(8.5)
+    doc.setFontSize(7.5)
     doc.setTextColor(...BRAND.PRIMARY)
 
     let currentX = margin
     columns.forEach((col) => {
       const textX = col.align === 'center' ? currentX + col.width / 2 : col.align === 'right' ? currentX + col.width - 6 : currentX + 6
-      doc.text(col.header.toUpperCase(), textX, this.y + 13, { align: col.align || 'left' })
+      doc.text(doc.splitTextToSize(col.header.toUpperCase(), col.width - 12), textX, this.y + 13, { align: col.align || 'left', maxWidth: col.width - 12 })
       currentX += col.width
     })
 
@@ -134,17 +203,101 @@ class PdfReportBuilder {
 
   // Check page bottom overflow and add new page if needed
   checkPageBreak(requiredHeight = 22, columns?: ColumnDef[]) {
-    if (this.y + requiredHeight > this.pageHeight - 50) {
+    if (this.y + requiredHeight > this.pageHeight - 60) {
       this.doc.addPage()
       this.currentPage += 1
       this.y = 50
-      this.doc.setDrawColor(...BRAND.BORDER)
-      this.doc.setLineWidth(0.7)
-      this.doc.roundedRect(22, 28, this.pageWidth - 44, this.pageHeight - 56, 5, 5, 'S')
+      this.drawFrame()
+      this.drawRunningHeader()
+      this.y += 20
       if (columns) {
         this.drawTableHeader(columns)
       }
     }
+  }
+
+  // Word-wrapping, dynamic-height data table. Rows never overflow their column width and
+  // automatically continue onto a new page (repeating the header) instead of clipping.
+  drawTable(columns: ColumnDef[], rows: Array<Array<string | number | undefined | null>>) {
+    const { doc, margin, printableWidth } = this
+    const fontSize = columns.length > 7 ? 6.5 : 7.5
+    const lineH = fontSize + 2.5
+
+    this.drawTableHeader(columns)
+
+    rows.forEach((row, index) => {
+      doc.setFontSize(fontSize)
+      const cells = row.map((value, i) => doc.splitTextToSize(String(value ?? '—'), Math.max(18, columns[i].width - 12)))
+      const rowH = Math.max(22, Math.min(64, Math.max(...cells.map((cell) => cell.length)) * lineH + 10))
+      this.checkPageBreak(rowH, columns)
+
+      let x = margin
+      if (index % 2 === 1) {
+        doc.setFillColor(...BRAND.ZEBRA_BG)
+        doc.rect(margin, this.y, printableWidth, rowH, 'F')
+      }
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...BRAND.FOREGROUND)
+      cells.forEach((cell, i) => {
+        const col = columns[i]
+        const cellX = col.align === 'center' ? x + col.width / 2 : col.align === 'right' ? x + col.width - 6 : x + 6
+        doc.text(cell, cellX, this.y + 12, { align: col.align || 'left', maxWidth: col.width - 12, lineHeightFactor: 1.15 })
+        x += col.width
+      })
+      doc.setDrawColor(...BRAND.BORDER)
+      doc.line(margin, this.y + rowH, margin + printableWidth, this.y + rowH)
+      this.y += rowH
+    })
+    this.y += 12
+  }
+
+  // Draw a status-colored badge cell inline within a manually-drawn row (used for compact tables)
+  drawStatusBadge(text: string, x: number, y: number, color: [number, number, number]) {
+    this.doc.setTextColor(...color)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text(text.toUpperCase(), x, y, { align: 'right' })
+  }
+
+  // Certification / attestation statement + dual signature blocks, matching the Lumière report templates
+  drawCertification(statement: string, signatories: Signatory[]) {
+    const { doc, margin, printableWidth, pageHeight } = this
+    if (this.y + 130 > pageHeight - 60) {
+      this.doc.addPage()
+      this.currentPage += 1
+      this.y = 50
+      this.drawFrame()
+      this.drawRunningHeader()
+      this.y += 20
+    }
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, this.y, this.pageWidth - margin, this.y)
+    this.y += 16
+    doc.setFont('helvetica', 'italic')
+    doc.setFontSize(8)
+    doc.setTextColor(...BRAND.FOREGROUND)
+    const lines = doc.splitTextToSize(`"${statement}"`, printableWidth - 10)
+    doc.text(lines, margin, this.y, { maxWidth: printableWidth - 10 })
+    this.y += lines.length * 11 + 22
+
+    const colW = printableWidth / signatories.length
+    signatories.forEach((sig, index) => {
+      const x = margin + index * colW
+      doc.setDrawColor(...BRAND.BORDER)
+      doc.line(x, this.y, x + colW - 24, this.y)
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(7)
+      doc.setTextColor(...BRAND.MUTED)
+      doc.text(sig.role.toUpperCase(), x, this.y + 13, { maxWidth: colW - 24 })
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8.5)
+      doc.setTextColor(...BRAND.FOREGROUND)
+      doc.text(sig.org, x, this.y + 26, { maxWidth: colW - 24 })
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(7)
+      doc.setTextColor(...BRAND.PRIMARY)
+      doc.text(sig.note, x, this.y + 38, { maxWidth: colW - 24 })
+    })
+    this.y += 50
   }
 
   // Add standard footer with page numbers
@@ -458,58 +611,52 @@ export function exportSecurityAuditPdf(
   filename: string,
 ) {
   const builder = new PdfReportBuilder()
+  const refId = makeReference('SEC')
   builder.drawHeader(title, [
-    `Total Logs Rendered: ${logs.length} entries`,
-    `Scope: Filtered System Security & Audit Log Record`,
+    { label: 'Document Reference', value: refId },
+    { label: 'Audit Date', value: new Date().toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) },
+    { label: 'Classification', value: 'Verified Official Audit' },
+    { label: 'Total Records', value: `${logs.length} entries` },
+  ])
+
+  const statusCounts = logs.reduce<Record<string, number>>((acc, log) => {
+    const key = (log.status || 'Info').toUpperCase()
+    acc[key] = (acc[key] || 0) + 1
+    return acc
+  }, {})
+  const topStatuses = Object.entries(statusCounts).sort((a, b) => b[1] - a[1])
+  builder.drawScorecard([
+    { label: 'Total Logs Rendered', value: String(logs.length), bullets: [`${new Set(logs.map((l) => l.role || 'System')).size} distinct roles`] },
+    { label: 'Status Breakdown', value: String(topStatuses.length), bullets: topStatuses.slice(0, 2).map(([status, count]) => `${count} ${status}`) },
+    { label: 'Scope', value: 'System-wide', bullets: ['Filtered security & audit log record'] },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Timestamp', width: 90 },
-    { header: 'Log ID / User', width: 100 },
-    { header: 'Role', width: 80 },
-    { header: 'Action Event', width: 172 },
-    { header: 'Status', width: 50, align: 'center' },
-    { header: 'IP Address', width: 40, align: 'right' },
+    { header: 'Timestamp', width: 88 },
+    { header: 'Log ID / User', width: 92 },
+    { header: 'Role', width: 62 },
+    { header: 'Action Event', width: 155 },
+    { header: 'Status', width: 55, align: 'center' },
+    { header: 'IP Address', width: 75, align: 'right' },
   ]
 
-  builder.drawTableHeader(cols)
+  const rows = logs.map((log) => [
+    log.timestamp || log.date || 'N/A',
+    log.employeeId || log.account || log.logId,
+    log.role || 'System',
+    log.action,
+    log.status || 'INFO',
+    log.ip || '—',
+  ])
+  builder.drawTable(cols, rows)
 
-  logs.forEach((log, idx) => {
-    builder.checkPageBreak(18, cols)
-    const { doc, margin } = builder
-
-    if (idx % 2 === 1) {
-      doc.setFillColor(...BRAND.ZEBRA_BG)
-      doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-    }
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-
-    const ts = log.timestamp || log.date || 'N/A'
-    const userStr = log.employeeId || log.account || log.logId
-    const roleStr = log.role || 'System'
-    const statusText = log.status || 'INFO'
-
-    doc.setTextColor(...BRAND.FOREGROUND)
-    doc.text(ts.slice(0, 18), margin + 6, builder.y)
-    doc.text(userStr.slice(0, 18), margin + 96, builder.y)
-    doc.text(roleStr.slice(0, 15), margin + 196, builder.y)
-    doc.text(log.action.slice(0, 32), margin + 276, builder.y)
-
-    // Status Badge
-    const statusColor = getStatusRGB(statusText)
-    doc.setTextColor(...statusColor)
-    doc.setFont('helvetica', 'bold')
-    doc.text(statusText.toUpperCase().slice(0, 8), margin + 448 + 25, builder.y, { align: 'center' })
-
-    // IP
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...BRAND.MUTED)
-    doc.text((log.ip || '-').slice(0, 12), margin + 498 + 34, builder.y, { align: 'right' })
-
-    builder.y += 16
-  })
+  builder.drawCertification(
+    'I hereby certify that the security and audit log entries presented in this report have been extracted directly from the verified database records of the Lumière platform.',
+    [
+      { role: 'System Administrator / Auditor', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Operations Manager / Security Lead', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   builder.save(filename)
 }
@@ -530,52 +677,36 @@ export function exportWarehouseLogsPdf(
 ) {
   const builder = new PdfReportBuilder()
   builder.drawHeader('WAREHOUSE ACTIVITY & INVENTORY LOGS', [
-    `Total Log Entries: ${logs.length} movement records`,
-    'Scope: Warehouse Logistics Movement & Handover Log',
+    { label: 'Document Reference', value: makeReference('WHL') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Total Entries', value: `${logs.length} movement records` },
+  ])
+
+  builder.drawScorecard([
+    { label: 'Total Log Entries', value: String(logs.length), bullets: [`${new Set(logs.map((l) => l.assetName)).size} distinct assets`] },
+    { label: 'Scope', value: 'Warehouse', bullets: ['Logistics movement & handover log'] },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Timestamp', width: 90 },
-    { header: 'Log ID', width: 65 },
-    { header: 'Asset / Item Name', width: 157 },
-    { header: 'Transaction', width: 85 },
+    { header: 'Timestamp', width: 88 },
+    { header: 'Log ID', width: 55 },
+    { header: 'Asset / Item Name', width: 140 },
+    { header: 'Transaction', width: 75 },
     { header: 'Qty', width: 35, align: 'center' },
-    { header: 'Handled By', width: 100, align: 'right' },
+    { header: 'Handled By', width: 89, align: 'right' },
   ]
 
-  builder.drawTableHeader(cols)
+  const rows = logs.map((l) => [l.timestamp, l.logId, l.assetName, l.transaction, l.qty, l.handledBy])
+  builder.drawTable(cols, rows)
 
-  logs.forEach((l, idx) => {
-    builder.checkPageBreak(18, cols)
-    const { doc, margin } = builder
-
-    if (idx % 2 === 1) {
-      doc.setFillColor(...BRAND.ZEBRA_BG)
-      doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-    }
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(...BRAND.FOREGROUND)
-
-    doc.text(l.timestamp.slice(0, 18), margin + 6, builder.y)
-    doc.text(l.logId, margin + 96, builder.y)
-    doc.text(l.assetName.slice(0, 26), margin + 161, builder.y)
-
-    const txColor = getStatusRGB(l.transaction)
-    doc.setTextColor(...txColor)
-    doc.setFont('helvetica', 'bold')
-    doc.text(l.transaction.slice(0, 14), margin + 318, builder.y)
-
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...BRAND.FOREGROUND)
-    doc.text(String(l.qty), margin + 403 + 17, builder.y, { align: 'center' })
-
-    doc.setTextColor(...BRAND.MUTED)
-    doc.text(l.handledBy.slice(0, 18), margin + 438 + 94, builder.y, { align: 'right' })
-
-    builder.y += 16
-  })
+  builder.drawCertification(
+    'I hereby certify that the warehouse activity and inventory movement records presented in this report have been extracted directly from the verified database records of the Lumière platform.',
+    [
+      { role: 'Warehouse Lead / Auditor', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Operations Manager / Warehouse Lead', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   builder.save(filename)
 }
@@ -584,53 +715,47 @@ export function exportWarehouseLogsPdf(
 export function exportDispatchEventPdf(summary: EventDispatchSummary) {
   const builder = new PdfReportBuilder()
   builder.drawHeader('DISPATCH MANIFEST (EVENT SCOPE)', [
-    `Event: ${summary.eventTitle.toUpperCase()}`,
-    `Venue: ${summary.venue}   |   Target Date: ${summary.targetDate}`,
-    `Total Batches: ${summary.batches.length}   |   Handshake Rate: ${summary.handshakePercent}%`,
+    { label: 'Document Reference', value: makeReference('DSP') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Event', value: summary.eventTitle },
+    { label: 'Venue', value: summary.venue },
+    { label: 'Target Date', value: summary.targetDate },
+  ])
+
+  builder.drawScorecard([
+    { label: 'Total Batches', value: String(summary.batches.length) },
+    { label: 'Handshake Rate', value: `${summary.handshakePercent}%`, bullets: ['Expected vs. actual reconciliation'] },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Batch ID', width: 65 },
-    { header: 'Vehicle / Plate', width: 110 },
-    { header: 'Dir / Stage', width: 90 },
-    { header: 'Item Name', width: 147 },
+    { header: 'Batch ID', width: 55 },
+    { header: 'Vehicle / Plate', width: 100 },
+    { header: 'Dir / Stage', width: 80 },
+    { header: 'Item Name', width: 125 },
     { header: 'Plan/Act', width: 50, align: 'center' },
-    { header: 'Status', width: 70, align: 'right' },
+    { header: 'Status', width: 72, align: 'right' },
   ]
 
-  builder.drawTableHeader(cols)
+  const rows = summary.batches.flatMap((batch) =>
+    batch.reconciliation.map((item) => [
+      batch.id.slice(-8),
+      `${batch.vehicleType} (${batch.plateNumber})`,
+      `${batch.direction.toUpperCase()} · ${batch.stage}`,
+      item.itemName,
+      `${item.planned}/${item.actual}`,
+      item.status,
+    ]),
+  )
+  builder.drawTable(cols, rows)
 
-  let rowIdx = 0
-  summary.batches.forEach((batch) => {
-    batch.reconciliation.forEach((item) => {
-      builder.checkPageBreak(18, cols)
-      const { doc, margin } = builder
-
-      if (rowIdx % 2 === 1) {
-        doc.setFillColor(...BRAND.ZEBRA_BG)
-        doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-      }
-
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(8)
-      doc.setTextColor(...BRAND.FOREGROUND)
-
-      doc.text(batch.id.slice(-8), margin + 6, builder.y)
-      doc.text(`${batch.vehicleType} (${batch.plateNumber})`.slice(0, 20), margin + 71, builder.y)
-      doc.text(`${batch.direction.toUpperCase()} · ${batch.stage}`.slice(0, 16), margin + 181, builder.y)
-      doc.text(item.itemName.slice(0, 24), margin + 271, builder.y)
-
-      doc.text(`${item.planned}/${item.actual}`, margin + 418 + 25, builder.y, { align: 'center' })
-
-      const statusColor = getStatusRGB(item.status)
-      doc.setTextColor(...statusColor)
-      doc.setFont('helvetica', 'bold')
-      doc.text(item.status, margin + 468 + 64, builder.y, { align: 'right' })
-
-      rowIdx++
-      builder.y += 16
-    })
-  })
+  builder.drawCertification(
+    'I hereby certify that the dispatch batches, vehicle assignments, and reconciliation records presented in this manifest have been extracted directly from the verified operations records of the Lumière event management system.',
+    [
+      { role: 'Dispatch Coordinator', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Warehouse Lead', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   const slug = summary.eventTitle.toLowerCase().replace(/\s+/g, '-')
   builder.save(`dispatch-manifest-${slug}.pdf`)
@@ -641,54 +766,47 @@ export function exportDispatchConsolidatedPdf(summaries: EventDispatchSummary[])
   const builder = new PdfReportBuilder()
   const totalBatches = summaries.reduce((acc, s) => acc + s.batches.length, 0)
   builder.drawHeader('CONSOLIDATED DISPATCH MANIFEST', [
-    `Total Events: ${summaries.length}   |   Total Batches: ${totalBatches}`,
-    'Scope: Global Consolidated Warehouse Dispatch & Logistics Manifest',
+    { label: 'Document Reference', value: makeReference('CDM') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Scope', value: 'Global consolidated warehouse dispatch & logistics manifest' },
+  ])
+
+  builder.drawScorecard([
+    { label: 'Total Events', value: String(summaries.length) },
+    { label: 'Total Batches', value: String(totalBatches) },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Event Title', width: 110 },
-    { header: 'Vehicle / Plate', width: 100 },
-    { header: 'Dir / Stage', width: 85 },
-    { header: 'Item Name', width: 132 },
-    { header: 'Plan/Act', width: 45, align: 'center' },
-    { header: 'Status', width: 60, align: 'right' },
+    { header: 'Event Title', width: 100 },
+    { header: 'Vehicle / Plate', width: 95 },
+    { header: 'Dir / Stage', width: 75 },
+    { header: 'Item Name', width: 115 },
+    { header: 'Plan/Act', width: 42, align: 'center' },
+    { header: 'Status', width: 55, align: 'right' },
   ]
 
-  builder.drawTableHeader(cols)
+  const rows = summaries.flatMap((summary) =>
+    summary.batches.flatMap((batch) =>
+      batch.reconciliation.map((item) => [
+        summary.eventTitle,
+        `${batch.vehicleType} (${batch.plateNumber})`,
+        `${batch.direction.toUpperCase()} · ${batch.stage}`,
+        item.itemName,
+        `${item.planned}/${item.actual}`,
+        item.status,
+      ]),
+    ),
+  )
+  builder.drawTable(cols, rows)
 
-  let rowIdx = 0
-  summaries.forEach((summary) => {
-    summary.batches.forEach((batch) => {
-      batch.reconciliation.forEach((item) => {
-        builder.checkPageBreak(18, cols)
-        const { doc, margin } = builder
-
-        if (rowIdx % 2 === 1) {
-          doc.setFillColor(...BRAND.ZEBRA_BG)
-          doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-        }
-
-        doc.setFont('helvetica', 'normal')
-        doc.setFontSize(8)
-        doc.setTextColor(...BRAND.FOREGROUND)
-
-        doc.text(summary.eventTitle.slice(0, 18), margin + 6, builder.y)
-        doc.text(`${batch.vehicleType} (${batch.plateNumber})`.slice(0, 18), margin + 116, builder.y)
-        doc.text(`${batch.direction.toUpperCase()} · ${batch.stage}`.slice(0, 15), margin + 216, builder.y)
-        doc.text(item.itemName.slice(0, 22), margin + 301, builder.y)
-
-        doc.text(`${item.planned}/${item.actual}`, margin + 433 + 22, builder.y, { align: 'center' })
-
-        const statusColor = getStatusRGB(item.status)
-        doc.setTextColor(...statusColor)
-        doc.setFont('helvetica', 'bold')
-        doc.text(item.status, margin + 478 + 54, builder.y, { align: 'right' })
-
-        rowIdx++
-        builder.y += 16
-      })
-    })
-  })
+  builder.drawCertification(
+    'I hereby certify that the consolidated dispatch batches and reconciliation records presented in this manifest have been extracted directly from the verified operations records of the Lumière event management system.',
+    [
+      { role: 'Dispatch Coordinator', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Warehouse Lead', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   builder.save('dispatch-manifest-consolidated.pdf')
 }
@@ -704,58 +822,52 @@ export function exportReplenishmentDeficitPdf(lines: DeficitLine[], reportTitle?
   }, 0)
 
   builder.drawHeader(reportTitle ? reportTitle.toUpperCase() : 'REPLENISHMENT & DEFICIT REPORT', [
-    `Deficit Lines Flagged: ${lines.length} items`,
-    `Total Estimated Procurement Cost: PHP ${totalEstimatedCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-    'Scope: Active Deficit & Automated Procurement Candidates',
+    { label: 'Document Reference', value: makeReference('RDR') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Scope', value: 'Active deficit & automated procurement candidates' },
+  ])
+
+  builder.drawScorecard([
+    { label: 'Deficit Lines Flagged', value: String(lines.length) },
+    {
+      label: 'Est. Procurement Cost',
+      value: `PHP ${totalEstimatedCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+      bullets: [`${activeLines.length} active line${activeLines.length === 1 ? '' : 's'}`],
+    },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Item Name', width: 125 },
-    { header: 'Event / Source', width: 110 },
-    { header: 'Stock/Thresh', width: 75, align: 'center' },
-    { header: 'Est. Cost', width: 70, align: 'right' },
-    { header: 'Priority', width: 65, align: 'center' },
-    { header: 'Status', width: 87, align: 'right' },
+    { header: 'Item Name', width: 115 },
+    { header: 'Event / Source', width: 100 },
+    { header: 'Stock/Thresh', width: 68, align: 'center' },
+    { header: 'Est. Cost', width: 65, align: 'right' },
+    { header: 'Priority', width: 62, align: 'center' },
+    { header: 'Status', width: 79, align: 'right' },
   ]
 
-  builder.drawTableHeader(cols)
-
-  lines.forEach((l, idx) => {
-    builder.checkPageBreak(18, cols)
-    const { doc, margin } = builder
-
-    if (idx % 2 === 1) {
-      doc.setFillColor(...BRAND.ZEBRA_BG)
-      doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-    }
-
+  const rows = lines.map((l) => {
     const unitPrice = l.costPerUnit ?? (l.category === 'Drapery & Fabrics' ? 350 : 180)
     const required = l.quantityNeeded ?? Math.max(0, l.threshold - l.currentStock)
     const lineCost = required * unitPrice
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(...BRAND.FOREGROUND)
-
-    doc.text(l.itemName.slice(0, 20), margin + 6, builder.y)
-    doc.text((l.eventTitle || l.triggerSource).slice(0, 18), margin + 131, builder.y)
-
-    doc.text(`${l.currentStock} / ${l.threshold}`, margin + 241 + 37, builder.y, { align: 'center' })
-    doc.text(`₱${lineCost.toLocaleString()}`, margin + 316 + 64, builder.y, { align: 'right' })
-
-    // Priority Badge
-    const prioColor = l.priority === 'Critical' || l.priority === 'High' ? BRAND.DANGER : l.priority === 'Medium' ? BRAND.WARNING : BRAND.MUTED
-    doc.setTextColor(...prioColor)
-    doc.setFont('helvetica', 'bold')
-    doc.text(l.priority.slice(0, 10), margin + 386 + 32, builder.y, { align: 'center' })
-
-    // Status Badge
-    const statusColor = getStatusRGB(l.status)
-    doc.setTextColor(...statusColor)
-    doc.text(l.status.slice(0, 14), margin + 451 + 81, builder.y, { align: 'right' })
-
-    builder.y += 16
+    return [
+      l.itemName,
+      l.eventTitle || l.triggerSource,
+      `${l.currentStock} / ${l.threshold}`,
+      `₱${lineCost.toLocaleString()}`,
+      l.priority,
+      l.status,
+    ]
   })
+  builder.drawTable(cols, rows)
+
+  builder.drawCertification(
+    'I hereby certify that the deficit lines and procurement estimates presented in this report have been extracted directly from the verified inventory records of the Lumière platform.',
+    [
+      { role: 'Inventory Officer / Auditor', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Operations Manager / Warehouse Lead', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   builder.save('replenishment-deficit-report.pdf')
 }
@@ -764,49 +876,39 @@ export function exportReplenishmentDeficitPdf(lines: DeficitLine[], reportTitle?
 export function exportReplenishmentProcurementPdf(items: ProcurementItem[]) {
   const builder = new PdfReportBuilder()
   builder.drawHeader('PROCUREMENT REGISTER & STOCK AUDIT', [
-    `Total Register Items: ${items.length} inventory lines`,
-    'Scope: Master Procurement & Low-Stock Threshold Register',
+    { label: 'Document Reference', value: makeReference('PRA') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Total Register Items', value: `${items.length} inventory lines` },
+  ])
+
+  builder.drawScorecard([
+    { label: 'Total Register Items', value: String(items.length) },
+    { label: 'Scope', value: 'Master Register', bullets: ['Procurement & low-stock threshold register'] },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Asset ID', width: 75 },
-    { header: 'Item Name', width: 147 },
-    { header: 'Category', width: 110 },
-    { header: 'Stock/Thresh', width: 70, align: 'center' },
-    { header: 'Stock %', width: 50, align: 'center' },
-    { header: 'Status', width: 80, align: 'right' },
+    { header: 'Asset ID', width: 68 },
+    { header: 'Item Name', width: 128 },
+    { header: 'Category', width: 100 },
+    { header: 'Stock/Thresh', width: 66, align: 'center' },
+    { header: 'Stock %', width: 48, align: 'center' },
+    { header: 'Status', width: 79, align: 'right' },
   ]
 
-  builder.drawTableHeader(cols)
-
-  items.forEach((p, idx) => {
-    builder.checkPageBreak(18, cols)
-    const { doc, margin } = builder
-
-    if (idx % 2 === 1) {
-      doc.setFillColor(...BRAND.ZEBRA_BG)
-      doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-    }
-
+  const rows = items.map((p) => {
     const pct = p.threshold > 0 ? Math.round((p.currentStock / p.threshold) * 100) : 100
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(...BRAND.FOREGROUND)
-
-    doc.text(p.assetId, margin + 6, builder.y)
-    doc.text(p.name.slice(0, 24), margin + 81, builder.y)
-    doc.text(p.category.slice(0, 18), margin + 228, builder.y)
-    doc.text(`${p.currentStock} / ${p.threshold}`, margin + 338 + 35, builder.y, { align: 'center' })
-    doc.text(`${pct}%`, margin + 408 + 25, builder.y, { align: 'center' })
-
-    const statusColor = getStatusRGB(p.status)
-    doc.setTextColor(...statusColor)
-    doc.setFont('helvetica', 'bold')
-    doc.text(p.status.slice(0, 15), margin + 458 + 74, builder.y, { align: 'right' })
-
-    builder.y += 16
+    return [p.assetId, p.name, p.category, `${p.currentStock} / ${p.threshold}`, `${pct}%`, p.status]
   })
+  builder.drawTable(cols, rows)
+
+  builder.drawCertification(
+    'I hereby certify that the procurement register and stock threshold records presented in this report have been extracted directly from the verified inventory records of the Lumière platform.',
+    [
+      { role: 'Inventory Officer / Auditor', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Operations Manager / Warehouse Lead', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   builder.save('lumiere-procurement-register.pdf')
 }
@@ -834,18 +936,25 @@ export function exportCrewRosterPdf(
   const leadsCount = crewList.filter((c) => c.isTeamLead).length
 
   builder.drawHeader('EVENT CREW ROSTER & MANNING DELEGATION', [
-    `EVENT: ${eventInfo.eventTitle.toUpperCase()}`,
-    `Venue: ${eventInfo.venue}   |   Target Date: ${eventInfo.targetDate}`,
-    `Total Crew Allocated: ${crewList.length} staff (${leadsCount} Team Lead${leadsCount === 1 ? '' : 's'})`,
+    { label: 'Document Reference', value: makeReference('CRW') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Event', value: eventInfo.eventTitle },
+    { label: 'Venue', value: eventInfo.venue },
+    { label: 'Target Date', value: eventInfo.targetDate },
+  ])
+
+  builder.drawScorecard([
+    { label: 'Total Crew Allocated', value: String(crewList.length), bullets: [`${leadsCount} Team Lead${leadsCount === 1 ? '' : 's'}`, `${crewList.length - leadsCount} Crew`] },
   ])
 
   const cols: ColumnDef[] = [
-    { header: 'Staff Name', width: 110 },
-    { header: 'Role / Designation', width: 115 },
-    { header: 'Department / Zone', width: 105 },
-    { header: 'Lead Status', width: 70, align: 'center' },
-    { header: 'Duty / Date', width: 72 },
-    { header: 'Ground Sign-Off', width: 60, align: 'center' },
+    { header: 'Staff Name', width: 100 },
+    { header: 'Role / Designation', width: 105 },
+    { header: 'Department / Zone', width: 95 },
+    { header: 'Lead Status', width: 65, align: 'center' },
+    { header: 'Duty / Date', width: 70 },
+    { header: 'Sign-Off', width: 68, align: 'center' },
   ]
 
   // Group crew members by department
@@ -867,55 +976,24 @@ export function exportCrewRosterPdf(
     doc.text(`${dept.toUpperCase()} DEPARTMENT CREW (${deptMembers.length})`, margin + 8, builder.y + 11)
     builder.y += 18
 
-    builder.drawTableHeader(cols)
-
-    deptMembers.forEach((member, idx) => {
-      builder.checkPageBreak(18, cols)
-
-      if (idx % 2 === 1) {
-        doc.setFillColor(...BRAND.ZEBRA_BG)
-        doc.rect(margin, builder.y - 10, builder.printableWidth, 16, 'F')
-      }
-
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(8)
-      doc.setTextColor(...BRAND.FOREGROUND)
-
-      doc.text(member.name.slice(0, 18), margin + 6, builder.y)
-      doc.text(member.role.slice(0, 20), margin + 116, builder.y)
-      doc.text(`${member.department} ${member.dutyCategory ? `· ${member.dutyCategory}` : ''}`.slice(0, 18), margin + 231, builder.y)
-
-      // Team Lead Status Badge
-      if (member.isTeamLead) {
-        doc.setFillColor(...BRAND.PRIMARY)
-        doc.roundedRect(margin + 336 + 8, builder.y - 8, 54, 12, 3, 3, 'F')
-        doc.setFont('helvetica', 'bold')
-        doc.setFontSize(7)
-        doc.setTextColor(...BRAND.WHITE)
-        doc.text('TEAM LEAD', margin + 336 + 35, builder.y, { align: 'center' })
-      } else {
-        doc.setFont('helvetica', 'normal')
-        doc.setFontSize(8)
-        doc.setTextColor(...BRAND.MUTED)
-        doc.text('Crew', margin + 336 + 35, builder.y, { align: 'center' })
-      }
-
-      // Duty / Date
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(7.5)
-      doc.setTextColor(...BRAND.FOREGROUND)
-      doc.text(member.assignmentDate || eventInfo.targetDate, margin + 406 + 6, builder.y)
-
-      // Sign-off Checkbox Line
-      doc.setDrawColor(...BRAND.BORDER)
-      doc.setLineWidth(0.75)
-      doc.rect(margin + 478 + 24, builder.y - 7, 10, 10)
-
-      builder.y += 16
-    })
-
-    builder.y += 10
+    const rows = deptMembers.map((member) => [
+      member.name,
+      member.role,
+      `${member.department}${member.dutyCategory ? ` · ${member.dutyCategory}` : ''}`,
+      member.isTeamLead ? 'Team Lead' : 'Crew',
+      member.assignmentDate || eventInfo.targetDate,
+      '☐',
+    ])
+    builder.drawTable(cols, rows)
   })
+
+  builder.drawCertification(
+    'I hereby certify that the crew roster and manning delegation records presented in this report have been extracted directly from the verified operations records of the Lumière event management system.',
+    [
+      { role: 'Production Manager / Auditor', org: 'Lumière Asset & Event Management Platform', note: 'Generated & Verified' },
+      { role: 'Event Coordinator', org: 'Lumière Facilities & Logistics', note: 'Verified & Received' },
+    ],
+  )
 
   const filename = `crew-roster-${eventInfo.eventTitle.toLowerCase().replace(/\s+/g, '-')}.pdf`
   builder.save(filename)
