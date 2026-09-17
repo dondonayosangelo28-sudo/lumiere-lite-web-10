@@ -13,8 +13,7 @@ import { CompactStatStrip } from '@/components/CompactStatStrip'
 import type { PortalEvent } from '@/lib/types'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
 
-// Deterministic dispatch progress derived from an event's lifecycle status,
-// used to render the Operational Progress bars.
+// Deterministic dispatch progress derived from an event's lifecycle status.
 const dispatchProgress: Record<string, number> = {
   Settled: 100,
   Completed: 100,
@@ -173,33 +172,32 @@ export function EventRegistryPage() {
         <p className="mt-1 text-xs text-muted-foreground">
           Asset dispatch readiness across active event portfolios.
         </p>
-        <div className="mt-4 space-y-4">
+        <div className="mt-4 overflow-hidden rounded-lg border border-border/70">
+          <div className="hidden grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] gap-4 bg-muted/40 px-3 py-2 text-[0.55rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
+            <span>Event</span><span>Date</span><span>Progress</span><span>Status</span>
+          </div>
           {events.filter((e) => e.status !== 'Cancelled').length === 0 ? (
-            <p className="text-xs text-muted-foreground">No active events to track.</p>
+            <p className="px-3 py-4 text-xs text-muted-foreground">No active events to track.</p>
           ) : (
             events
               .filter((e) => e.status !== 'Cancelled')
               .map((e) => {
                 const pct = dispatchProgress[e.status] ?? 0
+                const shortStatus = e.status === 'In Production' ? 'In Progress' : e.status === 'Initialized' ? 'Planning' : e.status
                 return (
-                  <div key={e.id}>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="truncate text-xs font-medium text-card-foreground">
-                        {e.title}
-                      </span>
-                      <span className="shrink-0 text-[0.65rem] font-semibold text-muted-foreground">
-                        {pct}%
-                      </span>
+                  <div key={e.id} className="grid gap-2 border-t border-border/60 px-3 py-3 first:border-t-0 sm:grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] sm:items-center sm:gap-4">
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-medium text-card-foreground">{e.title}</p>
+                      <p className="mt-0.5 text-[0.62rem] text-muted-foreground sm:hidden">{e.targetDate || 'Date unavailable'}</p>
                     </div>
-                    <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className={cn(
-                          'h-full rounded-full transition-all',
-                          pct === 100 ? 'bg-emerald-500' : pct >= 50 ? 'bg-sky-500' : 'bg-amber-500',
-                        )}
-                        style={{ width: `${pct}%` }}
-                      />
+                    <span className="hidden text-xs text-muted-foreground sm:block">{e.targetDate || '—'}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted" aria-label={`${pct}% complete`}>
+                        <div className={cn('h-full rounded-full', pct === 100 ? 'bg-emerald-500' : pct >= 50 ? 'bg-sky-500' : 'bg-amber-500')} style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="text-[0.65rem] font-semibold text-muted-foreground">{pct}%</span>
                     </div>
+                    <span className={cn('text-[0.62rem] font-bold uppercase tracking-[0.1em]', statusStyles[e.status])}>{shortStatus}</span>
                   </div>
                 )
               })
