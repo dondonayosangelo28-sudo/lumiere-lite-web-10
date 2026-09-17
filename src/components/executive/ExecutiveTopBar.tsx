@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CalendarClock, LogOut, Moon, PackageSearch, ShieldAlert, Sun, User } from 'lucide-react'
+import { CalendarClock, LogOut, Moon, PackageSearch, Sun, User } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { usePortal } from '@/lib/store'
 import { useDarkMode } from '@/lib/theme'
@@ -12,7 +12,7 @@ import { NotificationsBell, type NotificationEntry } from '@/components/Notifica
 // swapping the plain bell for the shared NotificationsBell.
 export function ExecutiveTopBar() {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
-  const { events, damageExceptions, inventory } = usePortal()
+  const { events, inventory } = usePortal()
   const { dark, toggle } = useDarkMode()
   const [menuOpen, setMenuOpen] = useState(false)
   const [now, setNow] = useState(() => new Date())
@@ -59,18 +59,6 @@ export function ExecutiveTopBar() {
       })
     }
 
-    const pendingDamage = damageExceptions.find((d) => d.status === 'Pending Verdict')
-    if (pendingDamage) {
-      items.push({
-        id: `dm-${pendingDamage.id}`,
-        icon: ShieldAlert,
-        color: 'text-rose-500',
-        text: `Damage report ${pendingDamage.logId} for ${pendingDamage.assetName} needs a verdict.`,
-        time: 'Damage Validation',
-        unread: true,
-      })
-    }
-
     const restock = inventory.find((i) => i.status === 'Critical Deficit' || i.status === 'Low Stock')
     if (restock) {
       items.push({
@@ -84,7 +72,7 @@ export function ExecutiveTopBar() {
     }
 
     return items
-  }, [events, damageExceptions, inventory])
+  }, [events, inventory])
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">

@@ -8,7 +8,6 @@ export interface NavIntent {
   kind:
     | 'unlock-user'
     | 'view-event'
-    | 'review-damage'
     | 'reorder-asset'
     | 'configure-subrole'
   payload?: any
@@ -41,7 +40,7 @@ export function NavProvider({
       const param = new URLSearchParams(window.location.search).get('route')
       const path = window.location.pathname.replace('/', '')
       const r = (param || path) as Route
-      const valid = ['dashboard', 'registry', 'replenishment', 'logs', 'damage', 'inventory', 'assets', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview']
+      const valid = ['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'assets', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview']
       if (r && valid.includes(r)) {
         setRoute(r)
       }

@@ -1,5 +1,4 @@
 import { logAuditEvent } from '@/lib/audit-logger'
-import * as damageApi from '@/lib/damageApi'
 import { API_BASE_URL, getAuthToken } from '@/lib/apiConfig'
 import { createEventApi } from '@/lib/eventsApi'
 import {
@@ -1500,35 +1499,6 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true)
   const [inventory, setInventory] = useState<InventoryItem[]>(seedInventory)
 
-  // Hydrate damage reports across active events from the REST API endpoint
-  useEffect(() => {
-    let active = true
-    const loadReports = async () => {
-      const token = getAuthToken()
-      if (!token) return
-
-      try {
-        const { reports, connected } = await damageApi.fetchDamageReportsAllEvents(events)
-        if (!active) return
-        setIsBackendConnected(connected)
-        if (connected && reports.length > 0) {
-          setDamageExceptions(reports)
-        }
-      } catch (err) {
-        console.warn('[v0] Failed to load damage reports from backend:', err)
-        if (active) setIsBackendConnected(false)
-      }
-    }
-
-    loadReports()
-    const interval = setInterval(loadReports, 3000)
-
-    return () => {
-      active = false
-      clearInterval(interval)
-    }
-  }, [events])
-
   // Live, editable copy of each parent role's sub-roles (Roles & Sub-Roles
   // screen). Lifted here — rather than kept local to AdminRolesPage — so the
   // System Dashboard's Pending Actions panel can surface newly created
@@ -2075,7 +2045,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
                 ip: randomIp(),
                 status: 'Flagged',
               })
-              return i // unchanged — same user cannot finalize
+              return i // unchanged �� same user cannot finalize
             }
             pushLog({
               account: 'SYS-ROOT',
@@ -2132,19 +2102,6 @@ export function PortalProvider({ children }: { children: ReactNode }) {
           }
         }),
       )
-
-      // Async Backend Integration for Damage Sign-Off / Emergency Unblock
-      if (unblockMetadata) {
-        damageApi.adminUnblock(id, { verdict, note, unblockMetadata, selfValidation }).catch((err) => {
-          console.warn('[store] Admin unblock REST API call failed:', err)
-          setIsBackendConnected(false)
-        })
-      } else {
-        damageApi.recordSignOff(id, { verdict, note, initiatorRole, staffEmail, staffName, selfValidation }).catch((err) => {
-          console.warn('[store] Sign-off REST API call failed:', err)
-          setIsBackendConnected(false)
-        })
-      }
 
       // Side Effects on Asset Registry
       if (targetItem) {
@@ -2208,11 +2165,6 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
   const completeMaintenance = useCallback(
     (assetId: string, initiatorRole = 'Warehouse Ops') => {
-      damageApi.completeMaintenanceBackend(assetId).catch((err) => {
-        console.warn('[store] Complete maintenance REST API call failed:', err)
-        setIsBackendConnected(false)
-      })
-
       setInventory((prev) =>
         prev.map((item) => {
           if (item.id !== assetId && item.assetId !== assetId) return item
@@ -2244,28 +2196,6 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       )
       if (!target) return { success: false, reason: 'Event not found' }
 
-      const blockingItems = damageExceptions.filter((d) => {
-        const matchesEvent =
-          d.boundEvent === target.title || d.boundEvent === target.refId || d.boundEvent === target.id
-        const isBlocking =
-          d.status === 'Pending Verdict' ||
-          d.status === 'Held for Audit' ||
-          d.status === 'Pending Second Sign-off'
-        return matchesEvent && isBlocking
-      })
-
-      if (blockingItems.length > 0) {
-        return {
-          success: false,
-          reason: `${blockingItems.length} pending damage item(s) must be resolved first`,
-        }
-      }
-
-      damageApi.checkSettlementBlockedBackend(eventId).catch((err) => {
-        console.warn('[store] Settlement check REST API call failed:', err)
-        setIsBackendConnected(false)
-      })
-
       setEvents((prev) =>
         prev.map((e) => (e.id === target.id ? { ...e, status: 'Settled' } : e)),
       )
@@ -2281,7 +2211,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
       return { success: true }
     },
-    [events, damageExceptions, pushLog],
+    [events, pushLog],
   )
 
   const addInventoryItem = useCallback(

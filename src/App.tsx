@@ -20,7 +20,6 @@ import { EventDashboardPage } from '@/pages/EventDashboardPage'
 import { EventRegistryPage } from '@/pages/EventRegistryPage'
 import { ReplenishmentPage } from '@/pages/ReplenishmentPage'
 import { ActivityLogsPage } from '@/pages/ActivityLogsPage'
-import { DamageValidationPage } from '@/pages/DamageValidationPage'
 import { InventoryStockPage } from '@/pages/InventoryStockPage'
 import { WarehouseLogsPage } from '@/pages/WarehouseLogsPage'
 import { CrewRosterPage } from '@/pages/CrewRosterPage'
@@ -80,8 +79,6 @@ function Router() {
       return <ReplenishmentPage />
     case 'logs':
       return <ActivityLogsPage />
-    case 'damage':
-      return <DamageValidationPage />
     case 'inventory':
       return <InventoryStockPage />
     case 'warehouse-logs':
@@ -155,7 +152,7 @@ function Gate() {
   const hasWorkforceHighlight =
     new URLSearchParams(window.location.search).has('highlight') || Boolean(window.history.state?.highlight)
   const urlParamRoute = (new URLSearchParams(window.location.search).get('route') || window.location.pathname.replace('/', '')) as Route | null
-  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'damage', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets'])
+  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets'])
   const targetUrlRoute = urlParamRoute && validRoutes.has(urlParamRoute) ? urlParamRoute : null
 
   const initialRoute = targetUrlRoute || (isManningOfficer

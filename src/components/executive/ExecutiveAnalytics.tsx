@@ -233,7 +233,6 @@ export function ReportDistributionCard({
 
 /* ----------------------------- Trend Analytics Line Chart ----------------------------- */
 
-type TrendMode = 'events' | 'damage'
 
 const eventActivityData = [
   { label: 'Jan', value: 6 },
@@ -244,28 +243,16 @@ const eventActivityData = [
   { label: 'Jun', value: 29 },
 ]
 
-const damageAdjudicationData = [
-  { label: 'Jan', value: 14 },
-  { label: 'Feb', value: 19 },
-  { label: 'Mar', value: 12 },
-  { label: 'Apr', value: 8 },
-  { label: 'May', value: 15 },
-  { label: 'Jun', value: 6 },
-]
-
-const TREND_TABS: { value: TrendMode; label: string }[] = [
-  { value: 'events', label: 'Event Activity' },
-  { value: 'damage', label: 'Damage Adjudication' },
-]
+const TREND_TABS = [{ value: 'events', label: 'Event Activity' }] as const
 
 export function ExecutiveTrendAnalyticsCard({
   onViewRegistry,
 }: {
   onViewRegistry?: () => void
 }) {
-  const [mode, setMode] = useState<TrendMode>('events')
-  const data = mode === 'events' ? eventActivityData : damageAdjudicationData
-  const title = mode === 'events' ? 'Event Activity' : 'Damage Adjudication'
+  const mode = 'events'
+  const data = eventActivityData
+  const title = 'Event Activity'
 
   const geometry = useMemo(() => {
     const w = 640
@@ -312,7 +299,6 @@ export function ExecutiveTrendAnalyticsCard({
               type="button"
               role="tab"
               aria-selected={mode === tab.value}
-              onClick={() => setMode(tab.value)}
               className={cn(
                 'rounded px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] transition',
                 mode === tab.value

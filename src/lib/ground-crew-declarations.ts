@@ -77,19 +77,6 @@ export function submitGroundCrewDeclaration(input: Omit<GroundCrewDeclaration, '
         submittedBy: input.submittedBy,
       }).catch((err) => console.warn('[ground-crew-declarations] Failed to enqueue offline declaration:', err))
     })
-  } else {
-    // Online: Post directly to backend API endpoint
-    import('./damageApi').then(({ createDamageReport }) => {
-      createDamageReport({
-        boundEvent: input.eventName,
-        assetName: input.item,
-        damageType: input.condition === 'Damaged' ? 'Critical' : 'Missing',
-        notes: input.description,
-        reportingOfficer: input.submittedBy,
-      }).catch((err) => {
-        console.warn('[ground-crew-declarations] Backend damage report submit skipped/failed:', err)
-      })
-    })
   }
 }
 
