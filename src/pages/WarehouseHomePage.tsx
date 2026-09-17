@@ -47,7 +47,7 @@ export function WarehouseHomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" data-page="warehouse-dashboard">
       <div className="mx-auto flex max-w-[90rem] w-full flex-col gap-8 sm:gap-10 px-6 py-8 sm:px-10 sm:py-12">
         {/* Header section — untouched */}
         <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
