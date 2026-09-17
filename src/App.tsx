@@ -171,7 +171,7 @@ function Gate() {
             : isPlanner
             ? 'canvas'
             : isWarehouse
-              ? 'overview'
+              ? 'warehouse-dashboard'
               : hasWorkforceHighlight
                 ? 'workforce'
                 : isExecutive
