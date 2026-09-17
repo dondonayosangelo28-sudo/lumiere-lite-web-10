@@ -175,15 +175,15 @@ export function EventRegistryPage() {
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
         </div>
-        <div className="mt-3 max-h-[25rem] overflow-y-auto rounded-lg border border-border/70">
+        <div className="mt-3 max-h-[25rem] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-lg border border-border/70">
           <div className="hidden grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] gap-4 bg-muted/40 px-3 py-2 text-[0.55rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
             <span>Event</span><span>Date</span><span>Progress</span><span>Status</span>
           </div>
           {progressEvents.length === 0 ? (
             <p className="px-3 py-4 text-xs text-muted-foreground">No active events match your search.</p>
           ) : (
-            progressEvents.slice(0, 7).map((e) => {
-                const pct = e.progress ?? dispatchProgress[e.status] ?? 0
+            progressEvents.map((e) => {
+                const pct = dispatchProgress[e.status] ?? 0
                 const shortStatus = e.status === 'In Production' ? 'In Progress' : e.status === 'Initialized' ? 'Planning' : e.status
                 return (
                   <button type="button" key={e.id} onClick={() => openView(e)} className="grid w-full gap-2 border-t border-border/60 px-3 py-3 text-left first:border-t-0 transition hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:grid-cols-[minmax(0,1.8fr)_minmax(7rem,0.7fr)_7rem_minmax(8rem,0.8fr)] sm:items-center sm:gap-4">
