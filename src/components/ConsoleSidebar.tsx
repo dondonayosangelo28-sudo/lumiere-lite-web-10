@@ -91,9 +91,8 @@ export function ConsoleSidebar({
           L
         </span>
 
-        {hasCompanionPanel && (
+        {isPlanner && (
           <>
-            {/* Companion Drawer Toggle Button */}
             <button
               type="button"
               onClick={() => setCompanionOpen((prev) => !prev)}
