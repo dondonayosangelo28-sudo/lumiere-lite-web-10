@@ -127,7 +127,7 @@ export function ActivityLogsPage() {
       ) : (
         <>
       {/* Status filters + export */}
-      <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {statusOptions.map((status) => (
             <button
