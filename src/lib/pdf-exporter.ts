@@ -26,9 +26,9 @@ interface ColumnDef {
 class PdfReportBuilder {
   doc: jsPDF
   margin = 40
-  pageWidth = 612 // Letter width in pt
-  pageHeight = 792 // Letter height in pt
-  printableWidth = 532
+  pageWidth = 595.28
+  pageHeight = 841.89
+  printableWidth = this.pageWidth - this.margin * 2
   y = 40
   currentPage = 1
 

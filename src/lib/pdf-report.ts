@@ -1,6 +1,15 @@
 import jsPDF from 'jspdf'
 
-type PdfRow = Array<string | number>
+type PdfRow = Array<string | number | null | undefined>
+
+const BRAND = {
+  PRIMARY: [155, 107, 63] as [number, number, number],
+  FOREGROUND: [39, 37, 34] as [number, number, number],
+  MUTED: [117, 111, 103] as [number, number, number],
+  CARD_BG: [251, 248, 242] as [number, number, number],
+  BORDER: [216, 206, 192] as [number, number, number],
+  ZEBRA_BG: [253, 251, 247] as [number, number, number],
+}
 
 export function downloadPdfReport({
   filename,
@@ -19,81 +28,109 @@ export function downloadPdfReport({
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 42
-  const usableWidth = pageWidth - margin * 2
-  const headerHeight = 86
-  const rowHeight = 22
-  const columnWidths = columns.map((_, index) => {
-    const weight = index === 0 ? 1.35 : index === columns.length - 1 ? 1.2 : 1
-    return weight
-  })
-  const widthTotal = columnWidths.reduce((sum, value) => sum + value, 0)
-  const widths = columnWidths.map((value) => (value / widthTotal) * usableWidth)
+  const width = pageWidth - margin * 2
+  const rowHeight = columns.length > 8 ? 30 : 25
+  const weights = columns.map((_, index) => (index === 0 ? 1.35 : index === columns.length - 1 ? 1.2 : 1))
+  const weightTotal = weights.reduce((sum, value) => sum + value, 0)
+  const widths = weights.map((value) => (value / weightTotal) * width)
+  let y = 42
 
-  const drawHeader = () => {
-    doc.setFillColor(25, 24, 22)
-    doc.rect(0, 0, pageWidth, headerHeight, 'F')
-    doc.setTextColor(245, 241, 233)
+  const drawRunningHeader = () => {
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(18)
-    doc.text(title, margin, 36)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(190, 182, 171)
-    doc.text(subtitle, margin, 56)
-    doc.text(`Generated ${new Date().toLocaleString()}`, margin, 71)
+    doc.setFontSize(7)
+    doc.setTextColor(...BRAND.MUTED)
+    doc.text('LUMIÈRE  /  OPERATIONS REPORT', margin, 26)
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, 32, pageWidth - margin, 32)
   }
 
-  const drawTableHeader = (y: number) => {
-    doc.setFillColor(221, 184, 132)
-    doc.rect(margin, y, usableWidth, rowHeight, 'F')
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(8)
-    doc.setTextColor(36, 31, 26)
-    let x = margin
-    columns.forEach((column, index) => {
-      doc.text(column, x + 6, y + 14, { maxWidth: widths[index] - 12 })
-      x += widths[index]
-    })
-  }
-
-  const drawRow = (row: PdfRow, y: number, index: number) => {
-    doc.setFillColor(index % 2 === 0 ? 250 : 243, index % 2 === 0 ? 248 : 239, index % 2 === 0 ? 244 : 232)
-    doc.rect(margin, y, usableWidth, rowHeight, 'F')
-    doc.setDrawColor(224, 218, 208)
-    doc.line(margin, y + rowHeight, margin + usableWidth, y + rowHeight)
+  const drawFooter = (page: number, totalPages: number) => {
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, pageHeight - 39, pageWidth - margin, pageHeight - 39)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(7.5)
-    doc.setTextColor(55, 51, 46)
-    let x = margin
-    row.forEach((value, cellIndex) => {
-      doc.text(String(value ?? '—'), x + 6, y + 14, { maxWidth: widths[cellIndex] - 12 })
-      x += widths[cellIndex]
-    })
+    doc.setTextColor(...BRAND.MUTED)
+    doc.text('Lumière Management System · Confidential Operations Report', margin, pageHeight - 25)
+    doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 25, { align: 'right' })
   }
 
-  drawHeader()
-  let y = headerHeight + 24
-  drawTableHeader(y)
-  y += rowHeight
-  rows.forEach((row, index) => {
-    if (y + rowHeight > pageHeight - margin) {
-      doc.addPage()
-      drawHeader()
-      y = headerHeight + 24
-      drawTableHeader(y)
-      y += rowHeight
-    }
-    drawRow(row, y, index)
+  const drawTableHeader = () => {
+    doc.setFillColor(...BRAND.CARD_BG)
+    doc.rect(margin, y, width, rowHeight, 'F')
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(columns.length > 8 ? 6.5 : 7)
+    doc.setTextColor(...BRAND.PRIMARY)
+    let x = margin
+    columns.forEach((column, index) => {
+      doc.text(column.toUpperCase(), x + 6, y + rowHeight - 9, { maxWidth: widths[index] - 12 })
+      x += widths[index]
+    })
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, y + rowHeight, margin + width, y + rowHeight)
     y += rowHeight
+  }
+
+  const drawRow = (row: PdfRow, index: number) => {
+    if (index % 2 === 1) {
+      doc.setFillColor(...BRAND.ZEBRA_BG)
+      doc.rect(margin, y, width, rowHeight, 'F')
+    }
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(columns.length > 8 ? 6.5 : 7.5)
+    doc.setTextColor(...BRAND.FOREGROUND)
+    let x = margin
+    row.forEach((value, cellIndex) => {
+      doc.text(String(value ?? '—'), x + 6, y + rowHeight - 9, { maxWidth: widths[cellIndex] - 12 })
+      x += widths[cellIndex]
+    })
+    doc.setDrawColor(...BRAND.BORDER)
+    doc.line(margin, y + rowHeight, margin + width, y + rowHeight)
+    y += rowHeight
+  }
+
+  doc.setDrawColor(...BRAND.BORDER)
+  doc.setLineWidth(0.7)
+  doc.rect(22, 22, pageWidth - 44, pageHeight - 44)
+  doc.setFillColor(...BRAND.PRIMARY)
+  doc.rect(margin, y, 4, 70, 'F')
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(...BRAND.PRIMARY)
+  doc.text('LUMIÈRE', margin + 14, y + 15)
+  doc.setFont('times', 'bold')
+  doc.setFontSize(20)
+  doc.setTextColor(...BRAND.FOREGROUND)
+  doc.text(title.toUpperCase(), margin + 14, y + 39, { maxWidth: width - 28 })
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(...BRAND.MUTED)
+  doc.text(subtitle, margin + 14, y + 57, { maxWidth: width - 28 })
+  y += 92
+  doc.setFontSize(7.5)
+  doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y)
+  y += 18
+  drawTableHeader()
+
+  rows.forEach((row, index) => {
+    if (y + rowHeight > pageHeight - 55) {
+      doc.addPage()
+      y = 42
+      drawRunningHeader()
+      y += 20
+      drawTableHeader()
+    }
+    drawRow(row, index)
   })
 
   const totalPages = doc.getNumberOfPages()
   for (let page = 1; page <= totalPages; page += 1) {
     doc.setPage(page)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(7)
-    doc.setTextColor(125, 117, 106)
-    doc.text(`Lumiere · Page ${page} of ${totalPages}`, margin, pageHeight - 18)
+    drawRunningHeader()
+    drawFooter(page, totalPages)
   }
   doc.save(filename)
 }
+
+export type { PdfRow }
+
+export default downloadPdfReport
