@@ -58,8 +58,7 @@ class PdfReportBuilder {
     const { doc, pageWidth, pageHeight } = this
     doc.setDrawColor(...BRAND.BORDER)
     doc.setLineWidth(1.1)
-    doc.line(22, 28, 22, pageHeight - 28)
-    doc.line(pageWidth - 22, 28, pageWidth - 22, pageHeight - 28)
+    doc.roundedRect(22, 28, pageWidth - 44, pageHeight - 56, 5, 5, 'S')
   }
 
   drawRunningHeader() {
