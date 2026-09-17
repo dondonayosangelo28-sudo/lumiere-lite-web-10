@@ -57,13 +57,6 @@ function StatCard({
   )
 }
 
-// Map a staff role onto the donut segment label it belongs to.
-function roleToSegment(role: string): string {
-  if (role === 'Warehouse Manager') return 'Warehouse Ops Manager'
-  if (role === 'Ground Crew') return 'Field & Production Crew'
-  return role
-}
-
 /* ----------------------------- Placeholder for not-yet-built destinations ----------------------------- */
 
 function AdminPlaceholder({ id }: { id: AdminDestinationId }) {
@@ -105,10 +98,10 @@ export function AdminSystemDashboardPage() {
   ).length
 
   const roleCounts = useMemo(() => {
-    const tally: Record<string, number> = {}
-    staff.forEach((s) => {
-      const seg = roleToSegment(s.role)
-      tally[seg] = (tally[seg] ?? 0) + 1
+    const tally: Record<string, number> = { Admin: 0, Executive: 0, WOM: 0 }
+    staff.filter((s) => s.recordKind !== 'employee-record').forEach((s) => {
+      const seg = s.role === 'WOM (Warehouse Operations Manager)' ? 'WOM' : s.role
+      if (seg in tally) tally[seg] += 1
     })
     return tally
   }, [staff])

@@ -13,6 +13,7 @@ import {
   type SetStateAction,
 } from 'react'
 import { STAFF_ROLES } from '@/lib/types'
+import { SECURITY_EVENTS } from '@/lib/security-events'
 import type {
   AccountStatus,
   ActivityLog,
@@ -89,7 +90,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Santos',
     email: 'juandelacruz@lumiere.com',
     contact: '09123456789',
-    role: 'Event Planner',
+    role: 'Executive',
     sessionStatus: 'Active Session',
     lastAccess: 'May 14, 2026 · 08:42',
     dateAdded: 'Jan 08, 2026',
@@ -115,7 +116,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Elena',
     email: 'maria.rodriguez@lumiere.com',
     contact: '09111222333',
-    role: 'Event Planner',
+    role: 'Executive',
     sessionStatus: 'Offline Session',
     lastAccess: 'May 26, 2026 · 14:22',
     dateAdded: 'Feb 04, 2026',
@@ -128,7 +129,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Ming',
     email: 'wei.chen@lumiere.com',
     contact: '09222333444',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'May 28, 2026 · 09:15',
     dateAdded: 'Feb 19, 2026',
@@ -141,7 +142,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Chioma',
     email: 'amara.okafor@lumiere.com',
     contact: '09333444555',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'May 28, 2026 · 11:30',
     dateAdded: 'Mar 03, 2026',
@@ -181,7 +182,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'James',
     email: 'david.thompson@lumiere.com',
     contact: '09666777888',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'May 28, 2026 · 10:20',
     dateAdded: 'Apr 17, 2026',
@@ -194,7 +195,7 @@ const seedStaffRaw: Staff[] = [
     middleName: 'Ho',
     email: 'min.park@lumiere.com',
     contact: '09777888999',
-    role: 'Event Planner',
+    role: 'Executive',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     accountStatus: 'Pending',
@@ -265,7 +266,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'amara.okafor@lumiere.com',
     contact: '09171112233',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 02, 2026 · 10:15',
     dateAdded: 'Jun 26, 2026',
@@ -278,7 +279,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'mateo.santos@lumiere.com',
     contact: '09172223344',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 02, 2026 · 11:20',
     dateAdded: 'Jun 27, 2026',
@@ -291,7 +292,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'camille.dubois@lumiere.com',
     contact: '09173334455',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 03, 2026 · 09:00',
     dateAdded: 'Jun 28, 2026',
@@ -304,7 +305,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'jihoon.kim@lumiere.com',
     contact: '09174445566',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 03, 2026 · 14:10',
     dateAdded: 'Jun 29, 2026',
@@ -317,7 +318,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'lucia.alvarez@lumiere.com',
     contact: '09175556677',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 04, 2026 · 08:45',
     dateAdded: 'Jun 30, 2026',
@@ -330,7 +331,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'antoine.moreau@lumiere.com',
     contact: '09176667788',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jun 04, 2026 · 13:30',
     dateAdded: 'Jul 01, 2026',
@@ -343,7 +344,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'ren.nakamura@lumiere.com',
     contact: '09177778899',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 02, 2026 · 10:00',
     dateAdded: 'Jul 02, 2026',
@@ -356,7 +357,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'aarav.gupta@lumiere.com',
     contact: '09178889900',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 03, 2026 · 15:45',
     dateAdded: 'Jul 03, 2026',
@@ -369,7 +370,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'freja.larsson@lumiere.com',
     contact: '09179990011',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 04, 2026 · 11:15',
     dateAdded: 'Jul 04, 2026',
@@ -382,7 +383,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'gabriel.silva@lumiere.com',
     contact: '09170001122',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 05, 2026 · 09:30',
     dateAdded: 'Jul 05, 2026',
@@ -395,7 +396,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'matteo.conti@lumiere.com',
     contact: '09171113355',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 06, 2026 · 16:20',
     dateAdded: 'Jul 06, 2026',
@@ -408,7 +409,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'zoe.novak@lumiere.com',
     contact: '09172224466',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 07, 2026 · 08:15',
     dateAdded: 'Jul 07, 2026',
@@ -421,7 +422,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'lukas.fischer@lumiere.com',
     contact: '09173335577',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 08, 2026 · 14:00',
     dateAdded: 'Jul 08, 2026',
@@ -434,7 +435,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'meiling.chen@lumiere.com',
     contact: '09174446688',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 09, 2026 · 10:45',
     dateAdded: 'Jul 09, 2026',
@@ -447,7 +448,7 @@ const seedStaffRaw: Staff[] = [
     middleName: '',
     email: 'piotr.kowalski@lumiere.com',
     contact: '09175557799',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Active Session',
     lastAccess: 'Jul 10, 2026 · 12:30',
     dateAdded: 'Jul 10, 2026',
@@ -465,7 +466,7 @@ const seedEmployeeRecords: Staff[] = [
     middleName: '',
     email: '',
     contact: '09211334455',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     recordKind: 'employee-record',
@@ -481,7 +482,7 @@ const seedEmployeeRecords: Staff[] = [
     middleName: '',
     email: '',
     contact: '09455778899',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     recordKind: 'employee-record',
@@ -497,7 +498,7 @@ const seedEmployeeRecords: Staff[] = [
     middleName: '',
     email: '',
     contact: '09677889900',
-    role: 'Field & Production Crew',
+    role: 'WOM',
     sessionStatus: 'Offline Session',
     lastAccess: '—',
     recordKind: 'employee-record',
@@ -1373,9 +1374,9 @@ interface PortalContextValue {
   addStaff: (draft: NewStaffDraft) => Promise<void>
   addEmployeeRecord: (draft: NewEmployeeRecordDraft) => void
   removeStaff: (id: string) => Promise<void>
-  toggleSuspend: (id: string) => Promise<void>
+  toggleSuspend: (id: string, reason?: string) => Promise<void>
   updateStaff: (staff: Staff) => void
-  forceLogout: (id: string) => void
+  forceLogout: (id: string, reason?: string) => void
   addEvent: (draft: NewEventDraft, initiatorRole?: string) => void
   updateEvent: (id: string, draft: Partial<PortalEvent>, initiatorRole?: string) => void
   resolveUserAction: (id: string) => void
@@ -1675,12 +1676,32 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     [pushLog, staff],
   )
 
+  const recordAdminSecurityEvent = useCallback((target: Staff, action: string, reason: string) => {
+    const now = new Date()
+    SECURITY_EVENTS.unshift({
+      id: `sec-admin-${Date.now()}`,
+      timestamp: now.toLocaleTimeString([], { hour12: false }),
+      date: now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      logId: `SEC-${Math.floor(10000 + Math.random() * 89999)}`,
+      employeeId: 'SYS-ROOT',
+      role: 'Admin',
+      action: `${action}: ${target.firstName} ${target.surname}`,
+      status: 'Success',
+      ip: '10.0.0.1',
+      terminal: 'CONSOLE',
+      token: 'SYS-KEY',
+      note: `Affected account: ${target.employeeId}. Reason: ${reason}`,
+      dotColor: 'bg-emerald-400',
+    })
+  }, [])
+
   const toggleSuspend = useCallback(
-    async (id: string) => {
+    async (id: string, reason = 'Administrative status change') => {
       const target = staff.find((s) => s.id === id)
       if (!target) return
       const suspending = (target.accountStatus ?? 'Active') !== 'Suspended'
       const fullName = `${target.firstName} ${target.surname}`
+      recordAdminSecurityEvent(target, suspending ? 'Account Suspended' : 'Account Reactivated', reason)
 
       // Employee records carry no portal session and never hit the database —
       // "suspend" archives them; "reactivate" restores them from the archive.
@@ -1731,7 +1752,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         status: 'Success',
       })
     },
-    [pushLog, staff],
+    [pushLog, recordAdminSecurityEvent, staff],
   )
 
   const addEmployeeRecord = useCallback(
@@ -1747,7 +1768,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         middleName: '',
         email: '',
         contact: draft.contact,
-        role: 'Field & Production Crew',
+        role: 'WOM',
         sessionStatus: 'Offline Session',
         lastAccess: '—',
         recordKind: 'employee-record',
@@ -1797,9 +1818,10 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   )
 
   const forceLogout = useCallback(
-    (id: string) => {
+    (id: string, reason = 'Administrative session termination') => {
       const target = staff.find((s) => s.id === id)
       if (!target) return
+      recordAdminSecurityEvent(target, 'Force Logout', reason)
       setStaff((prev) =>
         prev.map((s) => (s.id === id ? { ...s, sessionStatus: 'Offline Session' } : s)),
       )
@@ -1812,7 +1834,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         status: 'Success',
       })
     },
-    [pushLog, staff],
+    [pushLog, recordAdminSecurityEvent, staff],
   )
 
   const addEvent = useCallback(

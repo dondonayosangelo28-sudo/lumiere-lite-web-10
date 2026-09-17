@@ -15,7 +15,7 @@ import { SECURITY_EVENTS } from '@/lib/security-events'
 // resets. A cross-account view — every entry carries the account type so the
 // Admin can slice the trail by role alongside the status pills.
 type AuditStatus = 'Success' | 'Failed' | 'Blocked' | 'Warning'
-type AccountType = 'Admin' | 'Executive' | 'Event Planner' | 'Warehouse Ops' | 'Ground Crew'
+type AccountType = 'Admin' | 'Executive' | 'WOM' | 'On-call' | 'Seasonal'
 
 
 
@@ -26,9 +26,9 @@ const ACCOUNT_FILTERS = [
   'All',
   'Admin',
   'Executive',
-  'Event Planner',
-  'Warehouse Ops',
-  'Ground Crew',
+  'WOM',
+  'On-call',
+  'Seasonal',
 ] as const
 type AccountFilter = (typeof ACCOUNT_FILTERS)[number]
 
@@ -43,9 +43,9 @@ const statusStyles: Record<AuditStatus, string> = {
 const roleStyles: Record<AccountType, string> = {
   Admin: 'bg-emerald-500/12 text-emerald-300',
   Executive: 'bg-indigo-500/15 text-indigo-300',
-  'Event Planner': 'bg-sky-500/15 text-sky-300',
-  'Warehouse Ops': 'bg-amber-500/15 text-amber-300',
-  'Ground Crew': 'bg-rose-500/15 text-rose-300',
+  WOM: 'bg-amber-500/15 text-amber-300',
+  'On-call': 'bg-sky-500/15 text-sky-300',
+  Seasonal: 'bg-rose-500/15 text-rose-300',
 }
 
 /* const LEGACY_SECURITY_AUDIT_LOG: SecurityAuditEntry[] = [
