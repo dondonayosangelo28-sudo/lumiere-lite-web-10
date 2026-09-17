@@ -1,5 +1,5 @@
 export type SecurityEventStatus = 'Success' | 'Failed' | 'Blocked' | 'Warning'
-export type SecurityEventAccount = 'Admin' | 'Executive' | 'Event Planner' | 'Warehouse Ops' | 'Ground Crew'
+export type SecurityEventAccount = 'Admin' | 'Executive' | 'Executive' | 'WOM' | 'WOM'
 
 export interface SecurityEvent {
   id: string
@@ -24,22 +24,22 @@ export const SECURITY_EVENTS: SecurityEvent[] = [
     note: 'Triggered by 9 failed logins in a row.', dotColor: 'bg-rose-400',
   },
   {
-    id: 'sec-2', timestamp: '08:41:03', date: 'May 14, 2026', logId: 'SEC-99280', employeeId: 'LM-0004', role: 'Event Planner',
+    id: 'sec-2', timestamp: '08:41:03', date: 'May 14, 2026', logId: 'SEC-99280', employeeId: 'LM-0004', role: 'Executive',
     action: 'Login failed — wrong email or password', status: 'Failed', ip: '192.168.4.60', terminal: 'T-07', token: 'UID-4802',
     note: 'A single failed login attempt.', dotColor: 'bg-amber-400',
   },
   {
-    id: 'sec-3', timestamp: '08:12:57', date: 'May 14, 2026', logId: 'SEC-99276', employeeId: 'LM-0013', role: 'Ground Crew',
+    id: 'sec-3', timestamp: '08:12:57', date: 'May 14, 2026', logId: 'SEC-99276', employeeId: 'LM-0013', role: 'WOM',
     action: 'Login attempted from an unrecognized device', status: 'Warning', ip: '172.16.8.42', terminal: 'UNKNOWN', token: 'UID-6120',
     note: 'New/unknown device sign-in attempt.', dotColor: 'bg-sky-400',
   },
   {
-    id: 'sec-4', timestamp: '07:55:19', date: 'May 14, 2026', logId: 'SEC-99275', employeeId: 'LM-0009', role: 'Warehouse Ops',
+    id: 'sec-4', timestamp: '07:55:19', date: 'May 14, 2026', logId: 'SEC-99275', employeeId: 'LM-0009', role: 'WOM',
     action: 'User signed in successfully', status: 'Success', ip: '10.0.2.37', terminal: 'T-11', token: 'UID-5592',
     note: 'Unusual sign-in from a new device.', dotColor: 'bg-emerald-400',
   },
   {
-    id: 'sec-5', timestamp: '07:31:44', date: 'May 14, 2026', logId: 'SEC-99271', employeeId: 'LM-0009', role: 'Warehouse Ops',
+    id: 'sec-5', timestamp: '07:31:44', date: 'May 14, 2026', logId: 'SEC-99271', employeeId: 'LM-0009', role: 'WOM',
     action: 'Request for higher access was denied', status: 'Blocked', ip: '10.0.2.37', terminal: 'T-11', token: 'UID-5592',
     note: 'User asked for permissions beyond their role.', dotColor: 'bg-rose-400',
   },
@@ -54,7 +54,7 @@ export const SECURITY_EVENTS: SecurityEvent[] = [
     note: 'User asked to reset their password.', dotColor: 'bg-amber-400',
   },
   {
-    id: 'sec-8', timestamp: '06:22:35', date: 'May 14, 2026', logId: 'SEC-99257', employeeId: 'LM-0013', role: 'Ground Crew',
+    id: 'sec-8', timestamp: '06:22:35', date: 'May 14, 2026', logId: 'SEC-99257', employeeId: 'LM-0013', role: 'WOM',
     action: 'Password reset completed', status: 'Success', ip: '172.16.8.5', terminal: 'MOBILE-APP', token: 'UID-6120',
     note: 'Temporary password replaced with a permanent one.', dotColor: 'bg-emerald-400',
   },
