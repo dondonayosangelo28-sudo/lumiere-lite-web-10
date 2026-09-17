@@ -490,7 +490,7 @@ export function AssetAllocationKioskPage() {
         {/* Two-pane kiosk layout */}
         <div className="grid h-[60vh] grid-cols-[minmax(6.5rem,30%)_minmax(0,1fr)] gap-2 sm:h-auto sm:min-h-[60vh] sm:flex sm:gap-5">
           {/* ---- Left sidebar 20% — category list ---- */}
-          <aside className="h-full min-h-0 w-full shrink-0 space-y-1 overflow-y-auto sm:h-auto sm:w-1/5 sm:max-h-[65vh] sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
+          <aside className="h-full min-h-0 w-full shrink-0 space-y-1 overflow-x-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:h-auto sm:w-1/5 sm:max-h-[65vh]">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Classifications
@@ -548,7 +548,7 @@ export function AssetAllocationKioskPage() {
           </aside>
 
           {/* ---- Right pane 80% — thumbnail grid ---- */}
-          <div className="h-full min-h-0 min-w-0 overflow-y-auto pr-0.5 sm:h-auto sm:flex-1 sm:overflow-visible">
+          <div className="h-full min-h-0 min-w-0 overflow-x-hidden overflow-y-auto pr-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:h-auto sm:flex-1 sm:overflow-visible">
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
               <div className="flex shrink-0 items-center rounded-lg border border-border bg-card p-0.5">
