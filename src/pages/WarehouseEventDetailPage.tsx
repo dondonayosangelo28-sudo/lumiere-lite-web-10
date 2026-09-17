@@ -4,7 +4,6 @@ import { useAuth } from '@/lib/auth'
 import type { PortalEvent } from '@/lib/types'
 import type { WarehouseModuleId } from '@/lib/warehouse-modules'
 import {
-  computeProductionBanner,
   dispatchBannerFor,
   getEventDetailSnapshot,
   resolveCatalogAssetForItem,
@@ -20,11 +19,9 @@ import {
   updateReconciliationRow,
   useDispatchStore,
 } from '@/lib/warehouse-dispatch'
-import { useProductionItems, type ProductionItem } from '@/lib/warehouse-production'
 import { EventDetailHeader } from '@/components/warehouse/event-detail/EventDetailHeader'
 import { CrewPanel } from '@/components/warehouse/event-detail/CrewPanel'
 import { ItemsPanel } from '@/components/warehouse/event-detail/ItemsPanel'
-import { ProductionPanel } from '@/components/warehouse/event-detail/ProductionPanel'
 import { ReplenishmentPanel } from '@/components/warehouse/event-detail/ReplenishmentPanel'
 import { DispatchPanel } from '@/components/warehouse/event-detail/DispatchPanel'
 import { BatchDetailView } from '@/components/warehouse/event-detail/BatchDetailView'
@@ -32,7 +29,6 @@ import { AssignCrewModal } from '@/components/warehouse/event-detail/AssignCrewM
 import { CrewInfoModal } from '@/components/warehouse/event-detail/CrewInfoModal'
 import { EventChangesModal } from '@/components/warehouse/event-detail/EventChangesModal'
 import { AssetDetailModal } from '@/components/warehouse/asset-catalog/AssetDetailModal'
-import { ProductionDetailModal } from '@/components/warehouse/production/ProductionDetailModal'
 
 interface WarehouseEventDetailPageProps {
   event: PortalEvent
@@ -59,24 +55,10 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
   const [activeBatchId, setActiveBatchId] = useState<string | null>(null)
   const [crewModalOpen, setCrewModalOpen] = useState(false)
   const [selectedAssetItem, setSelectedAssetItem] = useState<EventAllocatedItem | null>(null)
-  const [selectedProductionItem, setSelectedProductionItem] = useState<ProductionItem | null>(null)
   const [selectedCrewMember, setSelectedCrewMember] = useState<EventCrewAssignment | null>(null)
   const [changesModalOpen, setChangesModalOpen] = useState(false)
 
   const fieldCrew = useMemo(() => staff.filter((member) => member.role === 'Field & Production Crew'), [staff])
-
-  // Production/Bespoke panel — sourced from the real Production &
-  // Fabrication store (scoped to this event via eventId), not a synthetic
-  // per-event derivation, so the banner always matches the items rendered.
-  const allProductionItems = useProductionItems(events, staff)
-  const productionItems = useMemo(
-    () => allProductionItems.filter((item) => item.eventId === event.id),
-    [allProductionItems, event.id],
-  )
-  const productionBanner = useMemo(() => computeProductionBanner(productionItems), [productionItems])
-  const activeProductionItem = selectedProductionItem
-    ? productionItems.find((item) => item.id === selectedProductionItem.id) ?? selectedProductionItem
-    : null
 
   const activeIndex = batches.findIndex((batch) => batch.id === activeBatchId)
   const activeBatch = activeIndex >= 0 ? batches[activeIndex] : null
@@ -120,13 +102,6 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
           items={snapshot.items}
           onViewAllocation={() => onOpenModule('assets')}
           onOpenItem={setSelectedAssetItem}
-        />
-
-        <ProductionPanel
-          banner={productionBanner}
-          items={productionItems}
-          onOpenItem={setSelectedProductionItem}
-          onViewTracker={() => onOpenModule('production')}
         />
 
         <ReplenishmentPanel
@@ -174,14 +149,6 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
         <AssetDetailModal
           asset={resolveCatalogAssetForItem(selectedAssetItem)}
           onClose={() => setSelectedAssetItem(null)}
-        />
-      )}
-
-      {activeProductionItem && (
-        <ProductionDetailModal
-          item={activeProductionItem}
-          isProductionManager={hasFullWarehouseAccess || isProductionManager}
-          onClose={() => setSelectedProductionItem(null)}
         />
       )}
 

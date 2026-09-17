@@ -5,7 +5,6 @@ import {
   PackageSearch,
   Boxes,
   Warehouse,
-  Users,
   Truck,
   LogOut,
   X,
@@ -31,12 +30,11 @@ type NavItem = {
 }
 
 const warehouseNavItems: NavItem[] = [
-  { label: 'Overview', blurb: 'Operations metrics & activity dashboard', icon: LayoutGrid, route: 'overview' },
+  { label: 'Dashboard', blurb: 'Operations metrics & activity dashboard', icon: LayoutGrid, route: 'overview' },
   { label: 'Inventory Stock', blurb: 'Category-specific asset levels and stock tracking', icon: Boxes, route: 'inventory', moduleId: 'assets' },
   { label: 'Asset Allocation', blurb: 'Allocate catalog assets to events and spaces', icon: Boxes, route: 'assets', moduleId: 'assets' },
   { label: 'Replenishment', blurb: 'Deficit tracking & reorder requisitions', icon: PackageSearch, route: 'replenishment', moduleId: 'replenishment' },
   { label: 'Warehouse Logs', blurb: 'Audit trail and ledger entries', icon: Warehouse, route: 'warehouse-logs' },
-  { label: 'Crew Roster', blurb: 'Staff shift roster & auto-allocations', icon: Users, route: 'crew', moduleId: 'manning' },
   { label: 'Task Deployments', blurb: 'Active event task force deployments', icon: ClipboardList, route: 'deployments' },
   { label: 'Dispatch Records', blurb: 'Fleet manifests and transit checkpoints', icon: Truck, route: 'dispatch', moduleId: 'dispatch' },
 ]

@@ -1,11 +1,8 @@
 import {
   Boxes,
-  Hammer,
   PackageSearch,
-  ShieldAlert,
   Store,
   Truck,
-  Users,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -16,10 +13,7 @@ export type WarehouseModuleId =
   | 'assets'
   | 'replenishment'
   | 'vendors'
-  | 'manning'
   | 'dispatch'
-  | 'production'
-  | 'incidents'
 
 export interface WarehouseModule {
   id: WarehouseModuleId
@@ -52,32 +46,11 @@ export const WAREHOUSE_MODULES: WarehouseModule[] = [
     previewPoints: ['Vendor directory & ratings', 'Lead-time comparisons', 'Preferred-supplier routing'],
   },
   {
-    id: 'manning',
-    label: 'Manning Delegation',
-    icon: Users,
-    blurb: 'Unified crew management: daily shift rosters, event schedules, 48h task confirmations, and warning ledgers.',
-    previewPoints: ['Daily shift grid (AM/PM/OFF)', 'Event schedule & squad assignments', '48h task confirmations & warning ledger'],
-  },
-  {
-    id: 'incidents',
-    label: 'Incident Reporting',
-    icon: ShieldAlert,
-    blurb: 'Crew-filed incident reports with a PIN-gated WOM review queue.',
-    previewPoints: ['Categorised incident intake', 'PIN-gated WOM review', 'Resolve / dismiss with audit notes'],
-  },
-  {
     id: 'dispatch',
     label: 'Dispatch & Logistics',
     icon: Truck,
     blurb: 'Dispatch manifests, vehicle assignments, and transit checkpoints.',
     previewPoints: ['Dispatch manifests', 'Vehicle assignments', 'Transit checkpoint history'],
-  },
-  {
-    id: 'production',
-    label: 'Production & Fabrication',
-    icon: Hammer,
-    blurb: 'Fabrication queues, build timelines, and workshop capacity.',
-    previewPoints: ['Fabrication queue', 'Build timelines', 'Workshop capacity'],
   },
 ]
 
