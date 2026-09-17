@@ -7,9 +7,9 @@ import { useClickFlash } from '@/lib/use-click-flash'
 const ROLE_SEGMENTS = [
   { label: 'Admin', color: 'text-emerald-500', dot: 'bg-emerald-500' },
   { label: 'Executive', color: 'text-sky-500', dot: 'bg-sky-500' },
-  { label: 'Warehouse Ops Manager', color: 'text-amber-500', dot: 'bg-amber-500' },
-  { label: 'Event Planner', color: 'text-rose-500', dot: 'bg-rose-500' },
-  { label: 'Field & Production Crew', color: 'text-indigo-500', dot: 'bg-indigo-500' },
+  { label: 'WOM', color: 'text-amber-500', dot: 'bg-amber-500' },
+  { label: 'On-call', color: 'text-rose-500', dot: 'bg-rose-500' },
+  { label: 'Seasonal', color: 'text-indigo-500', dot: 'bg-indigo-500' },
 ]
 
 export function UserDistributionCard({
