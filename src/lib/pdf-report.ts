@@ -67,8 +67,8 @@ export function downloadPdfReport({
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(7.5)
     doc.setTextColor(...BRAND.MUTED)
-    doc.text('Lumière Management System · Confidential Operations Report', margin, pageHeight - 12)
-    doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 12, { align: 'right' })
+    doc.text('Lumière Management System · Confidential Operations Report', margin, pageHeight - 8)
+    doc.text(`Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 8, { align: 'right' })
   }
 
   const drawTableHeader = () => {

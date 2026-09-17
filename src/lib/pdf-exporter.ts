@@ -310,8 +310,8 @@ class PdfReportBuilder {
       this.doc.setTextColor(...BRAND.MUTED)
       this.doc.setLineWidth(0.5)
 
-this.doc.text('Lumière Management System · Confidential Operations Report', this.margin, this.pageHeight - 12)
-    this.doc.text(`Page ${i} of ${totalPages}`, this.pageWidth - this.margin, this.pageHeight - 12, { align: 'right' })
+this.doc.text('Lumière Management System · Confidential Operations Report', this.margin, this.pageHeight - 8)
+    this.doc.text(`Page ${i} of ${totalPages}`, this.pageWidth - this.margin, this.pageHeight - 8, { align: 'right' })
     }
   }
 
