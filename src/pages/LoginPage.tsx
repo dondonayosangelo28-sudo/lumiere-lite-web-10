@@ -7,7 +7,7 @@ import { useThemeMode, type ThemeMode } from '@/lib/theme'
 type View = 'signin' | 'request' | 'sent'
 type RequestType = 'forgot-password' | 'request-password'
 
-export function LoginPage({ onCrewPortal }: { onCrewPortal: () => void }) {
+export function LoginPage() {
   const { login } = useAuth()
   const { mode: themeMode, setMode: setThemeMode } = useThemeMode()
   const [view, setView] = useState<View>('signin')

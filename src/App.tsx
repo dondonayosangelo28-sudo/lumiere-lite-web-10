@@ -194,6 +194,20 @@ function Gate() {
     </NavProvider>
   )
 }
+function AppContent() {
+  return (
+    <PortalProvider>
+      <PlannerProvider>
+        <WarehouseProvider>
+          <OfflineBanner />
+          <Gate />
+          <LogoutModal />
+        </WarehouseProvider>
+      </PlannerProvider>
+    </PortalProvider>
+  )
+}
+
 function App() {
   useEffect(() => {
     // Load the crew roster from the database on app initialization
@@ -202,15 +216,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <PortalProvider>
-        <PlannerProvider>
-          <WarehouseProvider>
-            <OfflineBanner />
-            <Gate />
-            <LogoutModal />
-          </WarehouseProvider>
-        </PlannerProvider>
-      </PortalProvider>
+      <AppContent />
     </AuthProvider>
   )
 }
