@@ -551,7 +551,7 @@ export function AssetAllocationKioskPage() {
           <div className="h-full min-h-0 min-w-0 overflow-y-auto pr-0.5 sm:h-auto sm:flex-1 sm:overflow-visible">
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
-              <div className="flex shrink-0 items-center rounded-lg border border-border bg-card p-0.5 sm:hidden">
+              <div className="flex shrink-0 items-center rounded-lg border border-border bg-card p-0.5">
                 <button type="button" aria-label="Grid view" aria-pressed={viewMode === 'grid'} onClick={() => setViewMode('grid')} className={cn('rounded-md px-2 py-1.5 text-sm', viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}>▦</button>
                 <button type="button" aria-label="List view" aria-pressed={viewMode === 'list'} onClick={() => setViewMode('list')} className={cn('rounded-md px-2 py-1.5 text-sm', viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}>☰</button>
               </div>
@@ -588,7 +588,7 @@ export function AssetAllocationKioskPage() {
               </div>
             ) : (
               <>
-              <div className={cn(viewMode === 'grid' ? 'grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4' : 'grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4')}>
+              <div className={cn(viewMode === 'grid' ? 'grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4' : 'grid grid-cols-1 gap-2')}>
                 {visibleAssets.map((asset) => {
                   const stock = stockInfo(asset)
                   return (
@@ -599,17 +599,17 @@ export function AssetAllocationKioskPage() {
                       onClick={() => setSelectedAsset(asset)}
                       className={cn(
                         'group relative overflow-hidden border border-border bg-card text-left transition hover:border-primary/40 hover:shadow-lg',
-                        viewMode === 'grid' ? 'rounded-xl' : 'flex w-full items-center gap-2 rounded-lg p-1.5 sm:block sm:rounded-xl sm:p-0',
+                        viewMode === 'grid' ? 'rounded-xl' : 'flex w-full items-center gap-3 rounded-lg p-1.5 sm:p-2',
                       )}
                     >
-                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-square w-full' : 'size-14 shrink-0 rounded-md sm:aspect-square sm:size-auto sm:w-full sm:rounded-none')}>
+                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-square w-full' : 'size-14 shrink-0 rounded-md sm:size-20 sm:aspect-square')}>
                         {asset.thumbnailUrl ? (
                           <img src={asset.thumbnailUrl} alt={asset.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center"><Boxes className="size-8 text-muted-foreground/40" /></div>
                         )}
                       </div>
-                      <div className={cn('sm:hidden', viewMode === 'grid' ? 'p-2.5' : 'min-w-0 flex-1 pr-1')}>
+                      <div className={cn(viewMode === 'grid' ? 'p-2.5' : 'min-w-0 flex-1 pr-1')}>
                         <p className="truncate text-[0.7rem] font-semibold text-card-foreground">{asset.name}</p>
                         <div className="mt-1 flex items-center justify-between gap-2">
                           <span className="text-[0.65rem] font-bold text-foreground">{stock.quantity} available</span>
@@ -625,7 +625,8 @@ export function AssetAllocationKioskPage() {
                 })}
               </div>
               {isPhone && mobilePageCount > 1 && (
-                <div className="mt-3 flex items-center justify-between rounded-lg border border-border bg-card px-2 py-1.5 sm:hidden">
+                  <div className="mt-3 flex items-center justify-between rounded-lg border border-border bg-card px-2 py-1.5">
+
                   <button type="button" disabled={mobilePage === 0} onClick={() => setMobilePage((page) => Math.max(0, page - 1))} className="rounded-md px-2 py-1 text-xs font-semibold text-primary disabled:opacity-40">Previous</button>
                   <span className="text-[0.6rem] text-muted-foreground">Page {mobilePage + 1} of {mobilePageCount}</span>
                   <button type="button" disabled={mobilePage >= mobilePageCount - 1} onClick={() => setMobilePage((page) => Math.min(mobilePageCount - 1, page + 1))} className="rounded-md px-2 py-1 text-xs font-semibold text-primary disabled:opacity-40">Next</button>
