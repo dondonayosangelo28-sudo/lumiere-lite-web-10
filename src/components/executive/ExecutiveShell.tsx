@@ -22,11 +22,20 @@ interface ExecutiveShellProps {
 export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: ExecutiveShellProps) {
   const { executiveRailOpen, toggleExecutiveRail } = useNav()
 
+  const handleDestinationSelect = (id: ExecutiveDestinationId) => {
+    if (id === activeId) {
+      toggleExecutiveRail()
+      return
+    }
+
+    onSelect(id)
+  }
+
   return (
     <div className="fixed inset-0 flex bg-background">
       <ExecutiveRail
         activeId={activeId}
-        onSelect={onSelect}
+        onSelect={handleDestinationSelect}
         open={executiveRailOpen}
         onToggle={toggleExecutiveRail}
       />
