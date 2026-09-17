@@ -251,7 +251,32 @@ function SignInView(props: {
         Ground Crew? Field Login
       </button>
 
+      <DemoAccounts />
     </form>
+  )
+}
+
+function DemoAccounts() {
+  return (
+    <details className="mt-8 rounded-xl border border-border/70 bg-background/40 px-4 py-3 text-xs text-muted-foreground">
+      <summary className="cursor-pointer font-medium uppercase tracking-[0.14em] text-foreground/70">
+        Demo accounts and passwords
+      </summary>
+      <div className="mt-3 space-y-1.5 font-mono text-[0.7rem] leading-relaxed">
+        <p>admin@lumiere.com — lumiere2026</p>
+        <p>tempadmin@lumiere.com — lumiere2026</p>
+        <p>executive@lumiere.com — lumiere2026</p>
+        <p>executive2@lumiere.com — lumiere2026</p>
+        <p>planner@lumiere.com — lumiere2026</p>
+        <p>warehouseops@lumiere.com — lumiere2026 or 246810</p>
+        <p>warehouse@lumiere.com — lumiere2026</p>
+        <p>manning@lumiere.com — lumiere2026</p>
+        <p>production@lumiere.com — lumiere2026</p>
+        <p>inventory@lumiere.com — lumiere2026</p>
+        <p>purchasing@lumiere.com — lumiere2026</p>
+        <p>crew@lumiere.com — lumiere2026</p>
+      </div>
+    </details>
   )
 }
 
