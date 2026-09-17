@@ -67,7 +67,9 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     })
   }, [assets, query, categoryFilter, statusFilter])
 
-  // Group items by Tier in fixed order
+  const isCategoryFiltered = categoryFilter !== 'All'
+
+  // Group items by category only when a category filter is active.
   const tierGroups = useMemo(() => {
     const map = new Map<AssetCategory, CatalogAsset[]>()
     FIXED_TIER_ORDER.forEach((t) => map.set(t, []))
@@ -253,96 +255,52 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
         </div>
       </div>
 
-      {/* Main Content Area (Tier-Grouped Sections with Sticky Headers) */}
+      {/* Main Content Area */}
       <div className="flex-1 px-6 py-4 sm:px-10">
-        {tierGroups.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="mt-10 text-center text-sm font-semibold uppercase tracking-[0.15em] text-muted-foreground">
             No assets match the current filters
           </div>
         ) : viewMode === 'grid' ? (
-          /* ─── GRID VIEW: Tier-Grouped Sections with Sticky Headers ─── */
           <GridRevealContainer maxHeightClass="max-h-[calc(100vh-230px)]">
-            <div className="space-y-6 pb-6">
-              {tierGroups.map(([tierName, tierItems]) => (
+            <div className="space-y-4 pb-6">
+              {!isCategoryFiltered && (
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                  {filtered.length} {filtered.length === 1 ? 'item' : 'items'} total
+                </p>
+              )}
+              {isCategoryFiltered ? tierGroups.map(([tierName, tierItems]) => (
                 <div key={tierName} className="space-y-3">
-                  {/* Sticky Section Header */}
-                  <div className="sticky top-0 z-10 border-b border-border/80 bg-background/95 py-2 backdrop-blur-sm">
+                  <div className="border-b border-border/80 py-2">
                     <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-primary">
                       {tierName} ({tierItems.length})
                     </span>
                   </div>
-
-                  {/* 6-Column Card Grid for this Tier */}
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-4">
-                    {tierItems.map((asset) => (
-                      <AssetCard key={asset.id} asset={asset} onOpen={() => setSelectedAsset(asset)} />
-                    ))}
+                    {tierItems.map((asset) => <AssetCard key={asset.id} asset={asset} onOpen={() => setSelectedAsset(asset)} />)}
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-4">
+                  {filtered.map((asset) => <AssetCard key={asset.id} asset={asset} onOpen={() => setSelectedAsset(asset)} />)}
+                </div>
+              )}
             </div>
           </GridRevealContainer>
         ) : (
-          /* ─── LIST VIEW: Tier-Grouped Sections with Sticky Headers ─── */
-          <div className="space-y-6 max-h-[calc(100vh-230px)] overflow-y-auto pr-1">
-            {tierGroups.map(([tierName, tierItems]) => (
+          <div className="space-y-4 max-h-[calc(100vh-230px)] overflow-y-auto pr-1">
+            {!isCategoryFiltered && (
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                {filtered.length} {filtered.length === 1 ? 'item' : 'items'} total
+              </p>
+            )}
+            {(isCategoryFiltered ? tierGroups : [['All', filtered] as const]).map(([tierName, tierItems]) => (
               <div key={tierName} className="space-y-2">
-                {/* Sticky Section Header */}
-                <div className="sticky top-0 z-10 border-b border-border/80 bg-background/95 py-2 backdrop-blur-sm">
-                  <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-primary">
-                    {tierName} ({tierItems.length})
-                  </span>
-                </div>
-
+                {isCategoryFiltered && <div className="border-b border-border/80 py-2"><span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-primary">{tierName} ({tierItems.length})</span></div>}
                 <div className="overflow-x-auto rounded-xl border border-border bg-card">
                   <table className="w-full min-w-[720px] text-left">
-                    <thead>
-                      <tr className="bg-muted/50">
-                        {['Item', 'Category', 'Status', 'Detail', ''].map((h) => (
-                          <th key={h} className="px-4 py-3 text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tierItems.map((asset) => {
-                        const display = getTierGlanceDisplay(asset)
-                        return (
-                          <tr
-                            key={asset.id}
-                            onClick={() => setSelectedAsset(asset)}
-                            className="cursor-pointer border-t border-border/60 align-middle transition-colors hover:bg-accent/50"
-                          >
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-3">
-                                <div className="size-11 shrink-0 overflow-hidden rounded-md bg-muted">
-                                  <img src={asset.image || '/placeholder.svg'} alt={asset.name} crossOrigin="anonymous" className="size-full object-cover" />
-                                </div>
-                                <p className="font-serif text-sm text-card-foreground">{asset.name}</p>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{asset.category}</td>
-                            <td className="px-4 py-3">
-                              <Pill tone={ASSET_STATUS_TONE[asset.status]}>{asset.status}</Pill>
-                            </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{display.text}</td>
-                            <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setSelectedAsset(asset)
-                                }}
-                                className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary hover:underline"
-                              >
-                                View item
-                              </button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
+                    <thead><tr className="bg-muted/50">{['Item', 'Category', 'Status', 'Detail', ''].map((h) => <th key={h} className="px-4 py-3 text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">{h}</th>)}</tr></thead>
+                    <tbody>{tierItems.map((asset) => { const display = getTierGlanceDisplay(asset); return <tr key={asset.id} onClick={() => setSelectedAsset(asset)} className="cursor-pointer border-t border-border/60 align-middle transition-colors hover:bg-accent/50"><td className="px-4 py-3"><div className="flex items-center gap-3"><div className="size-11 shrink-0 overflow-hidden rounded-md bg-muted"><img src={asset.image || '/placeholder.svg'} alt={asset.name} crossOrigin="anonymous" className="size-full object-cover" /></div><p className="font-serif text-sm text-card-foreground">{asset.name}</p></div></td><td className="px-4 py-3 text-xs text-muted-foreground">{asset.category}</td><td className="px-4 py-3"><Pill tone={ASSET_STATUS_TONE[asset.status]}>{asset.status}</Pill></td><td className="px-4 py-3 text-xs text-muted-foreground">{display.text}</td><td className="px-4 py-3 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); setSelectedAsset(asset) }} className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary hover:underline">View item</button></td></tr> })}</tbody>
                   </table>
                 </div>
               </div>
