@@ -225,12 +225,6 @@ export function EventRegistryPage() {
             </div>
           )}
         </div>
-        <h4 className="mt-5 border-t border-border/70 pt-4 text-xs font-semibold uppercase tracking-[0.12em] text-foreground">
-          Event Portfolio Overview
-        </h4>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Active event readiness across the current executive portfolio.
-        </p>
       </div>
 
       {/* Filter bar */}
