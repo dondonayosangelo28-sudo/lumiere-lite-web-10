@@ -166,15 +166,19 @@ export function EventRegistryPage() {
         <>
           {/* Operational Progress — dispatch readiness per active event */}
       <div className="mx-2 mt-0 rounded-xl border border-border bg-card p-5">
-        <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-foreground">
-          Operational Progress
-        </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Asset dispatch readiness across active event portfolios.
-        </p>
-        <div className="relative mt-4 max-w-sm">
-          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-foreground">
+              Operational Progress
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Asset dispatch readiness across active event portfolios.
+            </p>
+          </div>
+          <div className="relative w-full max-w-sm sm:-mr-5 sm:w-72">
+            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input value={progressQuery} onChange={(e) => setProgressQuery(e.target.value)} placeholder="Search active events..." aria-label="Search operational progress events" className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" />
+          </div>
         </div>
         <div className="relative mt-3">
           <div
