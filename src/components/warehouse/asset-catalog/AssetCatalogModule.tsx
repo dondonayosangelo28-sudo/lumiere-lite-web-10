@@ -172,17 +172,58 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </button>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <div className="order-2 relative w-full self-end lg:w-64">
-            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search assets…"
-              className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
+        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+          {/* Compact two-row filter group */}
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {CATEGORY_FILTERS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCategoryFilter(c)}
+                  aria-pressed={categoryFilter === c}
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
+                    categoryFilter === c
+                      ? 'bg-foreground text-background'
+                      : 'border border-border bg-background text-muted-foreground hover:bg-muted',
+                  )}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {STATUS_FILTERS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setStatusFilter(s)}
+                  aria-pressed={statusFilter === s}
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
+                    statusFilter === s
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border border-border bg-background text-muted-foreground hover:bg-muted',
+                  )}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="order-1 flex items-center gap-2 self-end">
+
+          {/* Search, view, and create controls */}
+          <div className="flex w-full shrink-0 items-center gap-2 lg:w-auto">
+            <div className="relative min-w-0 flex-1 lg:w-64 lg:flex-none">
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search assets…"
+                className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+              />
+            </div>
             <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
                 type="button"
@@ -211,46 +252,6 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               <Plus className="size-3.5" />
               Add Item
             </button>
-          </div>
-        </div>
-
-        {/* Filter Pills */}
-        <div className="flex flex-col gap-1.5">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {CATEGORY_FILTERS.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => setCategoryFilter(c)}
-                aria-pressed={categoryFilter === c}
-                className={cn(
-                  'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
-                  categoryFilter === c
-                    ? 'bg-foreground text-background'
-                    : 'border border-border bg-background text-muted-foreground hover:bg-muted',
-                )}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {STATUS_FILTERS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setStatusFilter(s)}
-                aria-pressed={statusFilter === s}
-                className={cn(
-                  'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
-                  statusFilter === s
-                    ? 'bg-primary text-primary-foreground'
-                    : 'border border-border bg-background text-muted-foreground hover:bg-muted',
-                )}
-              >
-                {s}
-              </button>
-            ))}
           </div>
         </div>
       </div>
