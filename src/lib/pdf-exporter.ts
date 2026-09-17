@@ -55,9 +55,6 @@ class PdfReportBuilder {
   }
 
   drawFrame() {
-    this.doc.setDrawColor(...BRAND.BORDER)
-    this.doc.setLineWidth(0.7)
-    this.doc.roundedRect(22, 28, this.pageWidth - 44, this.pageHeight - 56, 5, 5, 'S')
   }
 
   drawRunningHeader() {
@@ -188,13 +185,13 @@ class PdfReportBuilder {
     doc.line(margin, this.y + 20, margin + this.printableWidth, this.y + 20)
 
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(7.5)
+    doc.setFontSize(6.5)
     doc.setTextColor(...BRAND.PRIMARY)
 
     let currentX = margin
     columns.forEach((col) => {
       const textX = col.align === 'center' ? currentX + col.width / 2 : col.align === 'right' ? currentX + col.width - 6 : currentX + 6
-      doc.text(doc.splitTextToSize(col.header.toUpperCase(), col.width - 12), textX, this.y + 13, { align: col.align || 'left', maxWidth: col.width - 12 })
+      doc.text(col.header.toUpperCase(), textX, this.y + 13, { align: col.align || 'left', maxWidth: col.width - 12 })
       currentX += col.width
     })
 

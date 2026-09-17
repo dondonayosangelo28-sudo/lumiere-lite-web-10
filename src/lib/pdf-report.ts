@@ -43,10 +43,6 @@ export function downloadPdfReport({
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 34
-  const frameX = 22
-  const frameY = 28
-  const frameW = pageWidth - 44
-  const frameH = pageHeight - 56
   const width = pageWidth - margin * 2
   const rowHeight = columns.length > 8 ? 30 : 25
   const weights = columns.map((_, index) => (index === 0 ? 1.35 : index === columns.length - 1 ? 1.2 : 1))
@@ -55,9 +51,6 @@ export function downloadPdfReport({
   let y = 50
 
   const drawFrame = () => {
-    doc.setDrawColor(...BRAND.BORDER)
-    doc.setLineWidth(0.7)
-    doc.roundedRect(frameX, frameY, frameW, frameH, 5, 5, 'S')
   }
 
   const drawRunningHeader = () => {
@@ -83,11 +76,11 @@ export function downloadPdfReport({
     doc.setFillColor(...BRAND.CARD_BG)
     doc.rect(margin, y, width, rowHeight, 'F')
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(columns.length > 8 ? 6.5 : 7)
+    doc.setFontSize(6.5)
     doc.setTextColor(...BRAND.PRIMARY)
     let x = margin
     columns.forEach((column, index) => {
-      doc.text(doc.splitTextToSize(column.toUpperCase(), widths[index] - 12), x + 6, y + rowHeight - 9, { maxWidth: widths[index] - 12 })
+      doc.text(column.toUpperCase(), x + 6, y + rowHeight - 9, { maxWidth: widths[index] - 12 })
       x += widths[index]
     })
     doc.setDrawColor(...BRAND.BORDER)
