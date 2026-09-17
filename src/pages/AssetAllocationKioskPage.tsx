@@ -303,7 +303,6 @@ export function AssetAllocationKioskPage() {
   const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY)
   const [query, setQuery] = useState('')
   const [tierFilter, setTierFilter] = useState<number | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   // Kiosk action modal
   const [selectedAsset, setSelectedAsset] = useState<AssetResponse | null>(null)
@@ -453,18 +452,16 @@ export function AssetAllocationKioskPage() {
         </div>
 
         {/* Two-pane kiosk layout */}
-        <div className="flex min-h-[60vh] flex-col gap-4 sm:flex-row sm:gap-5">
+        <div className="grid h-[60vh] grid-cols-[minmax(6.5rem,30%)_minmax(0,1fr)] gap-2 sm:h-auto sm:min-h-[60vh] sm:flex sm:gap-5">
           {/* ---- Left sidebar 20% — category list ---- */}
-          {sidebarOpen && (
-          <aside className="w-full shrink-0 space-y-1 sm:w-1/5 sm:max-h-[65vh] sm:overflow-y-auto sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
+          <aside className="h-full min-h-0 w-full shrink-0 space-y-1 overflow-y-auto sm:h-auto sm:w-1/5 sm:max-h-[65vh] sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Classifications
               </p>
-              <button type="button" onClick={() => setSidebarOpen(false)} className="text-[0.6rem] font-semibold text-primary sm:hidden">Hide</button>
             </div>
-            <div className="flex gap-1 overflow-x-auto pb-1 sm:block sm:overflow-visible">
-              <div className="sm:contents">
+            <div className="space-y-1">
+              <div>
             <button
               type="button"
               onClick={() => setActiveCategory(ALL_CATEGORY)}
@@ -513,16 +510,14 @@ export function AssetAllocationKioskPage() {
               </div>
             </div>
           </aside>
-          )}
 
           {/* ---- Right pane 80% — thumbnail grid ---- */}
-          <div className="min-w-0 flex-1">
+          <div className="h-full min-h-0 min-w-0 overflow-y-auto pr-0.5 sm:h-auto sm:flex-1 sm:overflow-visible">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
-              {!sidebarOpen && <button type="button" onClick={() => setSidebarOpen(true)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-primary hover:bg-muted">Categories</button>}
             </div>
             {isLoading ? (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
                 {Array.from({ length: 12 }).map((_, i) => (
                   <div key={i} className="aspect-square animate-pulse rounded-xl bg-muted" />
                 ))}
@@ -552,7 +547,7 @@ export function AssetAllocationKioskPage() {
                 />
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
                 {displayed.map((asset) => (
                   <button
                     key={asset.id}
