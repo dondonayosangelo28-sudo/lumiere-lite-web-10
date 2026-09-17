@@ -303,6 +303,17 @@ export function AssetAllocationKioskPage() {
   const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY)
   const [query, setQuery] = useState('')
   const [tierFilter, setTierFilter] = useState<number | null>(null)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [mobilePage, setMobilePage] = useState(0)
+  const [isPhone, setIsPhone] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 639px)')
+    const update = () => setIsPhone(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   // Kiosk action modal
   const [selectedAsset, setSelectedAsset] = useState<AssetResponse | null>(null)
@@ -358,6 +369,31 @@ export function AssetAllocationKioskPage() {
       return true
     })
   }, [assets, activeCategory, tierFilter, query])
+
+  const mobilePageSize = 48
+  const mobilePageCount = Math.max(1, Math.ceil(displayed.length / mobilePageSize))
+  const visibleAssets = isPhone
+    ? displayed.slice(mobilePage * mobilePageSize, (mobilePage + 1) * mobilePageSize)
+    : displayed
+
+  useEffect(() => {
+    setMobilePage(0)
+  }, [activeCategory, query, tierFilter, viewMode])
+
+  const stockInfo = (asset: AssetResponse) => {
+    const quantity = Math.max(0, asset.quantity)
+    const status = asset.assetState === 'InMaintenance' || quantity === 0
+      ? 'Out of Stock'
+      : quantity <= 3
+        ? 'Low Stock'
+        : 'Available'
+    const tone = status === 'Available'
+      ? 'bg-emerald-500'
+      : status === 'Low Stock'
+        ? 'bg-amber-500'
+        : 'bg-rose-500'
+    return { quantity, status, tone, percent: Math.min(100, quantity === 0 ? 0 : Math.max(12, quantity * 8)) }
+  }
 
   const stickyHeader = (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -513,8 +549,12 @@ export function AssetAllocationKioskPage() {
 
           {/* ---- Right pane 80% — thumbnail grid ---- */}
           <div className="h-full min-h-0 min-w-0 overflow-y-auto pr-0.5 sm:h-auto sm:flex-1 sm:overflow-visible">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
+              <div className="flex shrink-0 items-center rounded-lg border border-border bg-card p-0.5 sm:hidden">
+                <button type="button" aria-label="Grid view" aria-pressed={viewMode === 'grid'} onClick={() => setViewMode('grid')} className={cn('rounded-md px-2 py-1.5 text-sm', viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}>▦</button>
+                <button type="button" aria-label="List view" aria-pressed={viewMode === 'list'} onClick={() => setViewMode('list')} className={cn('rounded-md px-2 py-1.5 text-sm', viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}>☰</button>
+              </div>
             </div>
             {isLoading ? (
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -547,56 +587,51 @@ export function AssetAllocationKioskPage() {
                 />
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-                {displayed.map((asset) => (
-                  <button
-                    key={asset.id}
-                    type="button"
-                    data-testid={`asset-card-${asset.id}`}
-                    onClick={() => setSelectedAsset(asset)}
-                    className="group relative overflow-hidden rounded-xl border border-border bg-card transition hover:border-primary/40 hover:shadow-lg text-left"
-                  >
-                    {/* Thumbnail */}
-                    <div className="aspect-square w-full overflow-hidden bg-muted/40">
-              {asset.thumbnailUrl ? (
-                <img
-                  src={asset.thumbnailUrl}
-                  alt={asset.name}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-1">
-                  <Boxes className="size-10 text-muted-foreground/40" />
-                  {(asset.colors ?? []).length > 0 && (
-                    <div className="flex gap-1 mt-1">
-                      {(asset.colors ?? []).slice(0, 5).map((c, i) => (
-                        <span
-                          key={i}
-                          className="size-3 rounded-full border border-border"
-                          style={{ background: c.hex }}
-                          title={c.brand || c.hex}
-                        />
-                      ))}
-                    </div>
-                  )}
+              <>
+              <div className={cn(viewMode === 'grid' ? 'grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4' : 'grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4')}>
+                {visibleAssets.map((asset) => {
+                  const stock = stockInfo(asset)
+                  return (
+                    <button
+                      key={asset.id}
+                      type="button"
+                      data-testid={`asset-card-${asset.id}`}
+                      onClick={() => setSelectedAsset(asset)}
+                      className={cn(
+                        'group relative overflow-hidden border border-border bg-card text-left transition hover:border-primary/40 hover:shadow-lg',
+                        viewMode === 'grid' ? 'rounded-xl' : 'flex w-full items-center gap-2 rounded-lg p-1.5 sm:block sm:rounded-xl sm:p-0',
+                      )}
+                    >
+                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-square w-full' : 'size-14 shrink-0 rounded-md sm:aspect-square sm:size-auto sm:w-full sm:rounded-none')}>
+                        {asset.thumbnailUrl ? (
+                          <img src={asset.thumbnailUrl} alt={asset.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center"><Boxes className="size-8 text-muted-foreground/40" /></div>
+                        )}
+                      </div>
+                      <div className={cn('sm:hidden', viewMode === 'grid' ? 'p-2.5' : 'min-w-0 flex-1 pr-1')}>
+                        <p className="truncate text-[0.7rem] font-semibold text-card-foreground">{asset.name}</p>
+                        <div className="mt-1 flex items-center justify-between gap-2">
+                          <span className="text-[0.65rem] font-bold text-foreground">{stock.quantity} available</span>
+                          <span className={cn('text-[0.55rem] font-semibold', stock.status === 'Available' ? 'text-emerald-600' : stock.status === 'Low Stock' ? 'text-amber-600' : 'text-rose-600')}>{stock.status}</span>
+                        </div>
+                        <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted" aria-label={`${stock.status}: ${stock.quantity} available`}>
+                          <div className={cn('h-full rounded-full', stock.tone)} style={{ width: `${stock.percent}%` }} />
+                        </div>
+                      </div>
+                      <span className="sr-only">Select to allocate {asset.name}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              {isPhone && mobilePageCount > 1 && (
+                <div className="mt-3 flex items-center justify-between rounded-lg border border-border bg-card px-2 py-1.5 sm:hidden">
+                  <button type="button" disabled={mobilePage === 0} onClick={() => setMobilePage((page) => Math.max(0, page - 1))} className="rounded-md px-2 py-1 text-xs font-semibold text-primary disabled:opacity-40">Previous</button>
+                  <span className="text-[0.6rem] text-muted-foreground">Page {mobilePage + 1} of {mobilePageCount}</span>
+                  <button type="button" disabled={mobilePage >= mobilePageCount - 1} onClick={() => setMobilePage((page) => Math.min(mobilePageCount - 1, page + 1))} className="rounded-md px-2 py-1 text-xs font-semibold text-primary disabled:opacity-40">Next</button>
                 </div>
               )}
-                    </div>
-
-                    <span className="sr-only">
-                      {asset.name}, {asset.subTypeName || 'Unclassified'}, {asset.assetState}, {asset.quantity} available. Select to allocate.
-                    </span>
-
-
-                    {/* Hover allocate prompt */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-primary/80 opacity-0 transition group-hover:opacity-100 rounded-xl">
-                      <span className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-primary shadow-lg">
-                        <ArrowRight className="size-3.5" /> Allocate
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              </>
             )}
           </div>
         </div>
