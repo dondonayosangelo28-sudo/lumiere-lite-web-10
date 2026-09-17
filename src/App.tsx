@@ -1,5 +1,5 @@
 import './App.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Route } from '@/lib/types'
 import { NavProvider, useNav } from '@/lib/nav'
 import { PortalProvider } from '@/lib/store'
@@ -36,6 +36,7 @@ import { AssetAllocationKioskPage } from '@/pages/AssetAllocationKioskPage'
 import { TempPasswordResetScreen } from '@/pages/TempPasswordResetScreen'
 import { PlannerProvider } from '@/lib/planner'
 import { WarehouseProvider } from '@/lib/warehouse'
+import { ConsoleLayout } from '@/components/ConsoleLayout'
 
 function PortalAccessError({ portal }: { portal: 'web' | 'pwa' }) {
   const { logout } = useAuth()
@@ -68,45 +69,29 @@ function Router() {
   const isPwaRoute = pwaRoutes.has(route)
   if (portal && ((portal === 'pwa') !== isPwaRoute)) return <PortalAccessError portal={portal} />
 
+  const warehouseShell = (page: ReactNode) => <ConsoleLayout>{page}</ConsoleLayout>
+
   switch (route) {
     case 'dashboard':
       return <EventDashboardPage />
     case 'registry':
       return <EventRegistryPage />
     case 'replenishment':
-      return <ReplenishmentPage />
+      return warehouseShell(<ReplenishmentPage />)
     case 'logs':
-      return <ActivityLogsPage />
+      return warehouseShell(<ActivityLogsPage />)
     case 'inventory':
-      return <InventoryStockPage />
+      return warehouseShell(<InventoryStockPage />)
     case 'warehouse-logs':
-      return <WarehouseLogsPage />
+      return warehouseShell(<WarehouseLogsPage />)
     case 'crew':
-      return <CrewRosterPage />
+      return warehouseShell(<CrewRosterPage />)
     case 'deployments':
-      return <TaskDeploymentsPage />
+      return warehouseShell(<TaskDeploymentsPage />)
     case 'dispatch':
-      return <DispatchManifestPage />
-    case 'event-detail':
-      return <EventDetailPage />
-    case 'canvas':
-      return <DesignCanvasHubPage />
-    case 'canvas-workspace':
-      return <CanvasWorkspacePage />
-    case 'field-ops':
-      return <GroundCrewPage />
-    case 'warehouse-lead':
-      return <WarehouseLeadPage />
-    case 'warehouse-member':
-      return <WarehouseMemberPage />
-    case 'manning':
-      return <ManningPage />
-    case 'production-manager':
-      return <ProductionManagerPage />
-    case 'inventory-officer':
-      return <InventoryOfficerPage />
+      return warehouseShell(<DispatchManifestPage />)
     case 'assets':
-      return <AssetAllocationKioskPage />
+      return warehouseShell(<AssetAllocationKioskPage />)
     case 'workforce':
       return <AdminWorkforcePage />
     case 'security-audit':
@@ -124,7 +109,7 @@ function Router() {
       ) : isMobileInventoryOfficer ? (
         <InventoryOfficerPage />
       ) : isWarehouse ? (
-        <WarehouseHomePage />
+        warehouseShell(<WarehouseHomePage />)
       ) : (
         <OverviewPage />
       )
