@@ -17,7 +17,7 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
   return (
     <aside className={cn(
       'fixed inset-x-0 bottom-0 z-40 flex w-full shrink-0 items-center justify-center border-t border-sidebar-border bg-sidebar px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 transition-all duration-200 md:static md:h-full md:flex-col md:justify-start md:border-r md:border-t-0 md:px-0 md:py-4',
-      open ? 'md:w-16' : 'md:w-12',
+      open ? 'md:w-64' : 'md:w-12',
     )}>
       <button
         type="button"
@@ -44,13 +44,16 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
               aria-current={active ? 'true' : undefined}
               title={destination.label}
               className={cn(
-                'flex size-11 items-center justify-center rounded-lg transition-colors md:size-10',
+                'flex size-11 items-center justify-center gap-3 rounded-lg transition-colors md:h-10 md:w-full md:justify-start md:px-3',
                 active
                   ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                   : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
               )}
             >
-              <Icon className="size-4" aria-hidden="true" />
+              <Icon className="size-4 shrink-0" aria-hidden="true" />
+              <span className={cn('hidden truncate text-sm font-medium md:block', !open && 'md:hidden')}>
+                {destination.label}
+              </span>
             </button>
           )
         })}
