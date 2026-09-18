@@ -18,7 +18,7 @@ export function WarehouseDrilldown({ entry, onExit }: WarehouseDrilldownProps) {
 
   return (
     <div className="fixed inset-0 z-40 flex bg-background">
-      <WarehouseRail activeModuleId={activeModuleId} onSelectModule={setActiveModuleId} onExit={onExit} />
+      <WarehouseRail activeModuleId={activeModuleId} onSelectModule={setActiveModuleId} onDashboard={onExit} onExit={onExit} />
       <CompanionPanel moduleId={activeModuleId} onClose={onExit} />
     </div>
   )

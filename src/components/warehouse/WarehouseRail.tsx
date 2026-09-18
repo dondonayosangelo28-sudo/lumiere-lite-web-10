@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, LayoutDashboard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
@@ -7,6 +7,7 @@ interface WarehouseRailProps {
   activeModuleId: WarehouseModuleId
   onSelectModule: (id: WarehouseModuleId) => void
   onExit: () => void
+  onDashboard: () => void
 }
 
 export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: WarehouseRailProps) {
@@ -34,6 +35,16 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
           {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
         </button>
       </div>
+
+      <button
+        type="button"
+        onClick={onDashboard}
+        aria-label="Warehouse Dashboard"
+        title="Warehouse Dashboard"
+        className="mt-5 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      >
+        <LayoutDashboard className="size-4" aria-hidden="true" />
+      </button>
 
       <button
         type="button"
