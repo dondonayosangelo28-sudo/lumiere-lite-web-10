@@ -75,7 +75,7 @@ function EventDashboardContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState(false)
 
-  const openCreate = () => {
+  const openCreate = (date = selectedDate) => {
     setActiveEvent(null)
     setDrawerMode('create')
     setDrawerOpen(true)
@@ -450,6 +450,7 @@ function EventDashboardContent() {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         event={activeEvent}
+        initialDate={selectedDate}
         mode={drawerMode}
       />
     </>

@@ -14,6 +14,8 @@ interface Props {
   onClose: () => void
   // When provided, the drawer opens bound to an existing event.
   event?: PortalEvent | null
+  // Preselects the date when creating an event from a calendar day.
+  initialDate?: string
   // 'create' registers a new event, 'view' is read-only, 'edit' saves changes.
   mode?: DrawerMode
 }
@@ -84,7 +86,7 @@ function SectionHeading({
   )
 }
 
-export function RegisterEventDrawer({ open, onClose, event = null, mode = 'create' }: Props) {
+export function RegisterEventDrawer({ open, onClose, event = null, initialDate = '', mode = 'create' }: Props) {
   const { addEvent, updateEvent, events, settleEvent } = usePortal()
   const { adminRole } = useAuth()
   const [draft, setDraft] = useState<NewEventDraft>(emptyDraft)
@@ -156,9 +158,15 @@ export function RegisterEventDrawer({ open, onClose, event = null, mode = 'creat
         returnDate: event.installationEnd || event.targetDate,
       })
     } else {
-      setDraft(emptyDraft)
+      const targetDate = initialDate || ''
+      setDraft({
+        ...emptyDraft,
+        targetDate,
+        ingressDate: targetDate,
+        returnDate: targetDate,
+      })
     }
-  }, [open, event])
+  }, [open, event, initialDate])
 
   const venues = [...baseVenues, ...customVenues]
 
