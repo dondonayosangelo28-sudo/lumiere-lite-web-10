@@ -131,6 +131,20 @@ function EventDashboardContent() {
     })
   }, [events, currentView, selectedDate, query])
 
+  const eventGroups = useMemo(() => {
+    const groups = new Map<string, PortalEvent[]>()
+    for (const event of monthEvents) {
+      const parts = parseEventDate(event.targetDate)
+      const key = parts
+        ? `${parts.year}-${String(parts.month + 1).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`
+        : 'unscheduled'
+      const group = groups.get(key) ?? []
+      group.push(event)
+      groups.set(key, group)
+    }
+    return Array.from(groups.entries()).map(([date, groupEvents]) => ({ date, events: groupEvents }))
+  }, [monthEvents])
+
   // Total booked events across the current viewed month (unfiltered by search/date)
   const totalEventsInViewMonth = useMemo(() => {
     return events.filter((ev) => {
@@ -333,7 +347,9 @@ function EventDashboardContent() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {monthEvents.map((e) => {
+                  {eventGroups.map((group) => (
+                    <div key={group.date} className="space-y-3">
+                      {group.events.map((e) => {
                     const dateParts = parseEventDate(e.targetDate)
                     const dayNum = dateParts ? dateParts.day : '—'
                     const monthAbbr = dateParts
@@ -436,17 +452,19 @@ function EventDashboardContent() {
                           >
                             Edit
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => openCreate(e.targetDate)}
-                            className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-                          >
-                            Register New Event
-                          </button>
                         </div>
                       </div>
                     )
-                  })}
+                      })}
+                      <button
+                        type="button"
+                        onClick={() => openCreate(group.date === 'unscheduled' ? '' : group.date)}
+                        className="w-full rounded-lg border border-dashed border-primary/40 bg-primary/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+                      >
+                        Register Event
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
