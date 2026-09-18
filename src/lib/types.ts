@@ -1,7 +1,6 @@
 // Shared domain types for the LUMIÈRE admin console
 
 export type Route =
-  | 'warehouse-dashboard'
   | 'overview'
   | 'workforce'
   | 'dashboard'
