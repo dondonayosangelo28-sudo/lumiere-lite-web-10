@@ -14,7 +14,7 @@ interface WarehouseDrilldownProps {
   onOpenEventDetail: (id: string) => void
 }
 
-export function WarehouseDrilldown({ entry, onExit }: WarehouseDrilldownProps) {
+export function WarehouseDrilldown({ entry, onExit, onOpenEventDetail }: WarehouseDrilldownProps) {
   const [activeModuleId, setActiveModuleId] = useState<WarehouseModuleId>(entry.moduleId)
 
   useEffect(() => {
