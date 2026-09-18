@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { usePortal } from '@/lib/store'
 import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
 import { ModuleEntryRow } from '@/components/warehouse/ModuleEntryRow'
+import { WarehouseKpiRow } from '@/components/warehouse/WarehouseKpiRow'
 import { WarehouseCalendarEventsView } from '@/components/warehouse/WarehouseCalendarEventsView'
 import { WomInputSummaryModal } from '@/components/warehouse/WomInputSummaryModal'
 import { WarehouseDrilldown, type DrilldownEntry } from '@/components/warehouse/WarehouseDrilldown'
@@ -55,6 +56,9 @@ export function WarehouseHomePage() {
 
         {/* 4-per-row Restructured Module Grid */}
         <ModuleEntryRow onOpenModule={openModule} />
+
+        {/* KPI summary */}
+        <WarehouseKpiRow events={events} onOpenModule={openModule} />
 
         {/* Month Calendar + Upcoming Events Side Panel */}
         <WarehouseCalendarEventsView
