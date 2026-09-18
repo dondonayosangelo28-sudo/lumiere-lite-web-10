@@ -218,15 +218,6 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
     setAddingVenue(false)
   }
 
-  // Flag a date conflict when the chosen target date matches an existing event
-  const dateConflict = draft.targetDate
-    ? events.some((ev) => {
-        const a = new Date(ev.targetDate).getTime()
-        const b = new Date(draft.targetDate).getTime()
-        return !Number.isNaN(a) && !Number.isNaN(b) && a === b
-      })
-    : false
-
   if (!open) return null
 
   return (
