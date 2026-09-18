@@ -3,7 +3,6 @@ import { WarehouseDashboardModule } from '@/components/warehouse/dashboard/Wareh
 import { getWarehouseModule, type WarehouseModuleId } from '@/lib/warehouse-modules'
 import { AssetCatalogModule } from '@/components/warehouse/asset-catalog/AssetCatalogModule'
 import { ReplenishmentModule } from '@/components/warehouse/replenishment/ReplenishmentModule'
-import { VendorManagementModule } from '@/components/warehouse/vendors/VendorManagementModule'
 import { ManningModule } from '@/components/warehouse/manning/ManningModule'
 import { DispatchModule } from '@/components/warehouse/dispatch/DispatchModule'
 import { ProductionModule } from '@/components/warehouse/production/ProductionModule'
