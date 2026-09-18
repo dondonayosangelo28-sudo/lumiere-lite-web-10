@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, LayoutDashboard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
@@ -7,9 +7,10 @@ interface WarehouseRailProps {
   activeModuleId: WarehouseModuleId
   onSelectModule: (id: WarehouseModuleId) => void
   onExit: () => void
+  onDashboard?: () => void
 }
 
-export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: WarehouseRailProps) {
+export function WarehouseRail({ activeModuleId, onSelectModule, onExit, onDashboard = onExit }: WarehouseRailProps) {
   const [open, setOpen] = useState(false)
 
   const handleSelect = (id: WarehouseModuleId) => {
@@ -27,11 +28,11 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Lumiere brand, collapse navigation' : 'Lumiere brand, expand navigation'}
+          aria-label={open ? 'WOM brand, collapse navigation' : 'WOM brand, expand navigation'}
           aria-expanded={open}
           className={cn('flex items-center rounded-lg text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'px-1' : 'size-9 justify-center')}
         >
-          {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
+          {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">WOM</span> : <span className="font-serif text-lg font-medium leading-none">W</span>}
         </button>
       </div>
 
@@ -43,6 +44,17 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         className="mt-5 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
+      </button>
+
+      <button
+        type="button"
+        onClick={onDashboard}
+        aria-label="Warehouse Dashboard"
+        title="Warehouse Dashboard"
+        className={cn('flex h-10 items-center gap-3 rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground', open ? 'mx-3 justify-start px-3' : 'w-10 justify-center')}
+      >
+        <LayoutDashboard className="size-4 shrink-0" aria-hidden="true" />
+        <span className={cn('truncate text-sm font-medium', !open && 'sr-only')}>Warehouse Dashboard</span>
       </button>
 
       <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />

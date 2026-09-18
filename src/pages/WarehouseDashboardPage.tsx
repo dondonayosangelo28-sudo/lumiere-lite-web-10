@@ -38,7 +38,7 @@ export function WarehouseDashboardPage() {
       <main className="min-w-0 flex-1">
         <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-7 px-6 py-7 sm:px-10 sm:py-8">
           <header className="border-b border-border pb-5">
-            <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module / Warehouse Dashboard</p>
+            <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-primary">WAREHOUSE MODULE / Warehouse Dashboard</p>
             <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight">Warehouse Dashboard</h1>
           </header>
 
