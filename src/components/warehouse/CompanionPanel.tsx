@@ -49,28 +49,7 @@ export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventD
   }
 
   if (moduleId === 'vendors') {
-    return (
-      <div className="flex h-full flex-1 flex-col overflow-y-auto">
-        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
-          <div>
-            <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
-            <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">{module.label}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{module.blurb}</p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close and return to dashboard"
-            className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
-        </div>
-        <div className="flex-1 px-6 py-6 sm:px-10">
-          <VendorManagementModule />
-        </div>
-      </div>
-    )
+  return null
   }
 
   return (
