@@ -597,7 +597,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         open={confirmOpen}
         eyebrow={mode === 'edit' ? 'Registry Update' : 'Registry Initialization'}
         title={mode === 'edit' ? 'Confirm Event Changes' : 'Confirm New Event'}
-        tone={dateConflict ? 'destructive' : 'default'}
+        tone="default"
         confirmLabel={mode === 'edit' ? 'Save Changes' : 'Initialize Registry'}
         onCancel={() => setConfirmOpen(false)}
         onConfirm={() => {
@@ -614,11 +614,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                 {draft.client || 'No client'} · {draft.targetDate || 'No date set'}
               </p>
             </div>
-            <p>
-              {dateConflict
-                ? 'Warning: the selected date already has a booked event. Are you sure you want to register this event on the same day?'
-                : 'This will register the new event in the portfolio registry. Proceed?'}
-            </p>
+            <p>This will register the new event in the portfolio registry. Proceed?</p>
           </div>
         }
       />
