@@ -1,4 +1,4 @@
-import { AlertTriangle, Boxes, CheckCircle2, PackageSearch } from 'lucide-react'
+import { AlertTriangle, Boxes, CheckCircle2, CircleDollarSign } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCatalogAssets } from '@/lib/warehouse-catalog'
 import { getDeficitLines } from '@/lib/warehouse-replenishment'
@@ -18,7 +18,7 @@ export function WarehouseKpiRow({ events, onOpenModule }: WarehouseKpiRowProps) 
     { label: 'Total Assets', value: assets.length, subtitle: 'Registered inventory', icon: Boxes, border: 'border-l-primary', moduleId: 'assets' as WarehouseModuleId },
     { label: 'Available Assets', value: assets.filter((asset) => asset.status === 'Available').length, subtitle: 'Ready for allocation', icon: CheckCircle2, border: 'border-l-emerald-500', moduleId: 'assets' as WarehouseModuleId },
     { label: 'Critical Deficits', value: assets.filter((asset) => asset.status === 'Critical Deficit').length, subtitle: 'Requires attention', icon: AlertTriangle, border: 'border-l-destructive', moduleId: 'replenishment' as WarehouseModuleId, critical: true },
-    { label: 'Pending Procurement', value: deficitLines.filter((line) => line.status !== 'Received').length, subtitle: 'Open replenishment items', icon: PackageSearch, border: 'border-l-amber-500', moduleId: 'replenishment' as WarehouseModuleId },
+    { label: 'Pending Procurement', value: deficitLines.filter((line) => line.status !== 'Received').length, subtitle: 'Open replenishment items', icon: CircleDollarSign, border: 'border-l-amber-500', moduleId: 'replenishment' as WarehouseModuleId },
   ]
 
   return (
@@ -29,20 +29,20 @@ export function WarehouseKpiRow({ events, onOpenModule }: WarehouseKpiRowProps) 
           type="button"
           onClick={() => onOpenModule(moduleId)}
           className={cn(
-            'rounded-lg border border-border bg-card px-4 py-4 text-left transition-colors hover:bg-accent',
+            'rounded-xl border border-border bg-card px-4 py-4 text-left shadow-sm transition-colors hover:bg-accent',
             'border-l-4',
             border,
             critical && 'border-destructive/25 border-l-destructive bg-destructive/5',
           )}
         >
-          <div className="flex items-center justify-between gap-3">
-            <p className={cn('font-serif text-3xl font-medium leading-none text-card-foreground', critical && 'text-destructive')}>
-              {value}
-            </p>
-            <Icon className={cn('size-4 text-muted-foreground', critical && 'text-destructive')} aria-hidden="true" />
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-[0.62rem] font-semibold uppercase leading-tight tracking-[0.12em] text-muted-foreground">{label}</p>
+            <Icon className={cn('size-4 text-primary/80', critical && 'text-destructive')} aria-hidden="true" />
           </div>
-          <p className="mt-3 text-[0.6rem] font-semibold uppercase leading-tight tracking-[0.1em] text-muted-foreground">{label}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
+          <p className={cn('mt-6 font-serif text-3xl font-medium leading-none text-card-foreground', critical && 'text-destructive')}>
+            {value}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">{subtitle}</p>
         </button>
       ))}
     </section>
