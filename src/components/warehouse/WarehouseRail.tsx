@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
@@ -21,7 +22,7 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
   }
 
   return (
-    <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-2 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
+    <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
         <button
           type="button"
@@ -34,7 +35,17 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         </button>
       </div>
 
-      <div className={cn('mt-3 mb-3 h-px bg-sidebar-border', open ? 'mx-auto w-8' : 'w-8')} aria-hidden="true" />
+      <button
+        type="button"
+        onClick={onExit}
+        aria-label="Back to dashboard"
+        title="Back to dashboard"
+        className="mt-5 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
+      </button>
+
+      <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
 
       <nav className={cn('flex flex-col gap-2', open ? 'items-stretch px-3' : 'items-center')} aria-label="Warehouse modules">
         {WAREHOUSE_MODULES.map((module) => {

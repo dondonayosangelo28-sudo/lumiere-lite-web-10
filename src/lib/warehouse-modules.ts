@@ -1,6 +1,5 @@
 import {
   Boxes,
-  LayoutDashboard,
   PackageSearch,
   Store,
   Truck,
@@ -11,7 +10,6 @@ import {
 // Shared between the home-screen module row and the icon rail so both
 // surfaces stay in lockstep as modules are filled in during later phases.
 export type WarehouseModuleId =
-  | 'dashboard'
   | 'assets'
   | 'replenishment'
   | 'vendors'
@@ -26,13 +24,6 @@ export interface WarehouseModule {
 }
 
 export const WAREHOUSE_MODULES: WarehouseModule[] = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-    blurb: 'Warehouse-wide KPIs, event roster, and upcoming ingress schedule.',
-    previewPoints: ['Total / Available Assets', 'Critical Deficits & Pending Procurement', 'Month calendar & upcoming events'],
-  },
   {
     id: 'assets',
     label: 'Asset Catalog',
