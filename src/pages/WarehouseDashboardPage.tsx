@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AlertTriangle, Boxes, CircleDollarSign, PackageCheck } from 'lucide-react'
 import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
 import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
@@ -8,13 +7,6 @@ import { WomInputSummaryModal } from '@/components/warehouse/WomInputSummaryModa
 import { WarehouseEventDetailPage } from '@/pages/WarehouseEventDetailPage'
 import type { PortalEvent } from '@/lib/types'
 import type { WarehouseModuleId } from '@/lib/warehouse-modules'
-
-const metrics = [
-  { label: 'Total Assets', value: '24', subtitle: 'Registered inventory', icon: Boxes },
-  { label: 'Available Assets', value: '14', subtitle: 'Ready for allocation', icon: PackageCheck },
-  { label: 'Critical Deficits', value: '11', subtitle: 'Requires attention', icon: AlertTriangle, critical: true },
-  { label: 'Pending Procurement', value: '7', subtitle: 'Open replenishment items', icon: CircleDollarSign },
-]
 
 export function WarehouseDashboardPage() {
   const { events } = usePortal()
@@ -40,22 +32,6 @@ export function WarehouseDashboardPage() {
             <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
             <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight">Warehouse Dashboard</h1>
           </header>
-
-          <section aria-labelledby="kpi-heading">
-            <h2 id="kpi-heading" className="sr-only">Warehouse dashboard summary</h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {metrics.map(({ label, value, subtitle, icon: Icon, critical }) => (
-                <article key={label} className={`rounded-xl border p-5 ${critical ? 'border-destructive/30 bg-destructive/5' : 'border-border bg-card'}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-                    <Icon className={`size-4 ${critical ? 'text-destructive' : 'text-primary'}`} aria-hidden="true" />
-                  </div>
-                  <p className={`mt-4 font-serif text-4xl font-medium ${critical ? 'text-destructive' : 'text-foreground'}`}>{value}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
-                </article>
-              ))}
-            </div>
-          </section>
 
           <WarehouseCalendarEventsView events={events} onSelectEvent={setSummaryEvent} />
         </div>

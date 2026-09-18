@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LayoutDashboard } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
@@ -38,11 +38,11 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
       <button
         type="button"
         onClick={onExit}
-        aria-label="Warehouse Dashboard"
-        title="Warehouse Dashboard"
+        aria-label="Back to dashboard"
+        title="Back to dashboard"
         className="mt-5 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       >
-        <LayoutDashboard className="size-4" aria-hidden="true" />
+        <ArrowLeft className="size-4" aria-hidden="true" />
       </button>
 
       <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
