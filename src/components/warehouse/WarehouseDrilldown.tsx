@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { PortalEvent } from '@/lib/types'
 import type { WarehouseModuleId } from '@/lib/warehouse-modules'
 import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
@@ -11,15 +11,25 @@ export type DrilldownEntry =
 interface WarehouseDrilldownProps {
   entry: { kind: 'module'; moduleId: WarehouseModuleId }
   onExit: () => void
+  onOpenEventDetail: (id: string) => void
 }
 
 export function WarehouseDrilldown({ entry, onExit }: WarehouseDrilldownProps) {
   const [activeModuleId, setActiveModuleId] = useState<WarehouseModuleId>(entry.moduleId)
 
+  useEffect(() => {
+    setActiveModuleId(entry.moduleId)
+  }, [entry.moduleId])
+
   return (
     <div className="fixed inset-0 z-40 flex bg-background">
       <WarehouseRail activeModuleId={activeModuleId} onSelectModule={setActiveModuleId} onExit={onExit} />
-      <CompanionPanel moduleId={activeModuleId} onClose={onExit} />
+      <CompanionPanel
+        moduleId={activeModuleId}
+        onClose={onExit}
+        onSelectModule={setActiveModuleId}
+        onOpenEventDetail={onOpenEventDetail}
+      />
     </div>
   )
 }
