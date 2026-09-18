@@ -48,10 +48,6 @@ export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventD
     return <ProductionModule onClose={onClose} />
   }
 
-  if (moduleId === 'vendors') {
-  return null
-  }
-
   return (
     <div className="flex h-full flex-1 flex-col overflow-y-auto">
       <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
