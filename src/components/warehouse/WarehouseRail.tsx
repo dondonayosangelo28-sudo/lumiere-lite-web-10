@@ -10,7 +10,7 @@ interface WarehouseRailProps {
   onDashboard: () => void
 }
 
-export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: WarehouseRailProps) {
+export function WarehouseRail({ activeModuleId, onSelectModule, onExit, onDashboard }: WarehouseRailProps) {
   const [open, setOpen] = useState(false)
 
   const handleSelect = (id: WarehouseModuleId) => {
