@@ -2,6 +2,7 @@ import {
   Boxes,
   LayoutDashboard,
   PackageSearch,
+  Store,
   Truck,
   type LucideIcon,
 } from 'lucide-react'
@@ -13,6 +14,7 @@ export type WarehouseModuleId =
   | 'dashboard'
   | 'assets'
   | 'replenishment'
+  | 'vendors'
   | 'dispatch'
 
 export interface WarehouseModule {
@@ -44,6 +46,13 @@ export const WAREHOUSE_MODULES: WarehouseModule[] = [
     icon: PackageSearch,
     blurb: 'Deficit tracking, reorder requisitions, and procurement status.',
     previewPoints: ['Checkpoint-based deficit tracking', 'Reorder requisition routing', 'Purchase order status'],
+  },
+  {
+    id: 'vendors',
+    label: 'Vendor Management',
+    icon: Store,
+    blurb: 'Vendor directory, lead times, and preferred-supplier routing.',
+    previewPoints: ['Vendor directory & ratings', 'Lead-time comparisons', 'Preferred-supplier routing'],
   },
   {
     id: 'dispatch',

@@ -5,6 +5,7 @@ import { AssetCatalogModule } from '@/components/warehouse/asset-catalog/AssetCa
 import { ReplenishmentModule } from '@/components/warehouse/replenishment/ReplenishmentModule'
 import { ManningModule } from '@/components/warehouse/manning/ManningModule'
 import { DispatchModule } from '@/components/warehouse/dispatch/DispatchModule'
+import { VendorManagementModule } from '@/components/warehouse/vendors/VendorManagementModule'
 import { ProductionModule } from '@/components/warehouse/production/ProductionModule'
 import { IncidentReportingModule } from '@/components/warehouse/incidents/IncidentReportingModule'
 
@@ -37,6 +38,10 @@ export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventD
 
   if (moduleId === 'incidents') {
     return <IncidentReportingModule onClose={onClose} />
+  }
+
+  if (moduleId === 'vendors') {
+    return <VendorManagementModule onClose={onClose} />
   }
 
   if (moduleId === 'dispatch') {
