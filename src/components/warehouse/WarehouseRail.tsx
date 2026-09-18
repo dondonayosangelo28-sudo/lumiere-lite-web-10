@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
@@ -35,17 +34,7 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         </button>
       </div>
 
-      <button
-        type="button"
-        onClick={onExit}
-        aria-label="Back to dashboard"
-        title="Back to dashboard"
-        className="mt-5 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-      >
-        <ArrowLeft className="size-4" aria-hidden="true" />
-      </button>
-
-      <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
+      <div className={cn('mt-5 mb-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
 
       <nav className={cn('flex flex-col gap-2', open ? 'items-stretch px-3' : 'items-center')} aria-label="Warehouse modules">
         {WAREHOUSE_MODULES.map((module) => {
