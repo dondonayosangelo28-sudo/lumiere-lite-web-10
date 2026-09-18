@@ -47,7 +47,7 @@ export function parseEventDate(dateStr: string): { year: number; month: number; 
 }
 
 const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 
 const dayKey = (y: number, m: number, d: number) => `${y}-${m}-${d}`
 

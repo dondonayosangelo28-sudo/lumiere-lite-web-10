@@ -71,12 +71,14 @@ function EventDashboardContent() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [drawerMode, setDrawerMode] = useState<'create' | 'view' | 'edit'>('create')
   const [activeEvent, setActiveEvent] = useState<PortalEvent | null>(null)
+  const [createDate, setCreateDate] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState(false)
 
   const openCreate = (date = selectedDate) => {
     setActiveEvent(null)
+    setCreateDate(date)
     setDrawerMode('create')
     setDrawerOpen(true)
   }
@@ -434,6 +436,13 @@ function EventDashboardContent() {
                           >
                             Edit
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => openCreate(e.targetDate)}
+                            className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+                          >
+                            Register New Event
+                          </button>
                         </div>
                       </div>
                     )
@@ -450,7 +459,7 @@ function EventDashboardContent() {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         event={activeEvent}
-        initialDate={selectedDate}
+        initialDate={createDate}
         mode={drawerMode}
       />
     </>
