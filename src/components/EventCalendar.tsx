@@ -16,6 +16,8 @@ export interface EventCalendarProps {
   onMonthChange?: (view: { year: number; month: number }) => void
   /* Optional full-year picker for dashboard calendars */
   enableYearView?: boolean
+  /* When true, days with multiple events show a numeric count next to the dot */
+  showEventCount?: boolean
   className?: string
 }
 
@@ -60,6 +62,7 @@ export function EventCalendar({
   currentView,
   onMonthChange,
   enableYearView = false,
+  showEventCount = false,
   className,
 }: EventCalendarProps) {
   // Map of booked day keys -> event details
@@ -238,9 +241,16 @@ export function EventCalendar({
               )}
             >
               <span>{day}</span>
-              {isBooked && !isSelected && (
-                <span className="absolute bottom-1 size-1 rounded-full bg-rose-500" />
-              )}
+              {isBooked &&
+                !isSelected &&
+                (showEventCount && bookingInfo.count > 1 ? (
+                  <span className="absolute bottom-0.5 flex items-center gap-0.5 text-[0.5rem] font-bold leading-none text-rose-600 dark:text-rose-400">
+                    <span className="size-1 rounded-full bg-rose-500" />
+                    {bookingInfo.count}
+                  </span>
+                ) : (
+                  <span className="absolute bottom-1 size-1 rounded-full bg-rose-500" />
+                ))}
             </button>
           )
         })}
