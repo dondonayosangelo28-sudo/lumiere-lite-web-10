@@ -1,33 +1,13 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Calendar as CalendarIcon, MapPin, Building2, Clock, FilterX, ArrowRight } from 'lucide-react'
+import { Calendar as CalendarIcon, MapPin, Building2, Clock, FilterX } from 'lucide-react'
 import type { PortalEvent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { EventCalendar, parseEventDate as parseCalendarDate } from '@/components/EventCalendar'
-
-// The Dashboard is an operational overview, not a full event-management page.
-// Only the nearest handful of upcoming events are previewed; the rest stay
-// reachable via "View all events" and the calendar.
-const UPCOMING_PREVIEW_LIMIT = 7
 
 interface WarehouseCalendarEventsViewProps {
   events: PortalEvent[]
   onSelectEvent: (event: PortalEvent) => void
 }
-
-const MONTH_NAMES = [
-  'JANUARY',
-  'FEBRUARY',
-  'MARCH',
-  'APRIL',
-  'MAY',
-  'JUNE',
-  'JULY',
-  'AUGUST',
-  'SEPTEMBER',
-  'OCTOBER',
-  'NOVEMBER',
-  'DECEMBER',
-]
 
 // Robust Event Date Parsing Helper (Handles 'Oct 14, 2026', '2026-10-14', etc.)
 function parseEventDate(dateStr: string): Date | null {
@@ -163,7 +143,6 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
 
   const [currentView, setCurrentView] = useState<{ year: number; month: number }>(initialView)
   const [selectedDate, setSelectedDate] = useState<string>('')
-  const [showAll, setShowAll] = useState(false)
 
   // Keep the view synchronized if the initial view resolves after mount (e.g. events load async)
   useEffect(() => {
@@ -200,86 +179,6 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
     const d = new Date(parts.year, parts.month, parts.day)
     return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
   }, [selectedDate])
-
-  // Upcoming Events list: sorted by nearest target date ascending
-  const upcomingEvents = useMemo(() => {
-    return [...events].sort((a, b) => {
-      const dateA = parseEventDate(a.targetDate)?.getTime() ?? 0
-      const dateB = parseEventDate(b.targetDate)?.getTime() ?? 0
-      return dateA - dateB
-    })
-  }, [events])
-
-  // Group upcoming events by Month Year for month-grouped sticky headers
-  const monthGroups = useMemo(() => {
-    const map = new Map<string, PortalEvent[]>()
-    upcomingEvents.forEach((evt) => {
-      const d = parseEventDate(evt.targetDate)
-      const groupKey = d ? `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}` : 'OTHER EVENTS'
-      const list = map.get(groupKey) ?? []
-      list.push(evt)
-      map.set(groupKey, list)
-    })
-    return Array.from(map.entries())
-  }, [upcomingEvents])
-
-  // Compact Dashboard preview: only the nearest upcoming events are shown.
-  // Prefer events that are today or later; fall back to the nearest overall
-  // if every event is in the past. The full dataset is never truncated —
-  // remaining events stay reachable via "View all events" and the calendar.
-  const previewEvents = useMemo(() => {
-    const now = new Date()
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-    const future = upcomingEvents.filter((evt) => {
-      const d = parseEventDate(evt.targetDate)
-      return d ? new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() >= todayStart : false
-    })
-    const source = future.length > 0 ? future : upcomingEvents
-    return source.slice(0, UPCOMING_PREVIEW_LIMIT)
-  }, [upcomingEvents])
-
-  // Shared compact row for both the preview and the expanded "View all" list.
-  const renderEventRow = (evt: PortalEvent) => {
-    const countdown = getIngressCountdownBadge(evt.targetDate)
-    return (
-      <button
-        key={evt.id}
-        type="button"
-        onClick={() => onSelectEvent(evt)}
-        className="group flex w-full flex-col gap-2 rounded-xl border border-border/70 bg-background/80 px-3.5 py-2.5 text-left transition-all duration-150 hover:border-primary/50 hover:bg-accent/40 sm:flex-row sm:items-center sm:gap-4"
-      >
-        {/* Event name + reference id */}
-        <div className="min-w-0 sm:flex-1">
-          <h4 className="truncate font-serif text-sm font-medium text-card-foreground transition-colors group-hover:text-primary">
-            {evt.title}
-          </h4>
-          <span className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">
-            {evt.refId}
-          </span>
-        </div>
-
-        {/* Venue / date / status — a wrapping row on mobile, aligned columns on desktop */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.68rem] text-muted-foreground sm:contents">
-          <span className="flex min-w-0 items-center gap-1 sm:w-44">
-            <MapPin className="size-3 shrink-0 text-muted-foreground" />
-            <span className="truncate">{evt.venue}</span>
-          </span>
-          <span className="flex items-center gap-1 whitespace-nowrap font-medium text-foreground/80 sm:w-24">
-            <CalendarIcon className="size-3 text-muted-foreground" />
-            {evt.targetDate}
-          </span>
-          <span
-            className={cn(
-              'shrink-0 rounded-full border px-2.5 py-0.5 text-[0.55rem] uppercase tracking-wider sm:w-28 sm:text-center',
-              countdown.style,
-            )}
-          >
-            {countdown.label}
-          </span>
-        </div>
-      </button>
-    )
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -424,58 +323,6 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
         </div>
       </div>
 
-      {/* ─── BELOW: Upcoming Events (Compact, Scalable Preview) ─── */}
-      <div className="flex flex-col rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 shadow-sm sm:shadow-md backdrop-blur-xs">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-4">
-          <div>
-            <h3 className="font-serif text-lg font-medium text-card-foreground">Upcoming Events</h3>
-            <p className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-              {showAll
-                ? `All ${upcomingEvents.length} scheduled`
-                : `Nearest ${previewEvents.length} of ${upcomingEvents.length} scheduled`}
-            </p>
-          </div>
-          {(upcomingEvents.length > previewEvents.length || showAll) && (
-            <button
-              type="button"
-              onClick={() => setShowAll((v) => !v)}
-              className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-muted"
-            >
-              {showAll ? 'Show less' : 'View all events'}
-              <ArrowRight className={cn('size-3.5 transition-transform', showAll && 'rotate-90')} />
-            </button>
-          )}
-        </div>
-
-        {/* Column labels (desktop only) */}
-        {upcomingEvents.length > 0 && (
-          <div className="mt-3 hidden items-center gap-4 px-3.5 text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground sm:flex">
-            <span className="flex-1">Event</span>
-            <span className="w-44">Venue</span>
-            <span className="w-24">Date</span>
-            <span className="w-28 text-center">Status</span>
-          </div>
-        )}
-
-        {upcomingEvents.length === 0 ? (
-          <p className="py-8 text-center text-xs text-muted-foreground">No upcoming events found.</p>
-        ) : showAll ? (
-          <div className="mt-2 max-h-[30rem] space-y-4 overflow-y-auto pr-1.5 scrollbar-thin">
-            {monthGroups.map(([groupKey, groupEvents]) => (
-              <div key={groupKey} className="space-y-1.5">
-                <div className="sticky top-0 z-10 border-b border-border/80 bg-card/95 py-1.5 backdrop-blur-sm">
-                  <span className="text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary">
-                    {groupKey} ({groupEvents.length})
-                  </span>
-                </div>
-                <div className="space-y-1.5">{groupEvents.map((evt) => renderEventRow(evt))}</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-2 space-y-1.5">{previewEvents.map((evt) => renderEventRow(evt))}</div>
-        )}
-      </div>
     </div>
   )
 }
