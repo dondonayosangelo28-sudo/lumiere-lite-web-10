@@ -166,9 +166,9 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
         </div>
 
-        <div className="mt-4 mb-5 flex flex-col items-start justify-between gap-6 pb-0 lg:flex-row">
-          {/* LEFT COLUMN: chips spacing — row height h-9 and gap-3 must match the other column to stay aligned */}
-          <div className="flex flex-col gap-3">
+        <div className="mt-4 mb-4 flex flex-col items-start justify-between gap-6 pb-0 lg:flex-row">
+          {/* LEFT COLUMN: chips spacing — row height h-9 and gap-1 must match the other column to stay aligned */}
+          <div className="flex flex-col gap-1">
             <div className="flex h-9 items-center gap-1.5">
             {CATEGORY_FILTERS.map((c) => (
               <button
@@ -207,8 +207,8 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: controls spacing — row height h-9 and gap-3 must match the other column to stay aligned */}
-          <div className="flex w-full max-w-full flex-col gap-3 lg:w-[22rem]"> 
+          {/* RIGHT COLUMN: controls spacing — row height h-9 and gap-1 must match the other column to stay aligned */}
+          <div className="flex w-full max-w-full flex-col gap-1 lg:w-[22rem]"> 
             <div className="flex h-9 w-full items-center gap-2">
             <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
