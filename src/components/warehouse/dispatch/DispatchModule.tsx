@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AlertTriangle, Archive, ArrowDown, ArrowUp, ChevronDown, ChevronRight, Download, Truck, User, X } from 'lucide-react'
+import { AlertTriangle, Archive, ArrowDown, ArrowUp, ChevronDown, ChevronRight, Download, Search, SlidersHorizontal, Truck, User, X } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
 import {
@@ -81,8 +81,29 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   const [pendingBatchId, setPendingBatchId] = useState<string | null>(null)
   const [newBatchModal, setNewBatchModal] = useState<{ eventId: string; direction: BatchDirection } | null>(null)
   const [archiveBatchTarget, setArchiveBatchTarget] = useState<{ eventId: string; batch: DispatchBatch } | null>(null)
+  const [search, setSearch] = useState('')
+  const [stageFilter, setStageFilter] = useState('all')
+  const [directionFilter, setDirectionFilter] = useState('all')
+  const [reconciliationFilter, setReconciliationFilter] = useState('all')
 
-  const selectedEvent = summaries.find((s) => s.eventId === selectedEventId) ?? null
+  const filteredSummaries = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    return summaries
+      .map((summary) => ({
+        ...summary,
+        batches: summary.batches.filter((batch) => {
+          const matchesQuery = !query || `${summary.eventTitle} ${summary.venue} ${batch.id} ${batch.vehicleType} ${batch.plateNumber} ${batch.driverName}`.toLowerCase().includes(query)
+          const matchesStage = stageFilter === 'all' || batch.stage === stageFilter
+          const matchesDirection = directionFilter === 'all' || batch.direction === directionFilter
+          const hasIssue = batch.reconciliation.some((row) => row.status === 'Pahabol' || row.status === 'Short')
+          const matchesReconciliation = reconciliationFilter === 'all' || (reconciliationFilter === 'issues' ? hasIssue : !hasIssue)
+          return matchesQuery && matchesStage && matchesDirection && matchesReconciliation
+        }),
+      }))
+      .filter((summary) => summary.batches.length > 0)
+  }, [directionFilter, reconciliationFilter, search, stageFilter, summaries])
+
+  const selectedEvent = filteredSummaries.find((s) => s.eventId === selectedEventId) ?? null
 
   // The list currently being navigated in the Level 3 overlay.
   const navList: NavigableBatch[] = useMemo(() => {
@@ -190,6 +211,25 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             )}
           </div>
 
+          <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
+            <label className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
+              <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search events, vehicles, batch IDs..." className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" aria-label="Search events, vehicles, batch IDs" />
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              <SlidersHorizontal className="hidden size-4 text-muted-foreground sm:block" aria-hidden="true" />
+              <select value={stageFilter} onChange={(event) => setStageFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter by stage">
+                <option value="all">All stages</option><option value="Planned">Planned</option><option value="Loaded">Loaded</option><option value="In Transit">In Transit</option><option value="Delivered">Delivered</option><option value="Returned">Returned</option>
+              </select>
+              <select value={directionFilter} onChange={(event) => setDirectionFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter by direction">
+                <option value="all">All directions</option><option value="outbound">Outbound</option><option value="return">Return</option>
+              </select>
+              <select value={reconciliationFilter} onChange={(event) => setReconciliationFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter by reconciliation">
+                <option value="all">All reconciliation</option><option value="issues">Needs attention</option><option value="clear">Clear</option>
+              </select>
+            </div>
+          </div>
+
         {viewMode === 'grouped' && selectedEvent && (
           <div className="flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             <button type="button" onClick={() => setSelectedEventId(null)} className="text-primary hover:underline">
@@ -203,18 +243,24 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
 
       <div className="flex-1 px-6 py-6 sm:px-10">
         {viewMode === 'consolidated' ? (
-          <ConsolidatedBatchTable summaries={summaries} onOpenBatch={openBatch} />
-        ) : selectedEvent ? (
-          <EventBatchLevel
-            summary={selectedEvent}
-            onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })}
-            onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)}
-            onExportManifest={() => exportEventManifest(selectedEvent)}
-          />
+          <ConsolidatedBatchTable summaries={filteredSummaries} onOpenBatch={openBatch} />
         ) : (
-          <EventCardGrid summaries={summaries} onOpenEvent={setSelectedEventId} />
+          <EventCardGrid summaries={filteredSummaries} onOpenEvent={setSelectedEventId} />
         )}
       </div>
+
+      {selectedEvent && viewMode === 'grouped' && (
+        <div className="fixed inset-0 z-40 flex justify-end bg-foreground/50 backdrop-blur-[2px]" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
+          <aside className="flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="dispatch-event-detail-title">
+            <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+              <div><p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-primary">Event detail</p><h2 id="dispatch-event-detail-title" className="mt-1 font-serif text-2xl font-medium text-card-foreground">{selectedEvent.eventTitle}</h2><p className="mt-1 text-sm text-muted-foreground">{selectedEvent.venue}</p></div>
+              <button type="button" onClick={() => setSelectedEventId(null)} className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Close event detail"><X className="size-4" /></button>
+            </div>
+            <div className="border-b border-border px-6 py-5"><EventOverview summary={selectedEvent} /></div>
+            <div className="p-6"><EventBatchLevel summary={selectedEvent} onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })} onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)} onExportManifest={() => exportEventManifest(selectedEvent)} /></div>
+          </aside>
+        </div>
+      )}
 
       {activeNav && (
         <BatchDetailView
@@ -286,15 +332,15 @@ function EventCardGrid({
     return <p className="text-sm text-muted-foreground">No events on the registry yet.</p>
   }
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="flex flex-col gap-3">
       {summaries.map((summary) => (
         <button
           key={summary.eventId}
           type="button"
           onClick={() => onOpenEvent(summary.eventId)}
-          className="flex flex-col gap-3 rounded-xl border border-border bg-card px-5 py-4 text-left transition hover:border-primary/50 hover:bg-accent"
+          className="group flex flex-col gap-4 rounded-xl border border-border bg-card px-5 py-5 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-6"
         >
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="truncate font-serif text-base font-medium text-card-foreground">{summary.eventTitle}</p>
               <p className="truncate text-[0.62rem] uppercase tracking-[0.06em] text-muted-foreground">{summary.venue}</p>
@@ -316,11 +362,12 @@ function EventCardGrid({
               </span>
             )}
           </div>
-          <div className="flex items-center justify-between gap-3">
-            <span className="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-              <Truck className="size-3.5" />
-              {summary.batches.length} batch{summary.batches.length === 1 ? '' : 'es'}
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-3">
+            <div className="flex flex-wrap items-center gap-4 text-[0.62rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5"><Truck className="size-3.5" />{summary.batches.length} batch{summary.batches.length === 1 ? '' : 'es'}</span>
+              <span>{summary.batches.filter((batch) => batch.direction === 'outbound').length} outbound</span>
+              <span>{summary.batches.filter((batch) => batch.direction === 'return').length} return</span>
+            </div>
             <div className="flex items-center gap-2">
               <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
                 <div
@@ -332,6 +379,21 @@ function EventCardGrid({
             </div>
           </div>
         </button>
+      ))}
+    </div>
+  )
+}
+
+function EventOverview({ summary }: { summary: EventDispatchSummary }) {
+  const stages = ['Planned', 'Loaded', 'In Transit', 'Delivered']
+  const counts = stages.map((stage) => summary.batches.filter((batch) => batch.stage === stage).length)
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {stages.map((stage, index) => (
+        <div key={stage} className="rounded-lg border border-border/70 bg-background px-3 py-3">
+          <p className="text-[0.58rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">{stage}</p>
+          <p className="mt-1 text-xl font-semibold text-card-foreground">{counts[index]}</p>
+        </div>
       ))}
     </div>
   )
