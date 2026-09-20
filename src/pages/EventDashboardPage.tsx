@@ -10,6 +10,7 @@ import { PortalProvider, usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 import type { PortalEvent } from '@/lib/types'
+import { getEventProgress } from '@/lib/event-progress'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
 
 const MONTH_NAMES = [
@@ -309,7 +310,7 @@ function EventDashboardContent() {
         onClick={() => openView(event)}
         title={`${event.title} — ${event.status}`}
         className={cn(
-          'flex w-full cursor-pointer items-center gap-2.5 rounded-md py-1.5 text-left hover:bg-muted/50',
+          'flex w-full cursor-pointer items-center gap-2.5 rounded-md py-2 text-left hover:bg-muted/50',
           index < Math.min(monthPreviewEvents.length, 4) - 1 && 'border-b border-border/40',
         )}
       >
@@ -319,10 +320,25 @@ function EventDashboardContent() {
             {eventDate?.toLocaleDateString('en-US', { weekday: 'short' }) ?? '—'}
           </span>
         </span>
-        <span className="min-w-0 flex-1 truncate text-xs font-medium text-card-foreground">{event.title}</span>
-        <span className="flex shrink-0 items-center gap-1.5 text-[0.58rem] font-semibold uppercase tracking-wider text-muted-foreground">
-          <span className={cn('size-1.5 rounded-full', status.dot)} />
-          <span className="max-sm:hidden">{event.status}</span>
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center justify-between gap-2">
+            <span className="min-w-0 truncate text-xs font-medium text-card-foreground">{event.title}</span>
+            <span className="flex shrink-0 items-center gap-1.5 text-[0.58rem] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span className={cn('size-1.5 rounded-full', status.dot)} />
+              <span className="max-sm:hidden">{event.status}</span>
+            </span>
+          </span>
+          <span className="mt-1.5 flex items-center gap-2">
+            <span className="h-[3px] min-w-0 flex-1 rounded-full bg-muted">
+              <span
+                className={cn('block h-full rounded-full', status.dot)}
+                style={{ width: `${getEventProgress(event)}%` }}
+              />
+            </span>
+            <span className="w-8 shrink-0 text-right text-[0.58rem] font-semibold text-muted-foreground">
+              {getEventProgress(event)}%
+            </span>
+          </span>
         </span>
       </button>
     )

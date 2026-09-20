@@ -171,6 +171,8 @@ export interface PortalEvent {
   installationEnd: string
   budget: number
   status: EventStatus
+  // 0–100. Provided by the backend when available; otherwise derived from status.
+  progress?: number
   moodPlan: string
 }
 
