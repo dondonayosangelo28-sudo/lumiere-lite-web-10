@@ -49,7 +49,7 @@ export function EventRegistryPage() {
   const { events } = usePortal()
   // Both administrators and executives can register and maintain events.
   // The registry remains the single source of truth for create, view, and edit actions.
-  const { intent, clearIntent } = useNav()
+  const { intent, clearIntent, navigate } = useNav()
   const readOnly = false
   // A single drawer instance serves create / view / edit.
   const [drawerOpen, setDrawerOpen] = useState(false)
