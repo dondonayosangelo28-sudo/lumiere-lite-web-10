@@ -277,8 +277,9 @@ function EventDashboardContent() {
                   events={events}
                   currentView={currentView}
                   onMonthChange={setCurrentView}
-                  onSelect={handleDateSelect}
-                  className="border-0 p-0 shadow-none"
+  onSelect={handleDateSelect}
+  enableYearView
+  className="border-0 p-0 shadow-none"
                 />
               </div>
 
