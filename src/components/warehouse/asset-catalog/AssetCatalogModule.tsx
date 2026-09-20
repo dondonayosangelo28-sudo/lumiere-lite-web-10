@@ -166,9 +166,10 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-y-2 pb-0 lg:grid-cols-[1fr_auto] lg:grid-rows-2 lg:gap-x-6 lg:items-center">
-          {/* Compact two-row filter group */}
-          <div className="flex flex-wrap items-center gap-1.5 lg:col-start-1 lg:row-start-1">
+        <div className="mt-4 flex flex-col items-start justify-between gap-6 pb-0 lg:flex-row">
+          {/* LEFT COLUMN: chips spacing */}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-1.5">
             {CATEGORY_FILTERS.map((c) => (
               <button
                 key={c}
@@ -185,9 +186,9 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                 {c}
               </button>
             ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5 lg:col-start-1 lg:row-start-2">
-            {STATUS_FILTERS.map((s) => (
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {STATUS_FILTERS.map((s) => (
               <button
                 key={s}
                 type="button"
@@ -202,11 +203,13 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               >
                 {s}
               </button>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* View, create, and search controls */}
-          <div className="flex w-[22rem] max-w-full items-center gap-2 lg:col-start-2 lg:row-start-1 lg:justify-self-end">
+          {/* RIGHT COLUMN: controls spacing */}
+          <div className="flex w-full max-w-full flex-col gap-3 lg:w-[22rem]"> 
+            <div className="flex w-full items-center gap-2">
             <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
                 type="button"
@@ -236,7 +239,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               Add Item
             </button>
           </div>
-          <div className="relative w-[22rem] max-w-full lg:col-start-2 lg:row-start-2 lg:justify-self-end">
+            <div className="relative w-full max-w-full">
             <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               value={query}
@@ -244,6 +247,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               placeholder="Search assets…"
               className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
             />
+            </div>
           </div>
         </div>
       </div>
