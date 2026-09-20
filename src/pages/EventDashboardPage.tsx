@@ -301,7 +301,7 @@ function EventDashboardContent() {
   <div>
   {monthPreviewEvents.slice(0, 4).map((event, index) => {
     const parts = parseEventDate(event.targetDate)
-    const status = statusStyles[event.status] ?? { dot: 'bg-muted-foreground' }
+    const progress = getEventProgress(event)
     const eventDate = parts ? new Date(parts.year, parts.month, parts.day) : null
     return (
       <button
@@ -321,22 +321,16 @@ function EventDashboardContent() {
           </span>
         </span>
         <span className="min-w-0 flex-1">
-          <span className="flex items-center justify-between gap-2">
-            <span className="min-w-0 truncate text-xs font-medium text-card-foreground">{event.title}</span>
-            <span className="flex shrink-0 items-center gap-1.5 text-[0.58rem] font-semibold uppercase tracking-wider text-muted-foreground">
-              <span className={cn('size-1.5 rounded-full', status.dot)} />
-              <span className="max-sm:hidden">{event.status}</span>
-            </span>
-          </span>
+          <span className="min-w-0 truncate text-xs font-medium text-card-foreground">{event.title}</span>
           <span className="mt-1.5 flex items-center gap-2">
-            <span className="h-[3px] min-w-0 flex-1 rounded-full bg-muted">
+            <span className="h-1.5 min-w-0 flex-1 rounded-full bg-muted">
               <span
-                className={cn('block h-full rounded-full', status.dot)}
-                style={{ width: `${getEventProgress(event)}%` }}
+                className={cn('block h-full rounded-full', progress < 20 ? 'bg-amber-500' : 'bg-primary')}
+                style={{ width: `${progress}%` }}
               />
             </span>
-            <span className="w-8 shrink-0 text-right text-[0.58rem] font-semibold text-muted-foreground">
-              {getEventProgress(event)}%
+            <span className="w-8 shrink-0 text-right text-[0.6rem] font-semibold text-muted-foreground">
+              {progress}%
             </span>
           </span>
         </span>
