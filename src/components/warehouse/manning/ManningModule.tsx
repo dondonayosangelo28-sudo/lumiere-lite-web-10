@@ -798,7 +798,7 @@ function AssignmentDetailModal({
       onAssignmentClosed?.()
       onClose()
     } catch (err: any) {
-      console.error('[v0] close assignment failed', err)
+      console.error('[v0] close assignment failed', err?.message ?? String(err))
       setErrorMsg(err?.message || 'Failed to remove assignment')
       setClosing(false)
     }

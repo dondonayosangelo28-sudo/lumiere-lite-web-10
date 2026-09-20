@@ -50,7 +50,7 @@ export function LoginPage() {
         .from('access_requests')
         .insert({ email: normalized, type: requestType, status: 'pending' })
       if (insertError) {
-        console.error('[v0] Failed to submit access request:', insertError)
+        console.error('[v0] Failed to submit access request:', insertError?.message ?? String(insertError))
         setRequestError('Could not submit your request. Please try again.')
         return
       }

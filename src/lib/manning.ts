@@ -1198,7 +1198,7 @@ export function useManningData(): ManningData {
       setUsingPreset(manningUsingPreset)
       setTasks(escalated.length ? await fetchTasks() : manningUsingPreset ? [...localTasks] : t)
     } catch (err) {
-      console.warn('[v0] Manning tables unavailable; using preset workspace data.', err)
+      console.warn('[v0] Manning tables unavailable; using preset workspace data.', err?.message ?? String(err))
       setAssignments(localAssignments)
       setTasks(localTasks)
       setWarnings(localWarnings)
@@ -1240,7 +1240,7 @@ export function useIncidentData(): IncidentData {
       setIncidents(await withManningTimeout(fetchIncidents(), 'Incident workspace'))
       setUsingPreset(incidentsUsingPreset)
     } catch (err) {
-      console.warn('[v0] Incident tables unavailable; using preset incident data.', err)
+      console.warn('[v0] Incident tables unavailable; using preset incident data.', err?.message ?? String(err))
       setIncidents(localIncidents)
       setUsingPreset(true)
       setError(null)
@@ -1293,7 +1293,7 @@ export async function fetchOverrides(): Promise<ManningOverride[]> {
       return localOverrides
     }
   } catch (err) {
-    console.warn('[v0] fetchAuditLogs for manning overrides fallback to local cache.', err)
+    console.warn('[v0] fetchAuditLogs for manning overrides fallback to local cache.', err?.message ?? String(err))
   }
   return localOverrides
 }

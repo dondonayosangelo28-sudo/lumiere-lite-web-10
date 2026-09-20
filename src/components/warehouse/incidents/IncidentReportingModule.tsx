@@ -189,7 +189,7 @@ function ReportForm({ actor, onFiled }: { actor: string; onFiled: (created: Inci
       setSeverity('')
       onFiled({ ...created, image_url: evidenceImage })
     } catch (err) {
-      console.error('[v0] file incident failed', err)
+      console.error('[v0] file incident failed', err?.message ?? String(err))
     } finally {
       setSaving(false)
     }
@@ -318,7 +318,7 @@ function PinGate({ onUnlock, onCancel }: { onUnlock: () => void; onCancel?: () =
       if (pin.trim() === real.trim()) onUnlock()
       else setErr(true)
     } catch (e) {
-      console.error('[v0] pin check failed', e)
+      console.error('[v0] pin check failed', e?.message ?? String(e))
       setErr(true)
     } finally {
       setChecking(false)
@@ -387,7 +387,7 @@ function ReviewQueue({
       await reviewIncident(i.id)
       setReviewedIds((current) => new Set(current).add(i.id))
     } catch (err) {
-      console.error('[v0] review incident failed', err)
+      console.error('[v0] review incident failed', err?.message ?? String(err))
     } finally {
       setBusy(null)
     }
@@ -652,7 +652,7 @@ function ResolveModal({
       await resolveIncident(incident.id, outcome, notes.trim(), actor)
       onSaved()
     } catch (err) {
-      console.error('[v0] resolve incident failed', err)
+      console.error('[v0] resolve incident failed', err?.message ?? String(err))
       setSaving(false)
     }
   }

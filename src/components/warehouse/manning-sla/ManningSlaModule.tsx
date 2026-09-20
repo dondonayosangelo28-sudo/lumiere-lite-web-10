@@ -56,7 +56,7 @@ export function ManningSlaModule({ onClose }: ManningSlaModuleProps) {
   useEffect(() => {
     fetchAuditLogs({ module: 'manning' })
       .then((logs) => setDisputeLogs(logs.filter((l) => l.action_type === 'DISPUTED_CONFIRMATION' || l.action_type === 'ASSIGNMENT_AUTO_RELEASED')))
-      .catch((e) => console.warn('Failed to load disputed confirmation logs', e))
+      .catch((e) => console.warn('Failed to load disputed confirmation logs', e?.message ?? String(e)))
   }, [tab, busy])
 
   // Live SLA countdowns — re-render every 30s so badges stay current.
@@ -91,7 +91,7 @@ export function ManningSlaModule({ onClose }: ManningSlaModuleProps) {
       await fn()
       await reload()
     } catch (err) {
-      console.error('[v0] manning action failed', err)
+      console.error('[v0] manning action failed', err?.message ?? String(err))
     } finally {
       setBusy(null)
     }
@@ -780,7 +780,7 @@ function AssignmentModal({
       )
       onSaved()
     } catch (err: any) {
-      console.error('[v0] create assignment failed', err)
+      console.error('[v0] create assignment failed', err?.message ?? String(err))
       setErrorMsg(err?.message || 'Failed to create assignment')
       setSaving(false)
     }
@@ -868,7 +868,7 @@ function TaskModal({
       })
       onSaved()
     } catch (err) {
-      console.error('[v0] create task failed', err)
+      console.error('[v0] create task failed', err?.message ?? String(err))
       setSaving(false)
     }
   }
@@ -942,7 +942,7 @@ function WarningModal({
       })
       onSaved()
     } catch (err) {
-      console.error('[v0] issue warning failed', err)
+      console.error('[v0] issue warning failed', err?.message ?? String(err))
       setSaving(false)
     }
   }

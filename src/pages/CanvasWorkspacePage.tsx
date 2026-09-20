@@ -943,7 +943,7 @@ function BackgroundTab({ onApply }: { onApply: (color: string | null, photoDataU
 
 /* ════════════════════����═════════════════════
    LEFT PANEL SHELL
-   ═════════════════════���═════���══════════════ */
+   ══════════════════��══���═════���══════════════ */
 const PANEL_TABS: { id: PanelTab; icon: React.ElementType; label: string }[] = [
   { id: 'elements',   icon: ImageIcon,  label: 'Elements' },
   { id: 'text',       icon: Type,       label: 'Text' },
@@ -2758,7 +2758,7 @@ export function CanvasWorkspacePage() {
             return parsed
           }
         } catch (e) {
-          console.error('[CanvasWorkspace] Failed to parse saved pages:', e)
+          console.error('[CanvasWorkspace] Failed to parse saved pages:', e?.message ?? String(e))
         }
       }
     }
@@ -2900,7 +2900,7 @@ export function CanvasWorkspacePage() {
           }
           localStorage.removeItem(`lumiere-canvas-assets-${card.id}`)
         } catch (e) {
-          console.error('[CanvasWorkspace] Failed to parse saved canvas assets:', e)
+          console.error('[CanvasWorkspace] Failed to parse saved canvas assets:', e?.message ?? String(e))
         }
       }
       return []
@@ -2926,7 +2926,7 @@ export function CanvasWorkspacePage() {
           }
           localStorage.removeItem(`lumiere-dropped-assets-${card.id}`)
         } catch (e) {
-          console.error('[CanvasWorkspace] Failed to parse saved dropped assets:', e)
+          console.error('[CanvasWorkspace] Failed to parse saved dropped assets:', e?.message ?? String(e))
         }
       }
       return []
@@ -2948,7 +2948,7 @@ export function CanvasWorkspacePage() {
           }
           localStorage.removeItem(`lumiere-allocated-assets-${card.id}`)
         } catch (e) {
-          console.error('[CanvasWorkspace] Failed to parse saved allocated assets:', e)
+          console.error('[CanvasWorkspace] Failed to parse saved allocated assets:', e?.message ?? String(e))
         }
       }
       return cleanDefault
@@ -2966,7 +2966,7 @@ export function CanvasWorkspacePage() {
           }
           localStorage.removeItem(`lumiere-pending-replenishment-${card.id}`)
         } catch (e) {
-          console.error('[CanvasWorkspace] Failed to parse saved pending replenishment:', e)
+          console.error('[CanvasWorkspace] Failed to parse saved pending replenishment:', e?.message ?? String(e))
         }
       }
       return []
@@ -3005,7 +3005,7 @@ export function CanvasWorkspacePage() {
             setDroppedAssets(parsed)
           }
         } catch (err) {
-          console.warn('[CanvasWorkspace] Failed to parse backend canvas canvasState:', err)
+          console.warn('[CanvasWorkspace] Failed to parse backend canvas canvasState:', err?.message ?? String(err))
         }
       })
     })
@@ -3144,7 +3144,7 @@ export function CanvasWorkspacePage() {
       setCanvasAssets((prev) => [...prev, ...clonedAssets])
       showToast(`Inserted "${sourcePageTitle}" into current project!`)
     } catch (err) {
-      console.error('Failed to insert page from project:', err)
+      console.error('Failed to insert page from project:', err?.message ?? String(err))
     }
 
     setTimeout(() => {
@@ -3197,7 +3197,7 @@ export function CanvasWorkspacePage() {
 
       showToast(`Inserted ${newPagesList.length} pages into current project!`)
     } catch (err) {
-      console.error('Failed to insert all project pages:', err)
+      console.error('Failed to insert all project pages:', err?.message ?? String(err))
     }
   }
 

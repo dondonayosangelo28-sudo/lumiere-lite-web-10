@@ -449,7 +449,7 @@ export function InventoryStockPage() {
               warehouse_stock: quantity,
             })
             .then(({ error }) => {
-              if (error) console.error('[v0] Failed to publish asset to planner library:', error)
+              if (error) console.error('[v0] Failed to publish asset to planner library:', error?.message ?? String(error))
             })
         }}
       />
