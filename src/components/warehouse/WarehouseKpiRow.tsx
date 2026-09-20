@@ -29,7 +29,7 @@ export function WarehouseKpiRow({ events, onOpenModule }: WarehouseKpiRowProps) 
           type="button"
           onClick={() => onOpenModule(moduleId)}
           className={cn(
-            'rounded-xl border border-border bg-card px-4 py-4 text-left shadow-sm transition-colors hover:bg-accent',
+            'group rounded-xl border border-border bg-card px-4 py-4 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
             'border-l-4',
             border,
             critical && 'border-destructive/25 border-l-destructive bg-destructive/5',
@@ -37,7 +37,7 @@ export function WarehouseKpiRow({ events, onOpenModule }: WarehouseKpiRowProps) 
         >
           <div className="flex items-start justify-between gap-3">
             <p className="text-[0.62rem] font-semibold uppercase leading-tight tracking-[0.12em] text-muted-foreground">{label}</p>
-            <Icon className={cn('size-4 text-primary/80', critical && 'text-destructive')} aria-hidden="true" />
+            <Icon className={cn('size-4 text-primary/80 transition-transform duration-200 group-hover:scale-110', critical && 'text-destructive')} aria-hidden="true" />
           </div>
           <p className={cn('mt-6 font-serif text-3xl font-medium leading-none text-card-foreground', critical && 'text-destructive')}>
             {value}
