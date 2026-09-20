@@ -158,101 +158,99 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
       {/* Header controls & filters */}
-        <div className="flex flex-col border-b border-border px-6 pb-4 pt-7 sm:px-10">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
-              <h1 className="mt-1 pb-1 font-serif text-4xl font-medium leading-tight text-foreground">Asset Catalog</h1>
-            </div>
+      <div className="flex flex-col gap-4 border-b border-border px-6 py-5 sm:px-10">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
+            <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">Asset Catalog</h1>
           </div>
         </div>
 
-        <div className="mt-4 mb-5 flex flex-col items-start justify-between gap-6 pb-0 lg:flex-row">
-          {/* LEFT COLUMN: chips spacing — row height h-9 and gap-3 must match the other column to stay aligned */}
-          <div className="flex flex-col gap-3">
-            <div className="flex h-9 items-center gap-1.5">
-            {CATEGORY_FILTERS.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => setCategoryFilter(c)}
-                aria-pressed={categoryFilter === c}
-                className={cn(
-                  'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
-                  categoryFilter === c
-                    ? 'bg-foreground text-background'
-                    : 'border border-border bg-background text-muted-foreground hover:bg-muted',
-                )}
-              >
-                {c}
-              </button>
-            ))}
+        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+          {/* Compact two-row filter group */}
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {CATEGORY_FILTERS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCategoryFilter(c)}
+                  aria-pressed={categoryFilter === c}
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
+                    categoryFilter === c
+                      ? 'bg-foreground text-background'
+                      : 'border border-border bg-background text-muted-foreground hover:bg-muted',
+                  )}
+                >
+                  {c}
+                </button>
+              ))}
             </div>
-            <div className="flex h-9 items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
               {STATUS_FILTERS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setStatusFilter(s)}
-                aria-pressed={statusFilter === s}
-                className={cn(
-                  'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
-                  statusFilter === s
-                    ? 'bg-primary text-primary-foreground'
-                    : 'border border-border bg-background text-muted-foreground hover:bg-muted',
-                )}
-              >
-                {s}
-              </button>
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setStatusFilter(s)}
+                  aria-pressed={statusFilter === s}
+                  className={cn(
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
+                    statusFilter === s
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border border-border bg-background text-muted-foreground hover:bg-muted',
+                  )}
+                >
+                  {s}
+                </button>
               ))}
             </div>
           </div>
 
-          {/* RIGHT COLUMN: controls spacing — row height h-9 and gap-3 must match the other column to stay aligned */}
-          <div className="flex w-full max-w-full flex-col gap-3 lg:w-[22rem]">
-            <div className="flex h-9 w-full items-center gap-2">
-            <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
+          {/* View, create, and search controls */}
+          <div className="flex w-full shrink-0 flex-col items-end gap-2 lg:w-auto">
+            <div className="flex items-center gap-2">
+              <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
+                <button
+                  type="button"
+                  aria-label="Grid view"
+                  aria-pressed={viewMode === 'grid'}
+                  onClick={() => setViewMode('grid')}
+                  className={cn('rounded-sm p-1.5 transition', viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
+                >
+                  <Grid2X2 className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="List view"
+                  aria-pressed={viewMode === 'list'}
+                  onClick={() => setViewMode('list')}
+                  className={cn('rounded-sm p-1.5 transition', viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
+                >
+                  <List className="size-3.5" />
+                </button>
+              </div>
               <button
                 type="button"
-                aria-label="Grid view"
-                aria-pressed={viewMode === 'grid'}
-                onClick={() => setViewMode('grid')}
-                className={cn('rounded-sm p-1.5 transition', viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
+                onClick={() => setAddOpen(true)}
+                className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
               >
-                <Grid2X2 className="size-3.5" />
-              </button>
-              <button
-                type="button"
-                aria-label="List view"
-                aria-pressed={viewMode === 'list'}
-                onClick={() => setViewMode('list')}
-                className={cn('rounded-sm p-1.5 transition', viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
-              >
-                <List className="size-3.5" />
+                <Plus className="size-3.5" />
+                Add Item
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setAddOpen(true)}
-              className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
-            >
-              <Plus className="size-3.5" />
-              Add Item
-            </button>
-          </div>
-            <div className="flex h-9 w-full items-center">
-              <div className="relative w-full max-w-full">
-            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search assets…"
-              className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+            <div className="relative w-64 max-w-full">
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search assets…"
+                className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
               />
-              </div>
             </div>
           </div>
         </div>
+      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 px-6 py-4 sm:px-10">
