@@ -400,7 +400,7 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-3 max-sm:gap-2">
+    <div className="flex flex-col gap-3">
       <div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
@@ -408,7 +408,7 @@ export function AssetAllocationKioskPage() {
             Asset Kiosk
           </span>
         </div>
-        <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground max-sm:text-2xl sm:text-4xl">
+        <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
           Asset Allocation
         </h1>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -418,7 +418,7 @@ export function AssetAllocationKioskPage() {
 
           {/* Search */}
           <div className="flex w-full justify-end sm:w-auto">
-            <div className="relative w-full max-sm:mt-0 sm:w-72">
+            <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
@@ -459,13 +459,13 @@ export function AssetAllocationKioskPage() {
                     aria-pressed={isActive}
                     onClick={() => setActiveCategory(cat.id === activeCategory ? ALL_CATEGORY : cat.id)}
                     className={cn(
-                      'group flex min-w-[9.5rem] shrink-0 items-center gap-3 rounded-xl border p-2 text-left transition duration-200 max-sm:min-w-[15rem] max-sm:gap-3 max-sm:rounded-xl max-sm:px-2 max-sm:py-2 sm:min-w-0 sm:w-full',
+                      'group flex min-w-[9.5rem] shrink-0 items-center gap-3 rounded-xl border p-2 text-left transition duration-200 sm:min-w-0 sm:w-full',
                       isActive
                         ? 'border-primary bg-primary text-primary-foreground shadow-md'
                         : 'border-border/70 bg-card text-card-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/60 hover:shadow-sm',
                     )}
                   >
-                    <span className={cn('size-11 shrink-0 overflow-hidden rounded-lg bg-muted/60 max-sm:size-12 sm:size-12', isActive && 'ring-2 ring-white/50')}>
+                    <span className={cn('size-11 shrink-0 overflow-hidden rounded-lg bg-muted/60 sm:size-12', isActive && 'ring-2 ring-white/50')}>
                       {cat.thumbnailUrl ? (
                         <img src={cat.thumbnailUrl} alt={`${cat.label} classification`} className="size-full object-cover transition duration-300 group-hover:scale-110" />
                       ) : (
@@ -485,7 +485,7 @@ export function AssetAllocationKioskPage() {
 
           {/* ---- Right pane 80% — thumbnail grid ---- */}
           <div className="h-auto min-w-0 overflow-x-hidden overflow-visible pr-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:h-auto sm:flex-1 sm:overflow-visible">
-            <div className="mb-3 flex items-center justify-between gap-2 max-sm:mb-2">
+            <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
               <div className="flex shrink-0 items-center rounded-lg border border-border bg-card p-0.5">
                 <button type="button" aria-label="Grid view" aria-pressed={viewMode === 'grid'} onClick={() => setViewMode('grid')} className={cn('rounded-md px-2 py-1.5 text-sm', viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}>▦</button>
@@ -534,22 +534,22 @@ export function AssetAllocationKioskPage() {
                       data-testid={`asset-card-${asset.id}`}
                       onClick={() => setSelectedAsset(asset)}
                       className={cn(
-                        'group relative overflow-hidden border border-border bg-card text-left transition max-sm:rounded-lg max-sm:shadow-none hover:border-primary/40 hover:shadow-lg',
-                        viewMode === 'grid' ? 'rounded-xl max-sm:rounded-lg' : 'flex w-full items-center gap-3 rounded-lg p-1.5 sm:p-2',
+                        'group relative overflow-hidden border border-border bg-card text-left transition hover:border-primary/40 hover:shadow-lg',
+                        viewMode === 'grid' ? 'rounded-xl' : 'flex w-full items-center gap-3 rounded-lg p-1.5 sm:p-2',
                       )}
                     >
-                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-[1.08/1] w-full max-sm:aspect-[1.12/1]' : 'size-14 shrink-0 rounded-md sm:size-20 sm:aspect-square')}>
+                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-square w-full' : 'size-14 shrink-0 rounded-md sm:size-20 sm:aspect-square')}>
                         {asset.thumbnailUrl ? (
                           <img src={asset.thumbnailUrl} alt={asset.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center"><Boxes className="size-8 text-muted-foreground/40" /></div>
                         )}
                       </div>
-                      <div className={cn(viewMode === 'grid' ? 'p-2.5 max-sm:p-2' : 'min-w-0 flex-1 pr-1')}>
-                        <p className="text-[0.7rem] font-semibold leading-snug text-card-foreground max-sm:line-clamp-2">{asset.name}</p>
-                        <div className="mt-1 flex items-center justify-between gap-2 max-sm:flex-col max-sm:items-start max-sm:gap-0.5">
-                          <span className="text-[0.65rem] font-bold text-foreground max-sm:text-[0.62rem]">{stock.quantity} available</span>
-                          <span className={cn('text-[0.55rem] font-semibold max-sm:text-[0.52rem]', stock.status === 'Available' ? 'text-emerald-600' : stock.status === 'Low Stock' ? 'text-amber-600' : 'text-rose-600')}>{stock.status}</span>
+                      <div className={cn(viewMode === 'grid' ? 'p-2.5' : 'min-w-0 flex-1 pr-1')}>
+                        <p className="truncate text-[0.7rem] font-semibold text-card-foreground">{asset.name}</p>
+                        <div className="mt-1 flex items-center justify-between gap-2">
+                          <span className="text-[0.65rem] font-bold text-foreground">{stock.quantity} available</span>
+                          <span className={cn('text-[0.55rem] font-semibold', stock.status === 'Available' ? 'text-emerald-600' : stock.status === 'Low Stock' ? 'text-amber-600' : 'text-rose-600')}>{stock.status}</span>
                         </div>
                         <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted" aria-label={`${stock.status}: ${stock.quantity} available`}>
                           <div className={cn('h-full rounded-full', stock.tone)} style={{ width: `${stock.percent}%` }} />
