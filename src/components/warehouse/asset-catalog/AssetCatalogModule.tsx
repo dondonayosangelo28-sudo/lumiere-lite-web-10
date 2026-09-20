@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Grid2X2, List, Plus, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
+import { WarehouseModuleHeader } from '@/components/warehouse/WarehouseModuleHeader'
 import {
   addCatalogAsset,
   useCatalogAssets,
@@ -158,16 +159,10 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
       {/* Header controls & filters */}
-      <div className="flex flex-col gap-4 border-b border-border px-6 py-5 sm:px-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
-            <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">Asset Catalog</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Category-specific asset views, stock levels, and condition tracking.</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+      <WarehouseModuleHeader
+        title="Asset Catalog"
+        subtitle="Category-specific asset views, stock levels, and condition tracking."
+      >
           {/* Compact two-row filter group */}
           <div className="flex min-w-0 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-1.5">
@@ -250,8 +245,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
               />
             </div>
           </div>
-        </div>
-      </div>
+      </WarehouseModuleHeader>
 
       {/* Main Content Area */}
       <div className="flex-1 px-6 py-4 sm:px-10">
