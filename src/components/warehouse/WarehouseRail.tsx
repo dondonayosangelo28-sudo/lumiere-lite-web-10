@@ -5,9 +5,6 @@ import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modul
 interface WarehouseRailProps {
   activeModuleId: WarehouseModuleId
   onSelectModule: (id: WarehouseModuleId) => void
-  onExit?: () => void
-  onDashboard?: () => void
-  activeDashboard?: boolean
   defaultOpen?: boolean
 }
 
