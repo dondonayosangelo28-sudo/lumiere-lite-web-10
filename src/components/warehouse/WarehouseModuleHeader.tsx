@@ -8,7 +8,7 @@ type WarehouseModuleHeaderProps = {
 
 export function WarehouseModuleHeader({ title, subtitle, children }: WarehouseModuleHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-7 sm:px-10">
+    <div className="flex flex-col gap-4 border-b border-border px-6 pb-3.5 pt-7 sm:px-10">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
