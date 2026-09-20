@@ -158,7 +158,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
       {/* Header controls & filters */}
-<div className="flex flex-col gap-4 border-b border-border px-6 py-5 sm:px-10">
+<div className="flex flex-col gap-8 border-b border-border px-6 py-8 sm:px-10">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
