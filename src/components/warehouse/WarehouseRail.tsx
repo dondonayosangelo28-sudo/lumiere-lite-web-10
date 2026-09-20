@@ -22,16 +22,24 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
   }
 
   return (
-    <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
+    <aside className={cn('flex h-full min-h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Lumiere brand, collapse navigation' : 'Lumiere brand, expand navigation'}
+          aria-label={open ? 'Warehouse Dashboard logo, collapse navigation' : 'Warehouse Dashboard logo, expand navigation'}
           aria-expanded={open}
-          className={cn('flex items-center rounded-lg text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'px-1' : 'size-9 justify-center')}
+          className={cn('group flex items-center rounded-xl text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'gap-3 px-1 py-1' : 'size-10 justify-center')}
         >
-          {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
+          <span className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary font-serif text-lg font-semibold leading-none text-sidebar-primary-foreground shadow-sm transition-transform group-hover:scale-105" aria-hidden="true">
+            W
+          </span>
+          {open && (
+            <span className="min-w-0 text-left">
+              <span className="block font-serif text-base font-semibold leading-none tracking-[0.08em]">WAREHOUSE</span>
+              <span className="mt-1 block text-[0.55rem] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/60">Dashboard</span>
+            </span>
+          )}
         </button>
       </div>
 
@@ -40,12 +48,12 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         onClick={onExit}
         aria-label="Back to dashboard"
         title="Back to dashboard"
-        className="mt-5 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        className="mt-7 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
       </button>
 
-      <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
+      <div className={cn('my-4 h-px bg-sidebar-border', open ? 'mx-4' : 'w-9')} aria-hidden="true" />
 
       <nav className={cn('flex flex-col gap-2', open ? 'items-stretch px-3' : 'items-center')} aria-label="Warehouse modules">
         {WAREHOUSE_MODULES.map((module) => {
