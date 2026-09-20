@@ -36,6 +36,7 @@ import { AssetAllocationKioskPage } from '@/pages/AssetAllocationKioskPage'
 import { TempPasswordResetScreen } from '@/pages/TempPasswordResetScreen'
 import { PlannerProvider } from '@/lib/planner'
 import { WarehouseProvider } from '@/lib/warehouse'
+import { AppErrorBoundary } from '@/components/AppErrorBoundary'
 
 function PortalAccessError({ portal }: { portal: 'web' | 'pwa' }) {
   const { logout } = useAuth()
@@ -181,9 +182,11 @@ function Gate() {
                   : 'overview')
 
   return (
-    <NavProvider initialRoute={initialRoute} initialExecutiveRailOpen={!isExecutive}>
-      <Router />
-    </NavProvider>
+  <NavProvider initialRoute={initialRoute} initialExecutiveRailOpen={!isExecutive}>
+  <AppErrorBoundary>
+  <Router />
+  </AppErrorBoundary>
+  </NavProvider>
   )
 }
 function AppContent() {
