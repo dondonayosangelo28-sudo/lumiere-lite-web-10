@@ -279,7 +279,7 @@ export function EventCalendar({
             role="dialog"
             aria-modal="true"
             aria-labelledby="calendar-year-title"
-            className="max-h-[92vh] w-full overflow-y-auto rounded-t-[28px] rounded-b-none border border-white/40 dark:border-white/10 bg-card/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl backdrop-saturate-150 transition duration-[220ms] ease-out motion-reduce:transition-opacity sm:max-w-4xl sm:rounded-[28px] sm:p-7"
+            className="max-h-[92vh] w-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-[28px] rounded-b-none border border-white/40 dark:border-white/10 bg-card/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl backdrop-saturate-150 transition duration-[220ms] ease-out motion-reduce:transition-opacity sm:max-w-4xl sm:rounded-[28px] sm:p-7"
           >
             <div className="mx-auto mt-2 mb-4 h-1.5 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
             <div className="flex items-start justify-between gap-4 pb-4">
