@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 interface WarehouseCalendarEventsViewProps {
   events: PortalEvent[]
   onSelectEvent: (event: PortalEvent) => void
-  onViewAllEvents: () => void
 }
 
 function getIngressCountdownBadge(targetDateStr: string): { label: string; style: string } {
@@ -78,7 +77,7 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
               {selectedEvents.length} {selectedEvents.length === 1 ? 'event' : 'events'} scheduled
             </p>
           </div>
-          <div className="mt-4 max-h-72 space-y-3 overflow-y-auto pr-1">
+          <div className="mt-4 space-y-3">
             {selectedEvents.length === 0 ? (
               <p className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">No events scheduled for this date.</p>
             ) : (
@@ -99,33 +98,28 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
       </div>
 
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6" aria-labelledby="upcoming-events">
-        <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center justify-between border-b border-border pb-4">
           <div>
-            <h2 id="upcoming-events" className="font-serif text-xl font-medium text-card-foreground">Upcoming Events</h2>
-            <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Nearest {Math.min(8, sortedEvents.length)} of {sortedEvents.length} scheduled events</p>
+            <h2 id="upcoming-events" className="font-serif text-xl font-medium text-card-foreground">Upcoming Events ({sortedEvents.length})</h2>
+            <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Operations roster</p>
           </div>
-          <button type="button" onClick={onViewAllEvents} className="shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-primary transition hover:text-primary/70">
-            View all events →
-          </button>
         </div>
-        <div className="mt-4 overflow-hidden rounded-lg border border-border">
-          <div className="hidden grid-cols-[minmax(0,1.6fr)_minmax(120px,1fr)_110px_120px] gap-4 bg-muted/40 px-4 py-2 text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:grid">
-            <span>Event</span><span>Venue</span><span>Date</span><span className="text-right">Status</span>
-          </div>
-          <div className="divide-y divide-border">
-            {sortedEvents.slice(0, 8).map((event) => {
-              const countdown = getIngressCountdownBadge(event.targetDate)
-              return (
-                <button key={event.id} type="button" onClick={() => onSelectEvent(event)} className="grid w-full gap-1 px-4 py-3 text-left transition hover:bg-accent/40 sm:grid-cols-[minmax(0,1.6fr)_minmax(120px,1fr)_110px_120px] sm:items-center sm:gap-4">
-                  <span className="truncate font-serif text-sm font-medium text-card-foreground">{event.title}</span>
-                  <span className="truncate text-xs text-muted-foreground">{event.venue}</span>
-                  <span className="text-xs text-muted-foreground">{event.targetDate}</span>
-                  <span className={cn('w-fit rounded-full border px-2 py-0.5 text-[0.52rem] uppercase tracking-wider sm:ml-auto', countdown.style)}>{countdown.label}</span>
-                </button>
-              )
-            })}
-            {sortedEvents.length === 0 && <p className="px-4 py-6 text-center text-xs text-muted-foreground">No events match your search.</p>}
-          </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {sortedEvents.map((event) => {
+            const countdown = getIngressCountdownBadge(event.targetDate)
+            return (
+              <button key={event.id} type="button" onClick={() => onSelectEvent(event)} className="group rounded-xl border border-border bg-background p-3.5 text-left transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent/40">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-serif text-sm font-medium text-card-foreground group-hover:text-primary">{event.title}</h3>
+                  <span className={cn('shrink-0 rounded-full border px-2.5 py-0.5 text-[0.55rem] uppercase tracking-wider', countdown.style)}>{countdown.label}</span>
+                </div>
+                <div className="mt-2 flex items-center justify-between gap-2 text-[0.62rem] text-muted-foreground">
+                  <span className="min-w-0 truncate font-semibold text-card-foreground">{event.venue}</span>
+                  <span className="shrink-0 whitespace-nowrap">· {event.targetDate}</span>
+                </div>
+              </button>
+            )
+          })}
         </div>
       </section>
     </div>

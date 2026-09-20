@@ -50,7 +50,6 @@ export function WarehouseDashboardPage() {
         <WarehouseDashboardModule
           onSelectModule={selectModule}
           onOpenEventDetail={openEventDetail}
-          onViewAllEvents={() => navigate('registry')}
         />
       ) : (
         <CompanionPanel

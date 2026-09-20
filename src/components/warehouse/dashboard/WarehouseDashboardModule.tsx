@@ -13,7 +13,7 @@ interface WarehouseDashboardModuleProps {
   onOpenEventDetail: (id: string) => void
 }
 
-export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail, onViewAllEvents }: WarehouseDashboardModuleProps & { onViewAllEvents: () => void }) {
+export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail }: WarehouseDashboardModuleProps) {
   const { events } = usePortal()
   const [searchQuery, setSearchQuery] = useState('')
   const [summaryEvent, setSummaryEvent] = useState<PortalEvent | null>(null)
@@ -34,7 +34,7 @@ export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail, on
         <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} searchInHeader hideTopBar />
         <div className="flex w-full flex-col gap-8 px-5 py-6 sm:gap-10 sm:px-8">
           <WarehouseKpiRow events={events} onOpenModule={onSelectModule} />
-          <WarehouseCalendarEventsView events={visibleEvents} onSelectEvent={setSummaryEvent} onViewAllEvents={onViewAllEvents} />
+          <WarehouseCalendarEventsView events={visibleEvents} onSelectEvent={setSummaryEvent} />
         </div>
       </div>
 
