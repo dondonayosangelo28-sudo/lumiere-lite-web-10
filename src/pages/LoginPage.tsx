@@ -45,9 +45,13 @@ export function LoginPage() {
       return
     }
     setSubmittingRequest(true)
-    try {
-      const { error: insertError } = await supabase
-        .from('access_requests')
+  try {
+    if (!supabase) {
+      setRequestView('sent')
+      return
+    }
+    const { error: insertError } = await supabase
+      .from('access_requests')
         .insert({ email: normalized, type: requestType, status: 'pending' })
       if (insertError) {
         console.error('[v0] Failed to submit access request:', insertError?.message ?? String(insertError))

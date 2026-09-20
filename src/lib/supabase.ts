@@ -1,18 +1,16 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-// These are injected at build time by vite.config.ts (see `define`).
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim()
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim()
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    '[v0] Supabase env vars missing. VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY were not injected.',
-  )
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+
+let didReportMissingConfig = false
+if (!isSupabaseConfigured && !didReportMissingConfig) {
+  didReportMissingConfig = true
+  console.info('[v0] Supabase unavailable; using API and local fallback data.')
 }
 
-// Singleton browser client. Falls back to harmless placeholders so the module
-// never throws at import time (which would blank the whole app).
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-anon-key',
-)
+export const supabase: SupabaseClient | null = isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseAnonKey!)
+  : null

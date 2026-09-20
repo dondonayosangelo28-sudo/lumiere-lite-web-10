@@ -1464,6 +1464,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
   // Hydrate the staff directory from the database (portal_accounts is the source of truth).
   useEffect(() => {
+    if (!supabase) return
     let active = true
     ;(async () => {
       const { data, error } = await supabase
@@ -1496,6 +1497,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
   // Hydrate pending account requests (forgot-password / request-access) from the database.
   useEffect(() => {
+    if (!supabase) return
     let active = true
     ;(async () => {
       const { data, error } = await supabase

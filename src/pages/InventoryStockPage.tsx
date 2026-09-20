@@ -439,8 +439,10 @@ export function InventoryStockPage() {
 
           // Publish to the Event Planner décor library so the new asset shows up
           // in the canvas side panel. Fire-and-forget; UI already updated.
-          void supabase
-            .from('planner_assets')
+  if (!supabase) return
+
+  void supabase
+    .from('planner_assets')
             .insert({
               sku: assetId,
               name: data.assetName,

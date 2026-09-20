@@ -543,6 +543,7 @@ export function PlannerProvider({ children }: { children: ReactNode }) {
   // Hydrate the décor library with assets registered by the Warehouse Supervisor
   // so newly stocked items appear in the canvas side panel.
   useEffect(() => {
+    if (!supabase) return
     let active = true
     ;(async () => {
       const { data, error } = await supabase
