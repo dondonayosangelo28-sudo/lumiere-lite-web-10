@@ -215,7 +215,7 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-primary">Warehouse Operations Manager</span>
-            <h1 className="mt-3 font-serif text-2xl font-medium tracking-tight text-foreground">Warehouse Dashboard</h1>
+            <h1 className="mt-3 font-serif text-4xl font-medium tracking-tight text-foreground">Warehouse Dashboard</h1>
             <p className="mt-1 text-sm text-muted-foreground">Warehouse KPIs, ingress calendar, and upcoming events.</p>
           </div>
           {searchInHeader && (
