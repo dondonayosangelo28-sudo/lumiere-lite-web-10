@@ -13,7 +13,7 @@ import { AdminSystemDashboardPage } from '@/pages/AdminSystemDashboardPage'
 import { AdminWorkforcePage } from '@/pages/AdminWorkforcePage'
 import { AdminSecurityAuditPage } from '@/pages/AdminSecurityAuditPage'
 import { AdminRolesPage } from '@/pages/AdminRolesPage'
-import { WarehouseHomePage } from '@/pages/WarehouseHomePage'
+import { WarehouseDashboardPage } from '@/pages/WarehouseDashboardPage'
 import { EventDashboardPage } from '@/pages/EventDashboardPage'
 import { EventRegistryPage } from '@/pages/EventRegistryPage'
 import { ReplenishmentPage } from '@/pages/ReplenishmentPage'
@@ -61,7 +61,8 @@ function Router() {
   // the Ground Crew / Warehouse Lead / Warehouse Member mobile accounts)
   // instead of the desktop sidebar shell — but only when scoped to that single
   // sub-role. The full-access Warehouse Ops Manager super-account still uses
-  // the desktop WarehouseHomePage even if its subRole happens to be unset.
+      // the desktop WarehouseDashboardPage even if its subRole happens to be unset.
+
   const isMobileProductionManager = isProductionManager && !hasFullWarehouseAccess
   const isMobileInventoryOfficer = isInventoryOfficer && !hasFullWarehouseAccess
   const pwaRoutes = new Set(['field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer'])
@@ -107,6 +108,8 @@ function Router() {
       return <InventoryOfficerPage />
     case 'assets':
       return <AssetAllocationKioskPage />
+    case 'warehouse-dashboard':
+      return <WarehouseDashboardPage />
     case 'workforce':
       return <AdminWorkforcePage />
     case 'security-audit':
@@ -124,7 +127,7 @@ function Router() {
       ) : isMobileInventoryOfficer ? (
         <InventoryOfficerPage />
       ) : isWarehouse ? (
-        <WarehouseHomePage />
+        <WarehouseDashboardPage />
       ) : (
         <OverviewPage />
       )
@@ -150,7 +153,7 @@ function Gate() {
   const hasWorkforceHighlight =
     new URLSearchParams(window.location.search).has('highlight') || Boolean(window.history.state?.highlight)
   const urlParamRoute = (new URLSearchParams(window.location.search).get('route') || window.location.pathname.replace('/', '')) as Route | null
-  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets'])
+  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets', 'warehouse-dashboard'])
   const targetUrlRoute = urlParamRoute && validRoutes.has(urlParamRoute) ? urlParamRoute : null
 
   const initialRoute = targetUrlRoute || (isManningOfficer
@@ -168,7 +171,7 @@ function Gate() {
             : isPlanner
             ? 'canvas'
             : isWarehouse
-              ? 'overview'
+              ? 'warehouse-dashboard'
               : hasWorkforceHighlight
                 ? 'workforce'
                 : isExecutive
