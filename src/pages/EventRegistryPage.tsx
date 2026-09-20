@@ -271,7 +271,7 @@ export function EventRegistryPage() {
           {!readOnly && (
           <button
             type="button"
-            onClick={openCreate}
+            onClick={() => openCreate()}
             className="rounded-md bg-neutral-900 px-5 py-2.5 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-neutral-800"
           >
             Register New Event

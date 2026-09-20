@@ -229,7 +229,7 @@ function EventDashboardContent() {
 
         <button
           type="button"
-          onClick={openCreate}
+          onClick={() => openCreate()}
           data-testid="executive-add-event-button"
           className="flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-[0.98] cursor-pointer max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
         >
@@ -408,7 +408,7 @@ function EventDashboardContent() {
                         : 'No event portfolios are scheduled for this timeframe. You can register a new event now.'
                     }
                     actionLabel="+ Register New Event"
-                    onAction={openCreate}
+                    onAction={() => openCreate()}
                   />
                 </div>
               ) : (
