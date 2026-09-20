@@ -34,7 +34,14 @@ export function WarehouseDashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <WarehouseRail activeModuleId="assets" onSelectModule={selectModule} onDashboard={() => navigate('warehouse-dashboard')} onExit={() => navigate('overview')} />
+      <WarehouseRail
+        activeModuleId="assets"
+        activeDashboard
+        defaultOpen
+        onSelectModule={selectModule}
+        onDashboard={() => navigate('warehouse-dashboard')}
+        onExit={() => navigate('overview')}
+      />
       <main className="min-w-0 flex-1">
         <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-7 px-6 py-7 sm:px-10 sm:py-8">
           <header className="border-b border-border pb-5">
