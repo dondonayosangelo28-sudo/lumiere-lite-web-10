@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Bell, CheckCircle2, Info, LogOut, Moon, Search, Sun, TriangleAlert, User } from 'lucide-react'
+import { Bell, CheckCircle2, Info, LogOut, Moon, Sun, TriangleAlert, User } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { useDarkMode } from '@/lib/theme'
 import { getDispatchActivity, type DispatchActivityEntry } from '@/lib/warehouse-dispatch'
@@ -95,29 +95,8 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
       {!hideTopBar && <div className="flex items-center justify-between border-b border-border bg-background px-5 py-3 sm:px-10">
         <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-muted-foreground">{liveDate} <span className="mx-1 text-border">|</span> {liveTime}</p>
         <div className="flex items-center gap-2">
-      {/* Right Header Action Cluster: Compact Search Bar + Notifications + Account Menu */}
+      {/* Right Header Action Cluster: Notifications + Account Menu */}
       <div className="flex items-center gap-3">
-        {!searchInHeader && <div className="relative w-52 sm:w-64">
-          <Search
-            className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <label htmlFor="warehouse-search" className="sr-only">
-            Search assets, batches, crew, purchase orders, vendors, and events
-          </label>
-          <input
-            id="warehouse-search"
-            type="text"
-            value={searchQuery}
-            onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Search anything"
-            className={cn(
-              'w-full rounded-full border border-border/80 bg-card/90 py-2.5 pl-10 pr-4 text-xs text-card-foreground shadow-xs outline-none transition-colors placeholder:text-muted-foreground',
-              'focus:border-primary focus:ring-1.5 focus:ring-primary/30',
-            )}
-          />
-        </div>}
-
         {/* Notifications Bell */}
         <div className="relative" ref={notifRef}>
           <button
@@ -239,13 +218,7 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
             <h1 className="mt-3 font-serif text-3xl font-medium tracking-tight text-foreground">Warehouse Dashboard</h1>
             <p className="mt-1 text-sm text-muted-foreground">Warehouse KPIs, ingress calendar, and upcoming events.</p>
           </div>
-          {searchInHeader ? (
-            <div className="relative w-52 sm:w-64">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-              <label htmlFor="warehouse-search" className="sr-only">Search assets, batches, crew, purchase orders, vendors, and events</label>
-              <input id="warehouse-search" type="text" value={searchQuery} onChange={(event) => onSearchChange(event.target.value)} placeholder="Search anything" className={cn('w-full rounded-full border border-border/80 bg-card/90 py-2.5 pl-10 pr-4 text-xs text-card-foreground shadow-xs outline-none transition-colors placeholder:text-muted-foreground', 'focus:border-primary focus:ring-1.5 focus:ring-primary/30')} />
-            </div>
-          ) : <div className="relative w-full max-w-xs">{null}</div>}
+
         </div>
       </div>}
     </div>
