@@ -143,7 +143,7 @@ export function DispatchManifestPage() {
   const [isError, setIsError] = useState(false)
 
   return (
-    <ConsoleLayout>
+    <ConsoleLayout warehouseActiveId="dispatch">
       {isError ? (
         <ErrorFallback title="Dispatch Manifests Unavailable" message="Could not fetch vehicle dispatch manifests." onRetry={() => setIsError(false)} />
       ) : isLoading ? (

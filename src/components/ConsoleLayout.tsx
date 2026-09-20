@@ -1,13 +1,34 @@
 import { useState, type ReactNode } from 'react'
 import { Menu } from 'lucide-react'
 import { ConsoleSidebar } from '@/components/ConsoleSidebar'
+import { WarehouseShell } from '@/components/warehouse/WarehouseShell'
+import type { WarehouseModuleId } from '@/lib/warehouse-modules'
+import { useAuth } from '@/lib/auth'
+import { useNav } from '@/lib/nav'
 
 interface Props {
   children: ReactNode
+  warehouseActiveId?: WarehouseModuleId
 }
 
-export function ConsoleLayout({ children }: Props) {
+export function ConsoleLayout({ children, warehouseActiveId }: Props) {
+  const { isWarehouse, hasFullWarehouseAccess } = useAuth()
+  const { navigate } = useNav()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  if (isWarehouse && hasFullWarehouseAccess && warehouseActiveId) {
+    return (
+      <WarehouseShell
+        activeId={warehouseActiveId}
+        onSelect={(id) => {
+          const routes = { dashboard: 'overview', assets: 'inventory', replenishment: 'replenishment', vendors: 'overview', dispatch: 'dispatch' } as const
+          navigate(routes[id])
+        }}
+      >
+        {children}
+      </WarehouseShell>
+    )
+  }
   const [collapsed, setCollapsed] = useState(false)
 
   const dateLabel = new Date().toLocaleDateString('en-US', {

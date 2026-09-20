@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { PortalEvent } from '@/lib/types'
 import type { WarehouseModuleId } from '@/lib/warehouse-modules'
-import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
+import { WarehouseShell } from '@/components/warehouse/WarehouseShell'
 import { CompanionPanel } from '@/components/warehouse/CompanionPanel'
 
 export type DrilldownEntry =
@@ -17,21 +17,17 @@ export function WarehouseDrilldown({ entry, onExit }: WarehouseDrilldownProps) {
   const [activeModuleId, setActiveModuleId] = useState<WarehouseModuleId>(entry.moduleId)
 
   return (
-    <div className="fixed inset-0 z-40 flex bg-background">
-      <WarehouseRail
-        activeModuleId={activeModuleId}
-        onSelectModule={(id) => {
-          if (id === 'dashboard') {
-            onExit()
-            return
-          }
-          setActiveModuleId(id)
-        }}
-        onDashboard={onExit}
-        onExit={onExit}
-        defaultOpen={false}
-      />
+    <WarehouseShell
+      activeId={activeModuleId}
+      onSelect={(id) => {
+        if (id === 'dashboard') {
+          onExit()
+          return
+        }
+        setActiveModuleId(id)
+      }}
+    >
       <CompanionPanel moduleId={activeModuleId} onClose={onExit} />
-    </div>
+    </WarehouseShell>
   )
 }
