@@ -11,7 +11,9 @@ import { BulkGenerateFlow } from '@/components/warehouse/replenishment/BulkGener
 import { cn } from '@/lib/utils'
 import { exportReplenishmentDeficitPdf } from '@/lib/pdf-exporter'
 
-type ViewMode = 'grouped' | 'consolidated'
+type ViewMode = 'grouped' | 'consolidated' | 'draft'
+
+const PREVIEW_LIMIT = 8
 
 interface ReplenishmentModuleProps {
   onClose: () => void
@@ -28,6 +30,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
   const [addPresetEvent, setAddPresetEvent] = useState<{ id: string; title: string } | null>(null)
   const [bulkOpen, setBulkOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     let active = true
@@ -177,12 +180,12 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
         </div>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="inline-flex rounded-lg border border-border bg-card p-1">
+          <div className="flex max-w-full overflow-x-auto rounded-lg border border-border bg-card p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               type="button"
               onClick={() => setViewMode('grouped')}
               className={cn(
-                'whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                'shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
                 viewMode === 'grouped'
                   ? 'bg-foreground text-background shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -194,13 +197,25 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               type="button"
               onClick={() => setViewMode('consolidated')}
               className={cn(
-                'whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                'shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
                 viewMode === 'consolidated'
                   ? 'bg-foreground text-background shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
               Consolidated Register ({lines.length} Lines)
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('draft')}
+              className={cn(
+                'shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                viewMode === 'draft'
+                  ? 'bg-foreground text-background shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              )}
+            >
+              Draft Purchase Orders ({openCandidates.length})
             </button>
           </div>
 
@@ -229,24 +244,36 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               <Download className="size-3.5" />
               Export Report (PDF)
             </button>
-            {openCandidates.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setBulkOpen(true)}
-                className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
-              >
-                Draft Master PO ({openCandidates.length})
-              </button>
-            )}
+
           </div>
         </div>
       </div>
 
       <div className="flex-1 px-6 py-6 sm:px-10">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ['Open deficits', lines.filter((line) => line.status !== 'Received').length, 'bg-destructive'],
+            ['Critical', lines.filter((line) => line.priority === 'Critical').length, 'bg-destructive'],
+            ['High priority', lines.filter((line) => line.priority === 'High').length, 'bg-amber-500'],
+            ['PO candidates', openCandidates.length, 'bg-primary'],
+          ].map(([label, value, dot]) => (
+            <div key={label} className="rounded-lg border border-border bg-card px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span className={cn('size-1.5 rounded-full', dot)} />
+                <p className="text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
+              </div>
+              <p className="mt-2 text-xl font-semibold text-card-foreground">{value}</p>
+            </div>
+          ))}
+        </div>
+
         {viewMode === 'consolidated' ? (
           <div className="overflow-hidden rounded-xl border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-5 py-4">
-              <h2 className="font-serif text-lg font-medium text-card-foreground">All Deficit Lines</h2>
+            <div className="flex flex-col gap-2 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="font-serif text-lg font-medium text-card-foreground">Consolidated Register</h2>
+                <p className="text-xs text-muted-foreground">All inventory items requiring attention across the operation.</p>
+              </div>
               <span className="rounded-full bg-muted px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                 {filtered.length} items
               </span>
@@ -260,78 +287,134 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               onTagForDispatch={handleTagForDispatch}
             />
           </div>
+        ) : viewMode === 'draft' ? (
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="font-serif text-lg font-medium text-card-foreground">Draft Purchase Orders</h2>
+                <p className="text-xs text-muted-foreground">Review deficit candidates before sending them into purchasing.</p>
+              </div>
+              {openCandidates.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setBulkOpen(true)}
+                  className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+                >
+                  Draft Master PO ({openCandidates.length})
+                </button>
+              )}
+            </div>
+            <div className="grid gap-3 p-5 md:grid-cols-2">
+              {openCandidates.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No open deficit lines are waiting for purchasing.</p>
+              ) : (
+                openCandidates.map((line) => (
+                  <button
+                    key={line.id}
+                    type="button"
+                    onClick={() => setPoLine(line)}
+                    className="flex items-start justify-between gap-4 rounded-lg border border-border bg-background p-4 text-left transition hover:border-primary/50 hover:bg-accent/40"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate font-serif text-sm font-medium text-card-foreground">{line.itemName}</span>
+                      <span className="mt-1 block text-[0.62rem] uppercase tracking-[0.08em] text-muted-foreground">
+                        {line.eventTitle ?? 'General stockroom'} · {line.quantityNeeded} {line.unit}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-sm font-semibold text-card-foreground">₱{lineCost(line).toLocaleString()}</span>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
             {grouped.groups.length === 0 && grouped.general.length === 0 && (
               <p className="text-sm text-muted-foreground">No deficit lines match the current search.</p>
             )}
             {grouped.groups.map(([eventId, group]) => {
-              const activeLines = group.lines.filter((l) => l.status !== 'Received')
-              const receivedCount = group.lines.length - activeLines.length
-              const activeTotalCost = activeLines.reduce((sum, l) => sum + lineCost(l), 0)
+              const activeLines = group.lines.filter((line) => line.status !== 'Received')
+              const criticalCount = group.lines.filter((line) => line.priority === 'Critical').length
+              const highCount = group.lines.filter((line) => line.priority === 'High').length
+              const totalCost = activeLines.reduce((sum, line) => sum + lineCost(line), 0)
+              const expanded = expandedEvents.has(eventId)
               return (
                 <div key={eventId} className="overflow-hidden rounded-xl border border-border bg-card">
-                  <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <h2 className="font-serif text-lg font-bold text-card-foreground">{group.title}</h2>
-                      <p className="text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
-                        {activeLines.length} active line{activeLines.length === 1 ? '' : 's'} · {receivedCount} Received
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="text-right sm:pr-2">
-                        <p className="text-[0.58rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Active Deficit Total</p>
-                        <p className="text-lg font-semibold text-card-foreground">₱{activeTotalCost.toLocaleString()}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAddPresetEvent({ id: eventId, title: group.title })
-                          setAddOpen(true)
-                        }}
-className="inline-flex items-center rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary transition hover:bg-primary/20"
+                  <button
+                    type="button"
+                    onClick={() => setExpandedEvents((current) => {
+                      const next = new Set(current)
+                      if (next.has(eventId)) next.delete(eventId)
+                      else next.add(eventId)
+                      return next
+                    })}
+                    className="flex w-full flex-col gap-3 px-5 py-4 text-left transition hover:bg-accent/30 sm:flex-row sm:items-center sm:justify-between"
+                    aria-expanded={expanded}
                   >
-                    Add Item
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => exportReplenishmentDeficitPdf(group.lines, `Deficit Report — ${group.title}`)}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
-                      >
-                        <Download className="size-3" />
-                        Export Report
-                      </button>
+                    <span className="min-w-0">
+                      <span className="block truncate font-serif text-lg font-medium text-card-foreground">{group.title}</span>
+                      <span className="mt-1 block text-[0.62rem] uppercase tracking-[0.08em] text-muted-foreground">
+                        {group.lines.length} deficit item{group.lines.length === 1 ? '' : 's'} · {criticalCount} Critical · {highCount} High
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-4 sm:text-right">
+                      <span>
+                        <span className="block text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Active deficit</span>
+                        <span className="block text-sm font-semibold text-card-foreground">₱{totalCost.toLocaleString()}</span>
+                      </span>
+                      <span className="rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary">
+                        {expanded ? 'Hide details' : 'Review'}
+                      </span>
+                    </span>
+                  </button>
+                  {expanded && (
+                    <div className="border-t border-border">
+                      <DeficitTable
+                        lines={group.lines}
+                        selectedIds={selectedIds}
+                        onRowClick={setPoLine}
+                        onEdit={setEditLine}
+                        onRemove={handleRemove}
+                        onTagForDispatch={handleTagForDispatch}
+                      />
                     </div>
-                  </div>
-                  <DeficitTable
-                    lines={group.lines}
-                    selectedIds={selectedIds}
-                    onRowClick={setPoLine}
-                    onEdit={setEditLine}
-                    onRemove={handleRemove}
-                    onTagForDispatch={handleTagForDispatch}
-                  />
+                  )}
                 </div>
               )
             })}
             {grouped.general.length > 0 && (
               <div className="overflow-hidden rounded-xl border border-dashed border-border bg-card">
-                <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                <div className="flex items-center justify-between px-5 py-4">
                   <div>
                     <h2 className="font-serif text-lg font-medium text-card-foreground">General Stockroom</h2>
-                    <p className="text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
-                      Not tied to a specific event — visible here and in Consolidated
-                    </p>
+                    <p className="text-xs text-muted-foreground">Not tied to a specific event.</p>
                   </div>
+                  <span className="text-xs text-muted-foreground">{grouped.general.length} items</span>
                 </div>
-                <DeficitTable
-                  lines={grouped.general}
-                  selectedIds={selectedIds}
-                  onRowClick={setPoLine}
-                  onEdit={setEditLine}
-                  onRemove={handleRemove}
-                  onTagForDispatch={handleTagForDispatch}
-                />
+                {expandedEvents.has('general') && (
+                  <div className="border-t border-border">
+                    <DeficitTable
+                      lines={grouped.general}
+                      selectedIds={selectedIds}
+                      onRowClick={setPoLine}
+                      onEdit={setEditLine}
+                      onRemove={handleRemove}
+                      onTagForDispatch={handleTagForDispatch}
+                    />
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setExpandedEvents((current) => {
+                    const next = new Set(current)
+                    if (next.has('general')) next.delete('general')
+                    else next.add('general')
+                    return next
+                  })}
+                  className="border-t border-border px-5 py-3 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary"
+                >
+                  {expandedEvents.has('general') ? 'Hide details' : 'Review'}
+                </button>
               </div>
             )}
           </div>
