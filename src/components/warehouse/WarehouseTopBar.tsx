@@ -4,6 +4,7 @@ import { usePortal } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { useDarkMode } from '@/lib/theme'
 import { NotificationsBell, type NotificationEntry } from '@/components/NotificationsBell'
+import { WarehouseMobileMenu } from '@/components/warehouse/WarehouseMobileMenu'
 import { getCatalogAssets, getLowStockAssets } from '@/lib/warehouse-catalog'
 import { getDispatchActivity } from '@/lib/warehouse-dispatch'
 import { useEffect, useRef, useState } from 'react'
@@ -64,9 +65,12 @@ export function WarehouseTopBar() {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">
-      <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
-        {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
-      </p>
+      <div className="flex min-w-0 items-center gap-3">
+        <WarehouseMobileMenu />
+        <p className="truncate text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
+          {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
+        </p>
+      </div>
       <div className="flex items-center gap-2">
         <NotificationsBell notifications={notifications} size="md" />
         <div className="relative" ref={menuRef}>

@@ -7,6 +7,7 @@ import { WarehouseDashboardModule } from '@/components/warehouse/dashboard/Wareh
 import { WarehouseEventDetailPage } from '@/pages/WarehouseEventDetailPage'
 import type { PortalEvent } from '@/lib/types'
 import type { WarehouseModuleId } from '@/lib/warehouse-modules'
+import { WarehouseNavContext } from '@/lib/warehouse-nav'
 
 export function WarehouseDashboardPage() {
   const { events } = usePortal()
@@ -41,11 +42,12 @@ export function WarehouseDashboardPage() {
   }
 
   return (
-    <div className="fixed inset-0 flex overflow-hidden bg-background text-foreground">
-      <WarehouseRail
-        activeModuleId={activeModuleId}
-        onSelectModule={selectModule}
-      />
+    <WarehouseNavContext.Provider value={{ activeModuleId, selectModule }}>
+      <div className="fixed inset-0 flex overflow-hidden bg-background text-foreground">
+        <WarehouseRail
+          activeModuleId={activeModuleId}
+          onSelectModule={selectModule}
+        />
       {activeModuleId === 'dashboard' ? (
         <WarehouseDashboardModule
           onSelectModule={selectModule}
@@ -58,8 +60,9 @@ export function WarehouseDashboardPage() {
           onOpenEventDetail={openEventDetail}
           onClose={() => setActiveModuleId('dashboard')}
         />
-      )}
-    </div>
+        )}
+      </div>
+    </WarehouseNavContext.Provider>
   )
 }
 
