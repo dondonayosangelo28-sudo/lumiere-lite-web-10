@@ -158,7 +158,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
       {/* Header controls & filters */}
-        <div className="flex flex-col gap-0 border-b border-border px-6 pb-0 pt-7 sm:px-10">
+        <div className="flex flex-col border-b border-border px-6 pb-4 pt-7 sm:px-10">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
@@ -208,8 +208,8 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: controls spacing — row height h-9 and gap-0 must match the other column to stay aligned */}
-          <div className="flex w-full max-w-full flex-col gap-0 lg:w-[22rem]"> 
+          {/* RIGHT COLUMN: controls spacing — row height h-9 and gap-1 must match the other column to stay aligned */}
+          <div className="flex w-full max-w-full flex-col gap-1 lg:w-[22rem]">
             <div className="flex h-9 w-full items-center gap-2">
             <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
