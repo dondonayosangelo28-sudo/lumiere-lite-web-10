@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Download, Plus, Search } from 'lucide-react'
+import { Download, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
 import { getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
@@ -209,9 +209,8 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3.5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-foreground hover:bg-muted"
+              className="inline-flex items-center rounded-md border border-border bg-card px-3.5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-foreground hover:bg-muted"
             >
-              <Plus className="size-3.5" />
               Add Item
             </button>
 
@@ -248,9 +247,8 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+              className="inline-flex items-center whitespace-nowrap rounded-md border border-border bg-background px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
             >
-              <Plus className="size-3.5" />
               Add Master Item
             </button>
             <button
@@ -316,10 +314,9 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                           setAddPresetEvent({ id: eventId, title: group.title })
                           setAddOpen(true)
                         }}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary transition hover:bg-primary/20"
-                      >
-                        <Plus className="size-3" />
-                        + Add Item
+className="inline-flex items-center rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary transition hover:bg-primary/20"
+                  >
+                    Add Item
                       </button>
                       <button
                         type="button"
