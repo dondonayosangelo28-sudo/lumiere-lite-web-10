@@ -2,8 +2,6 @@ import { useState, type ReactNode } from 'react'
 import { Menu } from 'lucide-react'
 import { ConsoleSidebar } from '@/components/ConsoleSidebar'
 import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
-import type { WarehouseModuleId } from '@/lib/warehouse-modules'
-
 interface Props {
   children: ReactNode
   warehouseActiveId?: WarehouseModuleId
@@ -26,30 +24,12 @@ export function ConsoleLayout({ children, warehouseActiveId }: Props) {
 
   return (
     <div className="flex min-h-screen bg-background">
-      {warehouseActiveId ? (
-        <WarehouseRail
-          activeId={warehouseActiveId}
-          fixed
-          onSelect={(id) => {
-            const routes: Record<WarehouseModuleId, string> = {
-              dashboard: 'overview',
-              assets: 'inventory',
-              replenishment: 'replenishment',
-              vendors: 'overview',
-              dispatch: 'dispatch',
-            }
-            window.history.pushState({}, '', `/${routes[id]}`)
-            window.dispatchEvent(new PopStateEvent('popstate'))
-          }}
-        />
-      ) : (
-        <ConsoleSidebar
-          collapsed={collapsed}
-          onToggleCollapse={() => setCollapsed((c) => !c)}
-          mobileOpen={mobileOpen}
-          onCloseMobile={() => setMobileOpen(false)}
-        />
-      )}
+      <ConsoleSidebar
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed((c) => !c)}
+        mobileOpen={mobileOpen}
+        onCloseMobile={() => setMobileOpen(false)}
+      />
 
       <div
         className="flex min-w-0 flex-1 flex-col overflow-hidden transition-[margin] duration-300 ease-in-out ml-0 lg:ml-16"

@@ -5,12 +5,11 @@ import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modul
 interface WarehouseRailProps {
   activeId: WarehouseModuleId
   onSelect: (id: WarehouseModuleId) => void
-  fixed?: boolean
 }
 
 let warehouseRailOpen = false
 
-export function WarehouseRail({ activeId, onSelect, fixed = false }: WarehouseRailProps) {
+export function WarehouseRail({ activeId, onSelect }: WarehouseRailProps) {
   const [open, setOpenState] = useState(warehouseRailOpen)
   const setOpen = (value: boolean | ((current: boolean) => boolean)) => {
     setOpenState((current) => {
@@ -29,7 +28,7 @@ export function WarehouseRail({ activeId, onSelect, fixed = false }: WarehouseRa
   }
 
   return (
-    <aside className={cn('flex shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', fixed && 'fixed inset-y-0 left-0 z-50 h-screen', !fixed && 'h-full', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
+    <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
         <button
           type="button"
