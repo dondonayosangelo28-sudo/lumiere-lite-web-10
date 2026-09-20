@@ -166,88 +166,84 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col items-start gap-0 pb-0 lg:flex-row lg:justify-between">
+        <div className="mt-4 grid grid-cols-1 gap-y-2 pb-0 lg:grid-cols-[1fr_auto] lg:grid-rows-2 lg:gap-x-6 lg:items-center">
           {/* Compact two-row filter group */}
-          <div className="flex min-w-0 flex-col gap-2">
-            <div className="flex flex-wrap items-center gap-1.5">
-              {CATEGORY_FILTERS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setCategoryFilter(c)}
-                  aria-pressed={categoryFilter === c}
-                  className={cn(
-                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
-                    categoryFilter === c
-                      ? 'bg-foreground text-background'
-                      : 'border border-border bg-background text-muted-foreground hover:bg-muted',
-                  )}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-            <div className="flex flex-wrap items-center gap-1.5">
-              {STATUS_FILTERS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setStatusFilter(s)}
-                  aria-pressed={statusFilter === s}
-                  className={cn(
-                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
-                    statusFilter === s
-                      ? 'bg-primary text-primary-foreground'
-                      : 'border border-border bg-background text-muted-foreground hover:bg-muted',
-                  )}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap items-center gap-1.5 lg:col-start-1 lg:row-start-1">
+            {CATEGORY_FILTERS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCategoryFilter(c)}
+                aria-pressed={categoryFilter === c}
+                className={cn(
+                  'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
+                  categoryFilter === c
+                    ? 'bg-foreground text-background'
+                    : 'border border-border bg-background text-muted-foreground hover:bg-muted',
+                )}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5 lg:col-start-1 lg:row-start-2">
+            {STATUS_FILTERS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setStatusFilter(s)}
+                aria-pressed={statusFilter === s}
+                className={cn(
+                  'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
+                  statusFilter === s
+                    ? 'bg-primary text-primary-foreground'
+                    : 'border border-border bg-background text-muted-foreground hover:bg-muted',
+                )}
+              >
+                {s}
+              </button>
+            ))}
           </div>
 
           {/* View, create, and search controls */}
-          <div className="flex w-full shrink-0 flex-col items-start gap-3 lg:w-auto lg:items-end">
-            <div className="flex items-center gap-2">
-              <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
-                <button
-                  type="button"
-                  aria-label="Grid view"
-                  aria-pressed={viewMode === 'grid'}
-                  onClick={() => setViewMode('grid')}
-                  className={cn('rounded-sm p-1.5 transition', viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
-                >
-                  <Grid2X2 className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="List view"
-                  aria-pressed={viewMode === 'list'}
-                  onClick={() => setViewMode('list')}
-                  className={cn('rounded-sm p-1.5 transition', viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
-                >
-                  <List className="size-3.5" />
-                </button>
-              </div>
+          <div className="flex w-[22rem] max-w-full items-center gap-2 lg:col-start-2 lg:row-start-1 lg:justify-self-end">
+            <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
               <button
                 type="button"
-                onClick={() => setAddOpen(true)}
-                className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+                aria-label="Grid view"
+                aria-pressed={viewMode === 'grid'}
+                onClick={() => setViewMode('grid')}
+                className={cn('rounded-sm p-1.5 transition', viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
               >
-                <Plus className="size-3.5" />
-                Add Item
+                <Grid2X2 className="size-3.5" />
+              </button>
+              <button
+                type="button"
+                aria-label="List view"
+                aria-pressed={viewMode === 'list'}
+                onClick={() => setViewMode('list')}
+                className={cn('rounded-sm p-1.5 transition', viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
+              >
+                <List className="size-3.5" />
               </button>
             </div>
-            <div className="relative w-64 max-w-full">
-              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search assets…"
-                className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-              />
-            </div>
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+            >
+              <Plus className="size-3.5" />
+              Add Item
+            </button>
+          </div>
+          <div className="relative w-[22rem] max-w-full lg:col-start-2 lg:row-start-2 lg:justify-self-end">
+            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search assets…"
+              className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+            />
           </div>
         </div>
       </div>
