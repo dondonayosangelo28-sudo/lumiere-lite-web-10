@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Download, Plus, Search, X } from 'lucide-react'
+import { Download, Plus, Search } from 'lucide-react'
 import { usePortal } from '@/lib/store'
 import { getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
 import { createDeficitItemApi, fetchDeficitQueueApi, updateDeficitStatusApi } from '@/lib/deficitApi'
@@ -173,14 +173,6 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               Automated deficit detection, inventory replenishment alerts, and purchase order drafting.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close and return to dashboard"
-            className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
         </div>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

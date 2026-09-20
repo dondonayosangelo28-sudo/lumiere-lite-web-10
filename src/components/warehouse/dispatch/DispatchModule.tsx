@@ -145,14 +145,6 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
               Dispatch manifests, vehicle assignments, and transit checkpoints.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close and return to dashboard"
-            className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
         </div>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

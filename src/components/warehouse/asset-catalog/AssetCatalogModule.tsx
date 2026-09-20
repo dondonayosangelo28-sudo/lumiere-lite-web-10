@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Grid2X2, List, Plus, Search, X } from 'lucide-react'
+import { Grid2X2, List, Plus, Search } from 'lucide-react'
 import {
   addCatalogAsset,
   useCatalogAssets,
@@ -162,14 +162,6 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
   <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">Asset Catalog</h1>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close and return to dashboard"
-            className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
         </div>
 
         <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
