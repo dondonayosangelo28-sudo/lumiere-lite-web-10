@@ -7,15 +7,22 @@ import { ManningModule } from '@/components/warehouse/manning/ManningModule'
 import { DispatchModule } from '@/components/warehouse/dispatch/DispatchModule'
 import { ProductionModule } from '@/components/warehouse/production/ProductionModule'
 import { IncidentReportingModule } from '@/components/warehouse/incidents/IncidentReportingModule'
+import { WarehouseDashboardModule } from '@/components/warehouse/dashboard/WarehouseDashboardModule'
 
 interface CompanionPanelProps {
   moduleId: WarehouseModuleId
   onClose: () => void
+  onSelectModule?: (id: WarehouseModuleId) => void
+  onOpenEventDetail?: (id: string) => void
 }
 
-export function CompanionPanel({ moduleId, onClose }: CompanionPanelProps) {
+export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventDetail }: CompanionPanelProps) {
   const module = getWarehouseModule(moduleId)
   if (!module) return null
+
+  if (moduleId === 'dashboard') {
+    return <WarehouseDashboardModule onSelectModule={onSelectModule ?? (() => {})} onOpenEventDetail={onOpenEventDetail ?? (() => {})} />
+  }
 
   if (moduleId === 'assets') {
     return <AssetCatalogModule onClose={onClose} />
