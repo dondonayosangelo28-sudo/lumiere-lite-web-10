@@ -172,7 +172,7 @@ export function ReplenishmentPage() {
   }, [])
 
   return (
-    <ConsoleLayout warehouseActiveId="replenishment">
+    <ConsoleLayout>
       {isError ? (
         <ErrorFallback
           title="Replenishment Monitoring Unavailable"

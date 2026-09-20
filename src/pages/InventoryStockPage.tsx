@@ -521,7 +521,7 @@ export function InventoryStockPage() {
   )
 
   return (
-    <ConsoleLayout warehouseActiveId="assets">
+    <ConsoleLayout>
       <div className="mt-4">{headerBlock}</div>
       {bodyContent}
       {maintenanceConfirmAsset && (

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePortal } from '@/lib/store'
 import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
-import { WarehouseShell } from '@/components/warehouse/WarehouseShell'
+import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
 import { WarehouseKpiRow } from '@/components/warehouse/WarehouseKpiRow'
 import { WarehouseCalendarEventsView } from '@/components/warehouse/WarehouseCalendarEventsView'
 import { WomInputSummaryModal } from '@/components/warehouse/WomInputSummaryModal'
@@ -49,8 +49,9 @@ export function WarehouseHomePage() {
   }
 
   return (
-    <WarehouseShell activeId="dashboard" onSelect={openModule}>
-      <main className="mx-auto w-full max-w-[96rem] text-foreground">
+    <div className="flex min-h-screen bg-background text-foreground">
+      <WarehouseRail activeModuleId="assets" onSelectModule={openModule} onExit={() => setDrilldown(null)} />
+      <main className="min-w-0 flex-1">
         <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-6 px-5 py-5 sm:gap-7 sm:px-10 sm:py-7">
           <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
           <WarehouseKpiRow events={events} onOpenModule={openModule} />
@@ -66,7 +67,7 @@ export function WarehouseHomePage() {
           onOpenFullDetail={(id) => openEvent(id)}
         />
       )}
-    </WarehouseShell>
+    </div>
   )
 }
 

@@ -1,13 +1,12 @@
 import { useState, type ReactNode } from 'react'
 import { Menu } from 'lucide-react'
 import { ConsoleSidebar } from '@/components/ConsoleSidebar'
-import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
+
 interface Props {
   children: ReactNode
-  warehouseActiveId?: WarehouseModuleId
 }
 
-export function ConsoleLayout({ children, warehouseActiveId }: Props) {
+export function ConsoleLayout({ children }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
 
