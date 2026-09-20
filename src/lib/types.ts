@@ -29,7 +29,6 @@ export type Route =
   | 'production-manager'
   | 'inventory-officer'
   | 'assets'
-  | 'warehouse-dashboard'
 
 /* ---------- Procurement / Replenishment ---------- */
 
