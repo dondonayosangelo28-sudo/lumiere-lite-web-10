@@ -2,11 +2,8 @@ import { getWarehouseModule, type WarehouseModuleId } from '@/lib/warehouse-modu
 import { AssetCatalogModule } from '@/components/warehouse/asset-catalog/AssetCatalogModule'
 import { ReplenishmentModule } from '@/components/warehouse/replenishment/ReplenishmentModule'
 import { VendorManagementModule } from '@/components/warehouse/vendors/VendorManagementModule'
-import { ManningModule } from '@/components/warehouse/manning/ManningModule'
 import { DispatchModule } from '@/components/warehouse/dispatch/DispatchModule'
-import { ProductionModule } from '@/components/warehouse/production/ProductionModule'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
-import { IncidentReportingModule } from '@/components/warehouse/incidents/IncidentReportingModule'
 import { WarehouseDashboardModule } from '@/components/warehouse/dashboard/WarehouseDashboardModule'
 
 interface CompanionPanelProps {
@@ -32,20 +29,8 @@ export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventD
     return <ReplenishmentModule onClose={onClose} />
   }
 
-  if (moduleId === 'manning') {
-    return <ManningModule onClose={onClose} />
-  }
-
-  if (moduleId === 'incidents') {
-    return <IncidentReportingModule onClose={onClose} />
-  }
-
   if (moduleId === 'dispatch') {
     return <DispatchModule onClose={onClose} />
-  }
-
-  if (moduleId === 'production') {
-    return <ProductionModule onClose={onClose} />
   }
 
   if (moduleId === 'vendors') {

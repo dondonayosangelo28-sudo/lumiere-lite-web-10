@@ -14,21 +14,12 @@ import { API_BASE_URL } from './apiConfig'
 // The exactly-5 Warehouse Operations Manager (WOM) sub-roles. Typing subRole
 // as this union means an invalid value (e.g. 'Logistics Coordinator') is a
 // compile-time error and can't be assigned again.
-export type WomSubRole =
-  | 'Manning Officer'
-  | 'Warehouse Manager'
-  | 'Production Manager'
-  | 'Inventory Officer'
-  | 'Purchasing Officer'
+export type WomSubRole = 'Warehouse Manager' | 'Inventory Officer' | 'Purchasing Officer'
 
-export type PortalKind = 'web' | 'pwa'
+export type PortalKind = 'web'
 
-const PWA_ROLES = new Set(['Ground Crew', 'Warehouse Lead', 'Warehouse Member', 'Manning Officer', 'Event Admin'])
-const PWA_SUBROLES = new Set(['Production Manager', 'Inventory Officer'])
-
-function inferPortal(account: Pick<PortalAccount, 'role' | 'subRole' | 'portal'>): PortalKind {
-  if (account.portal) return account.portal
-  return PWA_ROLES.has(account.role) || Boolean(account.subRole && PWA_SUBROLES.has(account.subRole)) ? 'pwa' : 'web'
+function inferPortal(account: Pick<PortalAccount, 'portal'>): PortalKind {
+  return account.portal ?? 'web'
 }
 
 export interface PortalAccount {
@@ -76,12 +67,10 @@ export function mapBackendUserToPortalAccount(data: {
     }
   }
 
-  // 2. The 5 WOM Sub-Roles
+  // WOM sub-roles remain permission scopes under the WOM account type.
   const womSubRoles: Record<string, PortalKind> = {
-    'Manning Officer': 'pwa',
     'Warehouse Manager': 'web',
-    'Production Manager': 'pwa',
-    'Inventory Officer': 'pwa',
+    'Inventory Officer': 'web',
     'Purchasing Officer': 'web',
   }
 
@@ -90,7 +79,7 @@ export function mapBackendUserToPortalAccount(data: {
       id: data.userId,
       email: data.email,
       name: data.fullName,
-      role: 'Warehouse Manager',
+      role: 'WOM',
       subRole: rawRole as WomSubRole,
       fullWarehouseAccess: false,
       portal: womSubRoles[rawRole],
@@ -99,16 +88,15 @@ export function mapBackendUserToPortalAccount(data: {
     }
   }
 
-  // 3. Structural (Admin, Executive, Event Planner) & PWA Field Roles
-  const pwaRoles = new Set(['Ground Crew', 'Warehouse Lead', 'Warehouse Member', 'Event Admin'])
-  const portal: PortalKind = pwaRoles.has(rawRole) ? 'pwa' : 'web'
+  // 3. Structural account types. Legacy roles are not active portal accounts.
+  const role = rawRole === 'Admin' || rawRole === 'Executive' || rawRole === 'WOM' ? rawRole : 'WOM'
 
   return {
     id: data.userId,
     email: data.email,
     name: data.fullName,
-    role: rawRole,
-    portal,
+    role,
+    portal: 'web',
     temporaryPassword: isTemp,
     token: data.token,
   }
@@ -117,7 +105,7 @@ export function mapBackendUserToPortalAccount(data: {
 // WOM sub-role that has visibility rights to full crew detail. Everyone else
 // in the Warehouse Operations Manager account type gets the muted restricted
 // state in the Manning/Crew person-info modal.
-export const MANNING_OFFICER_SUBROLE: WomSubRole = 'Manning Officer'
+export const MANNING_OFFICER_SUBROLE: WomSubRole = 'Warehouse Manager'
 
 // The two Executive login accounts. Damage Validation's two-sign-off rule for
 // audit-held exceptions checks this list (cross-referenced against each
@@ -409,15 +397,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       portal: currentUser?.portal ?? null,
       isAdmin: currentUser?.role === 'Admin',
       isExecutive: currentUser?.role === 'Executive',
-      isWarehouse: currentUser?.role === 'WOM' || currentUser?.role === 'Warehouse Manager',
-      isPlanner: currentUser?.role === 'Event Planner',
-      isGroundCrew: currentUser?.role === 'Ground Crew',
-      isWarehouseLead: currentUser?.role === 'Warehouse Lead',
-      isWarehouseMember: currentUser?.role === 'Warehouse Member',
+      isWarehouse: currentUser?.role === 'WOM',
+      isPlanner: false,
+      isGroundCrew: false,
+      isWarehouseLead: false,
+      isWarehouseMember: false,
       subRole: currentUser?.subRole ?? '',
       hasFullWarehouseAccess: currentUser?.fullWarehouseAccess ?? false,
       isManningOfficer: currentUser?.subRole === MANNING_OFFICER_SUBROLE,
-      isProductionManager: currentUser?.subRole === 'Production Manager',
+      isProductionManager: false,
       isInventoryOfficer: currentUser?.subRole === 'Inventory Officer',
       canModifyModule: (moduleId: string) => {
         if (currentUser?.fullWarehouseAccess) return true

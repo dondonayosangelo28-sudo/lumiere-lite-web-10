@@ -26,12 +26,6 @@ import { DispatchManifestPage } from '@/pages/DispatchManifestPage'
 import { EventDetailPage } from '@/pages/EventDetailPage'
 import { DesignCanvasHubPage } from '@/pages/DesignCanvasHubPage'
 import { CanvasWorkspacePage } from '@/pages/CanvasWorkspacePage'
-import { GroundCrewPage } from '@/pages/GroundCrewPage'
-import { WarehouseLeadPage } from '@/pages/WarehouseLeadPage'
-import { WarehouseMemberPage } from '@/pages/WarehouseMemberPage'
-import { ManningPage } from '@/pages/ManningPage'
-import { ProductionManagerPage } from '@/pages/ProductionManagerPage'
-import { InventoryOfficerPage } from '@/pages/InventoryOfficerPage'
 import { AssetAllocationKioskPage } from '@/pages/AssetAllocationKioskPage'
 import { TempPasswordResetScreen } from '@/pages/TempPasswordResetScreen'
 import { PlannerProvider } from '@/lib/planner'
@@ -57,16 +51,8 @@ function PortalAccessError({ portal }: { portal: 'web' | 'pwa' }) {
 
 function Router() {
   const { route } = useNav()
-  const { portal, isWarehouse, isAdmin, isProductionManager, isInventoryOfficer, hasFullWarehouseAccess } = useAuth()
-  // The Production Manager WOM sub-role gets its own mobile PWA page (matching
-  // the Ground Crew / Warehouse Lead / Warehouse Member mobile accounts)
-  // instead of the desktop sidebar shell — but only when scoped to that single
-  // sub-role. The full-access Warehouse Ops Manager super-account still uses
-      // the desktop WarehouseHomePage even if its subRole happens to be unset.
-
-  const isMobileProductionManager = isProductionManager && !hasFullWarehouseAccess
-  const isMobileInventoryOfficer = isInventoryOfficer && !hasFullWarehouseAccess
-  const pwaRoutes = new Set(['field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer'])
+  const { portal, isWarehouse, isAdmin } = useAuth()
+  const pwaRoutes = new Set<string>()
   const isPwaRoute = pwaRoutes.has(route)
   if (portal && ((portal === 'pwa') !== isPwaRoute)) return <PortalAccessError portal={portal} />
 
@@ -95,18 +81,6 @@ function Router() {
       return <DesignCanvasHubPage />
     case 'canvas-workspace':
       return <CanvasWorkspacePage />
-    case 'field-ops':
-      return <GroundCrewPage />
-    case 'warehouse-lead':
-      return <WarehouseLeadPage />
-    case 'warehouse-member':
-      return <WarehouseMemberPage />
-    case 'manning':
-      return <ManningPage />
-    case 'production-manager':
-      return <ProductionManagerPage />
-    case 'inventory-officer':
-      return <InventoryOfficerPage />
     case 'assets':
       return <AssetAllocationKioskPage />
     case 'warehouse-dashboard':
@@ -123,11 +97,7 @@ function Router() {
       // never the legacy sidebar shell — even for unknown routes.
       return isAdmin ? (
         <AdminSystemDashboardPage />
-      ) : isMobileProductionManager ? (
-        <ProductionManagerPage />
-      ) : isMobileInventoryOfficer ? (
-        <InventoryOfficerPage />
-    ) : isWarehouse ? (
+      ) : isWarehouse ? (
       <WarehouseDashboardPage />
 
       ) : (
@@ -137,9 +107,7 @@ function Router() {
 }
 
 function Gate() {
-  const { isAuthenticated, isTempPassword, isWarehouse, isWarehouseLead, isWarehouseMember, isPlanner, isGroundCrew, isExecutive, isProductionManager, isInventoryOfficer, isManningOfficer, hasFullWarehouseAccess } = useAuth()
-  const isMobileProductionManager = isProductionManager && !hasFullWarehouseAccess
-  const isMobileInventoryOfficer = isInventoryOfficer && !hasFullWarehouseAccess
+  const { isAuthenticated, isTempPassword, isWarehouse, isPlanner, isExecutive } = useAuth()
 
   if (!isAuthenticated) {
     return <LoginPage />
@@ -155,22 +123,10 @@ function Gate() {
   const hasWorkforceHighlight =
     new URLSearchParams(window.location.search).has('highlight') || Boolean(window.history.state?.highlight)
   const urlParamRoute = (new URLSearchParams(window.location.search).get('route') || window.location.pathname.replace('/', '')) as Route | null
-  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'field-ops', 'warehouse-lead', 'warehouse-member', 'manning', 'production-manager', 'inventory-officer', 'workforce', 'security-audit', 'rbac', 'overview', 'assets', 'warehouse-dashboard'])
+  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'workforce', 'security-audit', 'rbac', 'overview', 'assets', 'warehouse-dashboard'])
   const targetUrlRoute = urlParamRoute && validRoutes.has(urlParamRoute) ? urlParamRoute : null
 
-  const initialRoute = targetUrlRoute || (isManningOfficer
-    ? 'manning'
-    : isGroundCrew
-    ? 'field-ops'
-    : isWarehouseLead
-      ? 'warehouse-lead'
-      : isWarehouseMember
-        ? 'warehouse-member'
-        : isMobileProductionManager
-          ? 'production-manager'
-          : isMobileInventoryOfficer
-            ? 'inventory-officer'
-            : isPlanner
+  const initialRoute = targetUrlRoute || (isPlanner
             ? 'canvas'
     : isWarehouse
       ? 'warehouse-dashboard'

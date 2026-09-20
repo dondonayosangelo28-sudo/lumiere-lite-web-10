@@ -97,7 +97,6 @@ export const WOM_MODULES = [
   'Event Operations',
   'Inventory & Stock',
   'Asset Catalog',
-  'Production',
   'Manpower & Crew',
   'Dispatch & Manifest',
   'Procurement & Vendors',
@@ -133,28 +132,12 @@ function womSubRole(
 
 export const WOM_SUBROLES: SubRole[] = [
   womSubRole(
-    'manning-officer',
-    'Manning Officer',
-    'Broad view across warehouse operations; modifies crew scheduling and manpower only.',
-    'Manpower & Crew',
-    ['Manpower & Crew'],
-    ['Dispatch & Manifest', 'Event Operations'],
-  ),
-  womSubRole(
     'warehouse-manager',
     'Warehouse Manager',
     'Oversees the floor with broad visibility; modifies the asset catalog and warehouse records.',
     'Asset Catalog',
     ['Asset Catalog', 'Inventory & Stock'],
     ['Dispatch & Manifest', 'Production', 'Event Operations'],
-  ),
-  womSubRole(
-    'production-manager',
-    'Production Manager',
-    'Coordinates fabrication broadly; modifies production runs and quotas only.',
-    'Production',
-    ['Production'],
-    ['Manpower & Crew', 'Inventory & Stock', 'Event Operations'],
   ),
   womSubRole(
     'inventory-officer',
@@ -387,9 +370,7 @@ export const PARENT_MODULES: Record<string, readonly string[]> = {
 // Default enablement: which sub-roles are switched on out of the box for
 // this single-company platform.
 export const DEFAULT_ENABLED_SUBROLES: string[] = [
-  'manning-officer',
   'warehouse-manager',
-  'production-manager',
   'inventory-officer',
   'purchasing-officer',
   'event-admin',
@@ -409,9 +390,7 @@ export const WOM_MODULE_RBAC_NAME: Record<string, string> = {
   replenishment: 'Replenishment',
   vendors: 'Procurement & Vendors',
   manpower: 'Manpower & Crew',
-  manning: 'Manpower & Crew',
   dispatch: 'Dispatch & Manifest',
-  production: 'Production',
 }
 
 const WOM_SUBROLE_BY_NAME: Record<string, SubRole> = Object.fromEntries(

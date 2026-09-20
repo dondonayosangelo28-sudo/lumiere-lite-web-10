@@ -8,7 +8,6 @@ export type Route =
   | 'logs'
   | 'security-audit'
   | 'rbac'
-  | 'damage'
   | 'replenishment'
   // Warehouse supervisor console
   | 'inventory'
@@ -20,14 +19,6 @@ export type Route =
   | 'event-detail'
   | 'canvas'
   | 'canvas-workspace'
-  // Ground crew field app
-  | 'field-ops'
-  // Warehouse mobile workspaces
-  | 'warehouse-lead'
-  | 'warehouse-member'
-  | 'manning'
-  | 'production-manager'
-  | 'inventory-officer'
   | 'assets'
   | 'warehouse-dashboard'
 
