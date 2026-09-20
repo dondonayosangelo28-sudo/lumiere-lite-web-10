@@ -83,17 +83,15 @@ export function WarehouseHeader({ searchQuery, onSearchChange }: WarehouseHeader
     return [...lowStock, ...getDispatchActivity()]
   }, [notifOpen])
 
+  const now = new Date()
+  const liveDate = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase()
+  const liveTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4">
-      {/* Left Title & Greeting */}
-      <div>
-        <p className="text-[0.6rem] font-bold uppercase tracking-[0.28em] text-primary">
-          Warehouse Operations Manager
-        </p>
-        <h1 className="mt-0.5 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
-          Good to see you, {adminName.split(' ')[0] || 'there'}.
-        </h1>
-      </div>
+    <div className="-mx-5 -mt-5 sm:-mx-10 sm:-mt-7">
+      <div className="flex items-center justify-between border-b border-border bg-background px-5 py-3 sm:px-10">
+        <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-muted-foreground">{liveDate} <span className="mx-1 text-border">|</span> {liveTime}</p>
+        <div className="flex items-center gap-2">
 
       {/* Right Header Action Cluster: Compact Search Bar + Notifications + Account Menu */}
       <div className="flex items-center gap-3">
@@ -231,6 +229,18 @@ export function WarehouseHeader({ searchQuery, onSearchChange }: WarehouseHeader
           )}
         </div>
       </div>
-    </header>
+      </div>
+      </div>
+      <div className="border-b border-border px-5 py-5 sm:px-10">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-primary">Warehouse Operations Manager</span>
+            <h1 className="mt-3 font-serif text-3xl font-medium tracking-tight text-foreground">Warehouse Dashboard</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Warehouse KPIs, ingress calendar, and upcoming events.</p>
+          </div>
+          <div className="relative w-full max-w-xs">{null}</div>
+        </div>
+      </div>
+    </div>
   )
 }

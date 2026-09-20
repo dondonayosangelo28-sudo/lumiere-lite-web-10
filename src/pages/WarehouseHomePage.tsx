@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { usePortal } from '@/lib/store'
 import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
-import { ModuleEntryRow } from '@/components/warehouse/ModuleEntryRow'
+import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
+import { WarehouseKpiRow } from '@/components/warehouse/WarehouseKpiRow'
 import { WarehouseCalendarEventsView } from '@/components/warehouse/WarehouseCalendarEventsView'
 import { WomInputSummaryModal } from '@/components/warehouse/WomInputSummaryModal'
 import { WarehouseDrilldown, type DrilldownEntry } from '@/components/warehouse/WarehouseDrilldown'
@@ -48,20 +49,15 @@ export function WarehouseHomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto flex max-w-[90rem] w-full flex-col gap-8 sm:gap-10 px-6 py-8 sm:px-10 sm:py-12">
-        {/* Header section — untouched */}
-        <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-
-        {/* 4-per-row Restructured Module Grid */}
-        <ModuleEntryRow onOpenModule={openModule} />
-
-        {/* Month Calendar + Upcoming Events Side Panel */}
-        <WarehouseCalendarEventsView
-          events={events}
-          onSelectEvent={(evt) => setSummaryEvent(evt)}
-        />
-      </div>
+    <div className="flex min-h-screen bg-background text-foreground">
+      <WarehouseRail activeModuleId="assets" onSelectModule={openModule} onExit={() => setDrilldown(null)} />
+      <main className="min-w-0 flex-1">
+        <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-6 px-5 py-5 sm:gap-7 sm:px-10 sm:py-7">
+          <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          <WarehouseKpiRow events={events} onOpenModule={openModule} />
+          <WarehouseCalendarEventsView events={events} onSelectEvent={(evt) => setSummaryEvent(evt)} />
+        </div>
+      </main>
 
       {/* WOM Input Summary Modal */}
       {summaryEvent && (
