@@ -459,22 +459,22 @@ export function AssetAllocationKioskPage() {
                     aria-pressed={isActive}
                     onClick={() => setActiveCategory(cat.id === activeCategory ? ALL_CATEGORY : cat.id)}
                     className={cn(
-                      'group flex min-w-[9.5rem] shrink-0 items-center gap-3 rounded-xl border p-2 text-left transition duration-200 max-sm:min-w-0 max-sm:gap-1.5 max-sm:rounded-full max-sm:px-3 max-sm:py-2 max-sm:text-center sm:min-w-0 sm:w-full',
+                      'group flex min-w-[9.5rem] shrink-0 items-center gap-3 rounded-xl border p-2 text-left transition duration-200 max-sm:min-w-[15rem] max-sm:gap-3 max-sm:rounded-xl max-sm:px-2 max-sm:py-2 sm:min-w-0 sm:w-full',
                       isActive
                         ? 'border-primary bg-primary text-primary-foreground shadow-md'
                         : 'border-border/70 bg-card text-card-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/60 hover:shadow-sm',
                     )}
                   >
-                    <span className={cn('size-11 shrink-0 overflow-hidden rounded-lg bg-muted/60 max-sm:hidden sm:size-12', isActive && 'ring-2 ring-white/50')}>
+                    <span className={cn('size-11 shrink-0 overflow-hidden rounded-lg bg-muted/60 max-sm:size-12 sm:size-12', isActive && 'ring-2 ring-white/50')}>
                       {cat.thumbnailUrl ? (
                         <img src={cat.thumbnailUrl} alt={`${cat.label} classification`} className="size-full object-cover transition duration-300 group-hover:scale-110" />
                       ) : (
                         <span className="flex size-full items-center justify-center"><Boxes className="size-4 opacity-40" /></span>
                       )}
                     </span>
-                    <span className="min-w-0 flex-1 max-sm:flex-none">
+                    <span className="min-w-0 flex-1">
                       <span className="block truncate text-xs font-semibold">{cat.label}</span>
-                      <span className={cn('mt-0.5 block text-[0.6rem] max-sm:hidden', isActive ? 'text-primary-foreground/75' : 'text-muted-foreground')}>Browse collection</span>
+                      <span className={cn('mt-0.5 block text-[0.6rem]', isActive ? 'text-primary-foreground/75' : 'text-muted-foreground')}>Browse collection</span>
                     </span>
                     <span className={cn('rounded-full px-1.5 py-0.5 text-[0.6rem] font-bold', isActive ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground')}>{cat.count}</span>
                   </button>
