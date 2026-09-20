@@ -17,7 +17,7 @@ export function WarehouseHomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [drilldown, setDrilldown] = useState<DrilldownEntry | null>(null)
   const [summaryEvent, setSummaryEvent] = useState<PortalEvent | null>(null)
-  const [isLoading] = useState(false)
+  const [isLoading] = useState<boolean>(false)
   const [isError, setIsError] = useState(false)
 
   const openModule = (id: WarehouseModuleId) => setDrilldown({ kind: 'module', moduleId: id })
