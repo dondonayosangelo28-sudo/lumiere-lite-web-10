@@ -400,7 +400,7 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-3 max-sm:gap-2 sm:gap-2">
+    <div className="flex flex-col gap-3 max-sm:gap-2">
       <div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
@@ -418,7 +418,7 @@ export function AssetAllocationKioskPage() {
 
           {/* Search */}
           <div className="flex w-full justify-end sm:w-auto">
-            <div className="relative w-full max-sm:mt-0 sm:w-[20rem]">
+            <div className="relative w-full max-sm:mt-0 sm:w-72">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
@@ -442,9 +442,9 @@ export function AssetAllocationKioskPage() {
     <>
       <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
         {/* Two-pane kiosk layout */}
-        <div className="grid h-auto grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-8">
+        <div className="grid h-auto grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
           {/* ---- Visual category menu ---- */}
-          <aside className="min-w-0 sm:sticky sm:top-4 sm:max-h-[65vh]">
+          <aside className="min-w-0 sm:max-h-[65vh]">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Classifications</p>
               <span className="text-[0.6rem] text-muted-foreground">{categories.length + 1} categories</span>
@@ -534,11 +534,11 @@ export function AssetAllocationKioskPage() {
                       data-testid={`asset-card-${asset.id}`}
                       onClick={() => setSelectedAsset(asset)}
                       className={cn(
-                        'group relative overflow-hidden border border-border bg-card text-left transition max-sm:rounded-lg max-sm:shadow-none lg:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg',
+                        'group relative overflow-hidden border border-border bg-card text-left transition max-sm:rounded-lg max-sm:shadow-none hover:border-primary/40 hover:shadow-lg',
                         viewMode === 'grid' ? 'rounded-xl max-sm:rounded-lg' : 'flex w-full items-center gap-3 rounded-lg p-1.5 sm:p-2',
                       )}
                     >
-                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-[1.08/1] w-full max-sm:aspect-[1.12/1] lg:aspect-[1.16/1]' : 'size-14 shrink-0 rounded-md sm:size-20 sm:aspect-square')}>
+                      <div className={cn('overflow-hidden bg-muted/40', viewMode === 'grid' ? 'aspect-[1.08/1] w-full max-sm:aspect-[1.12/1]' : 'size-14 shrink-0 rounded-md sm:size-20 sm:aspect-square')}>
                         {asset.thumbnailUrl ? (
                           <img src={asset.thumbnailUrl} alt={asset.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                         ) : (
@@ -546,12 +546,12 @@ export function AssetAllocationKioskPage() {
                         )}
                       </div>
                       <div className={cn(viewMode === 'grid' ? 'p-2.5 max-sm:p-2' : 'min-w-0 flex-1 pr-1')}>
-                        <p className="text-[0.7rem] font-semibold leading-snug text-card-foreground max-sm:line-clamp-2 sm:text-sm sm:font-medium">{asset.name}</p>
-                        <div className="mt-1 flex items-center justify-between gap-2 max-sm:flex-col max-sm:items-start max-sm:gap-0.5 sm:mt-1.5">
+                        <p className="text-[0.7rem] font-semibold leading-snug text-card-foreground max-sm:line-clamp-2">{asset.name}</p>
+                        <div className="mt-1 flex items-center justify-between gap-2 max-sm:flex-col max-sm:items-start max-sm:gap-0.5">
                           <span className="text-[0.65rem] font-bold text-foreground max-sm:text-[0.62rem]">{stock.quantity} available</span>
                           <span className={cn('text-[0.55rem] font-semibold max-sm:text-[0.52rem]', stock.status === 'Available' ? 'text-emerald-600' : stock.status === 'Low Stock' ? 'text-amber-600' : 'text-rose-600')}>{stock.status}</span>
                         </div>
-                        <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted sm:h-[3px]" aria-label={`${stock.status}: ${stock.quantity} available`}>
+                        <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted" aria-label={`${stock.status}: ${stock.quantity} available`}>
                           <div className={cn('h-full rounded-full', stock.tone)} style={{ width: `${stock.percent}%` }} />
                         </div>
                       </div>
