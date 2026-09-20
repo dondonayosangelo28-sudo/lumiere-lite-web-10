@@ -6,7 +6,7 @@ import { RegisterEventDrawer } from '@/components/RegisterEventDrawer'
 import { EmptyState } from '@/components/EmptyState'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
-import { PortalProvider, usePortal } from '@/lib/store'
+import { usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 import type { PortalEvent } from '@/lib/types'
@@ -558,11 +558,7 @@ function EventDashboardContent() {
 }
 
 export function EventDashboardPage() {
-  return (
-    <PortalProvider>
-      <EventDashboardContent />
-    </PortalProvider>
-  )
+  return <EventDashboardContent />
 }
 
 export default EventDashboardPage
