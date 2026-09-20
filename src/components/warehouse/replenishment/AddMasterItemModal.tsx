@@ -6,6 +6,7 @@ import { SearchableVendorSelect } from '@/components/warehouse/shared/Searchable
 
 const PRIORITIES: DeficitPriority[] = ['Low', 'Medium', 'High', 'Critical']
 const TRIGGERS: TriggerSource[] = ['Canvas', 'Batch Pahabol', 'Manual Audit', 'Auto-Threshold']
+const CATEGORIES = ['Event Asset', 'Bespoke', 'Stockroom', 'Rental', 'Office Asset'] as const
 
 export interface MasterItemDraft {
   itemName: string
@@ -91,11 +92,13 @@ export function AddMasterItemModal({ initial, presetEvent, onClose, onSave }: Ad
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Category</span>
-                <input
-                  value={category}
+                <select
+                  value={CATEGORIES.includes(category as (typeof CATEGORIES)[number]) ? category : 'Event Asset'}
                   onChange={(e) => setCategory(e.target.value)}
                   className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-                />
+                >
+                  {CATEGORIES.map((option) => <option key={option} value={option}>{option}</option>)}
+                </select>
               </label>
               <label className="flex flex-col gap-2">
                 <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Unit</span>

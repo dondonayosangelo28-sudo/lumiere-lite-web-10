@@ -179,8 +179,8 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex max-w-full overflow-x-auto rounded-lg border border-border bg-card p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-col gap-3 overflow-x-auto lg:flex-row lg:flex-nowrap lg:items-center lg:justify-start [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex shrink-0 rounded-lg border border-border bg-card p-1">
             <button
               type="button"
               onClick={() => setViewMode('grouped')}
@@ -205,21 +205,9 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             >
               Consolidated Register ({lines.length} Lines)
             </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('draft')}
-              className={cn(
-                'shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
-                viewMode === 'draft'
-                  ? 'bg-foreground text-background shadow-sm'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-              )}
-            >
-              Draft Purchase Orders ({openCandidates.length})
-            </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex shrink-0 flex-nowrap items-center gap-2">
             <div className="relative h-10">
               <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -244,7 +232,13 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               <Download className="size-3.5" />
               Export Report (PDF)
             </button>
-
+            <button
+              type="button"
+              onClick={() => setViewMode('draft')}
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+            >
+              Draft Master PO ({openCandidates.length})
+            </button>
           </div>
         </div>
       </div>
