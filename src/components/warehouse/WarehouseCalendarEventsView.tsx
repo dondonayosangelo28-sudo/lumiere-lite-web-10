@@ -367,15 +367,15 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
                         key={evt.id}
                         type="button"
                         onClick={() => onSelectEvent(evt)}
-                        className="relative z-10 flex w-full cursor-pointer items-center gap-1 rounded bg-card border border-border/60 px-1 py-0.5 text-left text-[0.55rem] font-semibold text-card-foreground shadow-xs transition hover:border-primary hover:bg-primary/10 hover:text-primary truncate"
+                        className="flex w-full items-center gap-1 rounded bg-card border border-border/60 px-1 py-0.5 text-left text-[0.55rem] font-semibold text-card-foreground shadow-xs transition hover:border-primary hover:bg-primary/10 hover:text-primary truncate"
                       >
                         {isActualEvent ? (
-                          <Star className="pointer-events-none size-2.5 shrink-0 fill-amber-500 text-amber-500" />
+                          <Star className="size-2.5 shrink-0 fill-amber-500 text-amber-500" />
                         ) : (
-                          <Circle className="pointer-events-none size-2 shrink-0 fill-sky-500 text-sky-500" />
+                          <Circle className="size-2 shrink-0 fill-sky-500 text-sky-500" />
                         )}
-                        <span className="pointer-events-none font-bold shrink-0">{shortCodeFor(evt.title)}</span>
-                        <span className="pointer-events-none truncate opacity-85">{evt.title}</span>
+                        <span className="font-bold shrink-0">{shortCodeFor(evt.title)}</span>
+                        <span className="truncate opacity-85">{evt.title}</span>
                       </button>
                     )
                   })}
