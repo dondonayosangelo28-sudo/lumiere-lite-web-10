@@ -50,7 +50,7 @@ export function AddMasterItemModal({ initial, presetEvent, onClose, onSave }: Ad
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-xl bg-card shadow-2xl"
+        className="flex max-h-[calc(100vh-2rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between border-b border-border px-6 py-5">
@@ -74,100 +74,102 @@ export function AddMasterItemModal({ initial, presetEvent, onClose, onSave }: Ad
           </button>
         </div>
 
-        <div className="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto px-6 py-5">
-          <label className="col-span-2 flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Item name</span>
-            <input
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Category</span>
-            <input
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Unit</span>
-            <input
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Current stock</span>
-            <input
-              type="number"
-              min={0}
-              value={currentStock}
-              onChange={(e) => setCurrentStock(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Threshold</span>
-            <input
-              type="number"
-              min={0}
-              value={threshold}
-              onChange={(e) => setThreshold(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Cost / unit (₱)</span>
-            <input
-              type="number"
-              min={0}
-              value={costPerUnit}
-              onChange={(e) => setCostPerUnit(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Priority</span>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as DeficitPriority)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            >
-              {PRIORITIES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8">
+          <section className="flex flex-col gap-4" aria-labelledby="basic-information-heading">
+            <div className="flex items-center gap-3">
+              <h3 id="basic-information-heading" className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-primary">Basic Information</h3>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="flex flex-col gap-2 sm:col-span-2">
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Item name <span className="text-primary">*</span></span>
+                <input
+                  value={itemName}
+                  onChange={(e) => setItemName(e.target.value)}
+                  className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Category</span>
+                <input
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Unit</span>
+                <input
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section className="mt-7 flex flex-col gap-4" aria-labelledby="inventory-heading">
+            <div className="flex items-center gap-3">
+              <h3 id="inventory-heading" className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-primary">Inventory</h3>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ['Current stock', currentStock, setCurrentStock],
+                ['Threshold', threshold, setThreshold],
+                ['Cost / unit (₱)', costPerUnit, setCostPerUnit],
+              ].map(([label, value, setter]) => (
+                <label key={label as string} className="flex flex-col gap-2">
+                  <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">{label as string}</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={value as string}
+                    onChange={(e) => (setter as (value: string) => void)(e.target.value)}
+                    className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                  />
+                </label>
               ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Trigger source</span>
-            <select
-              value={triggerSource}
-              onChange={(e) => setTriggerSource(e.target.value as TriggerSource)}
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-            >
-              {TRIGGERS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="col-span-2 flex flex-col gap-1.5">
-            <SearchableVendorSelect
-              label="Primary vendor"
-              value={primaryVendorId}
-              onChange={setPrimaryVendorId}
-              placeholder="Search or select primary vendor…"
-            />
-            <span className="text-[0.6rem] text-muted-foreground">
-              Pulled live from the Vendor Registry — type to filter or create a new vendor inline.
-            </span>
-          </div>
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Priority</span>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value as DeficitPriority)}
+                  className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                >
+                  {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section className="mt-7 flex flex-col gap-4" aria-labelledby="procurement-heading">
+            <div className="flex items-center gap-3">
+              <h3 id="procurement-heading" className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-primary">Procurement</h3>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+            <div className="grid gap-4">
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Trigger source</span>
+                <select
+                  value={triggerSource}
+                  onChange={(e) => setTriggerSource(e.target.value as TriggerSource)}
+                  className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                >
+                  {TRIGGERS.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </label>
+              <div className="flex flex-col gap-2">
+                <SearchableVendorSelect
+                  label="Primary vendor"
+                  value={primaryVendorId}
+                  onChange={setPrimaryVendorId}
+                  placeholder="Search or select primary vendor…"
+                />
+                <span className="text-[0.65rem] text-muted-foreground">Pulled live from the Vendor Registry — type to filter or create a new vendor inline.</span>
+              </div>
+            </div>
+          </section>
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
