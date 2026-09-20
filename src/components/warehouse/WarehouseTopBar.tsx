@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react'
+import { useMemo } from 'react'
 import { CalendarClock, Moon, PackageSearch, Sun, User } from 'lucide-react'
 import { usePortal } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
@@ -8,11 +8,7 @@ import { getCatalogAssets, getLowStockAssets } from '@/lib/warehouse-catalog'
 import { getDispatchActivity } from '@/lib/warehouse-dispatch'
 import { useEffect, useRef, useState } from 'react'
 
-interface WarehouseTopBarProps {
-  mobileLeading?: ReactNode
-}
-
-export function WarehouseTopBar({ mobileLeading }: WarehouseTopBarProps) {
+export function WarehouseTopBar() {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
   const { events } = usePortal()
   const { dark, toggle } = useDarkMode()
@@ -68,12 +64,9 @@ export function WarehouseTopBar({ mobileLeading }: WarehouseTopBarProps) {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">
-      <div className="flex items-center gap-3">
-        {mobileLeading}
-        <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
-          {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
-        </p>
-      </div>
+      <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
+        {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
+      </p>
       <div className="flex items-center gap-2">
         <NotificationsBell notifications={notifications} size="md" />
         <div className="relative" ref={menuRef}>

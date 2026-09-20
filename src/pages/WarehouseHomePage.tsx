@@ -11,8 +11,6 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
 import type { WarehouseModuleId } from '@/lib/warehouse-modules'
 import type { PortalEvent } from '@/lib/types'
-import { WarehouseNavContext } from '@/lib/warehouse-nav'
-import { WarehouseMobileMenu } from '@/components/warehouse/WarehouseMobileMenu'
 
 export function WarehouseHomePage() {
   const { events } = usePortal()
@@ -23,9 +21,6 @@ export function WarehouseHomePage() {
   const [isError, setIsError] = useState(false)
 
   const openModule = (id: WarehouseModuleId) => setDrilldown({ kind: 'module', moduleId: id })
-  const activeModuleId: WarehouseModuleId = drilldown?.kind === 'module' ? drilldown.moduleId : 'dashboard'
-  const selectModule = (id: WarehouseModuleId) => (id === 'dashboard' ? setDrilldown(null) : openModule(id))
-  const navValue = { activeModuleId, selectModule }
   const openEvent = (id: string) => {
     const event = events.find((item) => item.id === id)
     if (event) setDrilldown({ kind: 'event', event })
@@ -33,47 +28,32 @@ export function WarehouseHomePage() {
 
   if (drilldown?.kind === 'event') {
     return (
-      <WarehouseNavContext.Provider value={navValue}>
-        <WarehouseEventDetailPage
-          event={drilldown.event}
-          onBack={() => setDrilldown(null)}
-          onOpenModule={openModule}
-        />
-      </WarehouseNavContext.Provider>
+      <WarehouseEventDetailPage
+        event={drilldown.event}
+        onBack={() => setDrilldown(null)}
+        onOpenModule={openModule}
+      />
     )
   }
 
   if (drilldown?.kind === 'module') {
-    return (
-      <WarehouseNavContext.Provider value={navValue}>
-        <WarehouseDrilldown entry={drilldown} onExit={() => setDrilldown(null)} />
-      </WarehouseNavContext.Provider>
-    )
+    return <WarehouseDrilldown entry={drilldown} onExit={() => setDrilldown(null)} />
   }
 
   if (isError) {
-    return (
-      <WarehouseNavContext.Provider value={navValue}>
-        <ErrorFallback title="Warehouse Portal Unavailable" message="Could not load warehouse schedule & inventory records." onRetry={() => setIsError(false)} />
-      </WarehouseNavContext.Provider>
-    )
+    return <ErrorFallback title="Warehouse Portal Unavailable" message="Could not load warehouse schedule & inventory records." onRetry={() => setIsError(false)} />
   }
 
   if (isLoading) {
-    return (
-      <WarehouseNavContext.Provider value={navValue}>
-        <LoadingSkeleton variant="dashboard" />
-      </WarehouseNavContext.Provider>
-    )
+    return <LoadingSkeleton variant="dashboard" />
   }
 
   return (
-    <WarehouseNavContext.Provider value={navValue}>
-      <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen bg-background text-foreground">
       <WarehouseRail activeModuleId="assets" onSelectModule={openModule} onExit={() => setDrilldown(null)} />
       <main className="min-w-0 flex-1">
         <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-6 px-5 py-5 sm:gap-7 sm:px-10 sm:py-7">
-          <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} mobileLeading={<WarehouseMobileMenu />} />
+          <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
           <WarehouseKpiRow events={events} onOpenModule={openModule} />
           <WarehouseCalendarEventsView events={events} onSelectEvent={(evt) => setSummaryEvent(evt)} />
         </div>
@@ -87,8 +67,7 @@ export function WarehouseHomePage() {
           onOpenFullDetail={(id) => openEvent(id)}
         />
       )}
-      </div>
-    </WarehouseNavContext.Provider>
+    </div>
   )
 }
 

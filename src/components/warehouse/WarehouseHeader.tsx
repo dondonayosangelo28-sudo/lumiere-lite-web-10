@@ -1,7 +1,4 @@
 import { Search, Warehouse } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { WarehouseMobileMenu } from '@/components/warehouse/WarehouseMobileMenu'
-import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 
 interface WarehouseHeaderProps {
   searchQuery: string
@@ -9,16 +6,13 @@ interface WarehouseHeaderProps {
   searchInHeader?: boolean
   topBarOnly?: boolean
   hideTopBar?: boolean
-  mobileLeading?: ReactNode
 }
 
-export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false, topBarOnly = false, mobileLeading }: WarehouseHeaderProps) {
-  if (topBarOnly) return <WarehouseTopBar mobileLeading={mobileLeading ?? <WarehouseMobileMenu />} />
+export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false, topBarOnly = false }: WarehouseHeaderProps) {
+  if (topBarOnly) return null
 
   return (
-    <>
-      {!hideTopBar && <div className="md:hidden"><WarehouseTopBar mobileLeading={mobileLeading ?? <WarehouseMobileMenu />} /></div>}
-      <div className="border-b border-border px-5 py-6 sm:px-8">
+    <div className="border-b border-border px-5 py-6 sm:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-primary">
@@ -36,7 +30,6 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
           </div>
         )}
       </div>
-      </div>
-    </>
+    </div>
   )
 }
