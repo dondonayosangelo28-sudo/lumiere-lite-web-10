@@ -34,7 +34,7 @@ export function WarehouseRail({
           aria-expanded={open}
           className={cn(
             'flex h-10 items-center rounded-lg text-sidebar-primary-foreground transition-colors hover:bg-sidebar-accent',
-            open ? 'w-full justify-start px-3' : 'size-10 justify-center bg-sidebar-primary',
+            open ? 'w-full justify-start px-3' : 'size-10 justify-center',
           )}
         >
           {open ? (
