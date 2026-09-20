@@ -41,7 +41,7 @@ export function WarehouseRail({
   }
 
   return (
-    <aside className={cn('relative z-50 flex h-screen min-h-0 shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
+    <aside className={cn('relative z-50 flex h-auto min-h-full shrink-0 self-stretch border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
       <div className={cn('flex items-center', open ? 'justify-start px-4' : 'justify-center')}>
         <button
           type="button"
