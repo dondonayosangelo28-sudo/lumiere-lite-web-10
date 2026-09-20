@@ -27,19 +27,11 @@ export function WarehouseRail({ activeModuleId, onSelectModule, onExit }: Wareho
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Warehouse Dashboard logo, collapse navigation' : 'Warehouse Dashboard logo, expand navigation'}
+          aria-label={open ? 'Collapse navigation' : 'Expand navigation'}
           aria-expanded={open}
-          className={cn('group flex items-center rounded-xl text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'gap-3 px-1 py-1' : 'size-10 justify-center')}
+          className="flex size-10 items-center justify-center rounded-lg bg-sidebar-primary font-serif text-lg font-semibold leading-none text-sidebar-primary-foreground transition-colors hover:bg-sidebar-accent"
         >
-          <span className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary font-serif text-lg font-semibold leading-none text-sidebar-primary-foreground shadow-sm transition-transform group-hover:scale-105" aria-hidden="true">
-            W
-          </span>
-          {open && (
-            <span className="min-w-0 text-left">
-              <span className="block font-serif text-base font-semibold leading-none tracking-[0.08em]">WAREHOUSE</span>
-              <span className="mt-1 block text-[0.55rem] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/60">Dashboard</span>
-            </span>
-          )}
+          <span aria-hidden="true">L</span>
         </button>
       </div>
 
