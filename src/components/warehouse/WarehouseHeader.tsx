@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Search, Warehouse } from 'lucide-react'
 
 interface WarehouseHeaderProps {
@@ -6,21 +7,36 @@ interface WarehouseHeaderProps {
   searchInHeader?: boolean
   topBarOnly?: boolean
   hideTopBar?: boolean
+  mobileLeading?: ReactNode
+  desktopOnly?: boolean
 }
 
-export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false, topBarOnly = false }: WarehouseHeaderProps) {
-  if (topBarOnly) return null
+export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false, topBarOnly = false, mobileLeading, desktopOnly = false }: WarehouseHeaderProps) {
+  if (topBarOnly) {
+    return (
+      <div className="md:hidden flex items-center justify-between border-b border-border px-4 py-3">
+        <div className="flex items-center gap-3">
+          {mobileLeading}
+          <span className="text-xs text-muted-foreground">Warehouse Operations</span>
+        </div>
+        <span className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">Today</span>
+      </div>
+    )
+  }
 
   return (
-    <div className="border-b border-border px-5 py-6 sm:px-8">
+    <div className={`${desktopOnly ? 'hidden md:block' : ''} border-b border-border px-5 py-6 sm:px-8`}>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
+        <div className="flex items-center gap-3">
+          {mobileLeading}
+          <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-primary">
             <Warehouse className="size-3" aria-hidden="true" />
             Warehouse Operations Manager
           </span>
           <h1 className="mt-3 font-serif text-4xl font-medium tracking-tight text-foreground">Warehouse Dashboard</h1>
           <p className="mt-1 text-sm text-muted-foreground">Warehouse KPIs, ingress calendar, and upcoming events.</p>
+          </div>
         </div>
         {searchInHeader && (
           <div className="relative w-full sm:max-w-sm">

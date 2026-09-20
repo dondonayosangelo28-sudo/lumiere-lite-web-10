@@ -29,6 +29,8 @@ import { AssignCrewModal } from '@/components/warehouse/event-detail/AssignCrewM
 import { CrewInfoModal } from '@/components/warehouse/event-detail/CrewInfoModal'
 import { EventChangesModal } from '@/components/warehouse/event-detail/EventChangesModal'
 import { AssetDetailModal } from '@/components/warehouse/asset-catalog/AssetDetailModal'
+import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
+import { WarehouseMobileMenu } from '@/components/warehouse/WarehouseMobileMenu'
 
 interface WarehouseEventDetailPageProps {
   event: PortalEvent
@@ -83,6 +85,7 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
 
   return (
     <div className="min-h-screen bg-background">
+      <WarehouseHeader topBarOnly mobileLeading={<WarehouseMobileMenu />} searchQuery="" onSearchChange={() => {}} />
       <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10 sm:px-8 sm:py-14">
         <EventDetailHeader
           event={event}

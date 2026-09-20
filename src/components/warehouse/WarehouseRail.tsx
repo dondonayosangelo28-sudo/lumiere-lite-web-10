@@ -5,6 +5,7 @@ import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modul
 interface WarehouseRailProps {
   activeModuleId: WarehouseModuleId
   onSelectModule: (id: WarehouseModuleId) => void
+  onExit?: () => void
   defaultOpen?: boolean
 }
 
@@ -25,7 +26,7 @@ export function WarehouseRail({
   }
 
   return (
-    <aside className={cn('flex h-full min-h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
+    <aside className={cn('hidden h-full min-h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200 md:flex', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
         <button
           type="button"
