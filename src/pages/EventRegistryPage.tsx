@@ -400,7 +400,7 @@ export function EventRegistryPage() {
       <RegisterEventDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        event={activeEvent}
+        event={activeEvent ? { ...activeEvent } : null}
         mode={drawerMode}
       />
     </ExecutiveShell>

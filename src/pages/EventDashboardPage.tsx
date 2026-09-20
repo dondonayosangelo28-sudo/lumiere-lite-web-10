@@ -542,8 +542,8 @@ function EventDashboardContent() {
       <RegisterEventDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        event={activeEvent}
-        initialDate={createDate}
+        event={activeEvent ? { ...activeEvent } : null}
+        initialDate={typeof createDate === 'string' ? createDate : ''}
         mode={drawerMode}
       />
     </>
