@@ -452,109 +452,12 @@ export function createReturnBatchFromDelivered(eventId: string, outboundBatch: D
   return returnBatch
 }
 
-import jsPDF from 'jspdf'
+import { exportDispatchBatchPdf } from '@/lib/pdf-exporter'
 
 export function exportBatchPdf(eventInfo: { eventTitle: string; venue: string; targetDate: string }, batch: DispatchBatch) {
-  const doc = new jsPDF({ unit: 'pt', format: 'letter' })
-  const margin = 40
-  let y = margin
-
-  // Header Title
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(16)
-  doc.setTextColor(30, 41, 59)
-  doc.text('LUMIÈRE OPERATIONS — DISPATCH MANIFEST', margin, y)
-  y += 24
-
-  // Event Details Box
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(100, 116, 139)
-  doc.text(`EVENT: ${eventInfo.eventTitle.toUpperCase()}`, margin, y)
-  y += 14
-  doc.setFont('helvetica', 'normal')
-  doc.text(`Venue: ${eventInfo.venue}   |   Target Date: ${eventInfo.targetDate}`, margin, y)
-  y += 20
-
-  // Separator Line
-  doc.setLineWidth(1)
-  doc.setDrawColor(226, 232, 240)
-  doc.line(margin, y, 612 - margin, y)
-  y += 20
-
-  // Vehicle & Dispatch Details
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(11)
-  doc.setTextColor(15, 23, 42)
-  doc.text('VEHICLE & FLEET INFO', margin, y)
-  y += 16
-
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text(`Vehicle: ${batch.vehicleType}   |   Plate #: ${batch.plateNumber}`, margin, y)
-  y += 14
-  doc.text(
-    `Driver: ${batch.driverName || 'Unassigned'}   |   Direction: ${batch.direction.toUpperCase()}   |   Stage: ${batch.stage}`,
-    margin,
-    y,
-  )
-  y += 14
-  if (batch.crew.length > 0) {
-    doc.text(`Escort Crew: ${batch.crew.map((c) => c.name).join(', ')}`, margin, y)
-    y += 14
-  }
-  if (batch.handoffNote) {
-    doc.text(`Handoff Note: ${batch.handoffNote}`, margin, y)
-    y += 14
-  }
-  y += 15
-
-  // Table Headers
-  doc.setFillColor(241, 245, 249)
-  doc.rect(margin, y, 612 - margin * 2, 20, 'F')
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(51, 65, 85)
-  doc.text('ITEM NAME', margin + 10, y + 14)
-  doc.text('PLANNED', margin + 280, y + 14)
-  doc.text('ACTUAL', margin + 370, y + 14)
-  doc.text('STATUS', margin + 460, y + 14)
-  y += 24
-
-  // Table Rows
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(15, 23, 42)
-  batch.reconciliation.forEach((item, idx) => {
-    if (y > 720) {
-      doc.addPage()
-      y = margin
-    }
-    if (idx % 2 === 1) {
-      doc.setFillColor(248, 250, 252)
-      doc.rect(margin, y - 10, 612 - margin * 2, 18, 'F')
-    }
-    doc.text(item.itemName.slice(0, 45), margin + 10, y)
-    doc.text(String(item.planned), margin + 280, y)
-    doc.text(String(item.actual), margin + 370, y)
-    doc.text(item.status, margin + 460, y)
-    y += 18
-  })
-
-  // Footer Signatures
-  y = Math.max(y + 35, 680)
-  doc.setLineWidth(0.5)
-  doc.setDrawColor(203, 213, 225)
-  doc.line(margin, y, margin + 200, y)
-  doc.line(612 - margin - 200, y, 612 - margin, y)
-  y += 12
-  doc.setFontSize(8)
-  doc.setTextColor(100, 116, 139)
-  doc.text('Dispatch Lead Signature', margin, y)
-  doc.text('Driver / Recipient Signature', 612 - margin - 200, y)
-
-  const filename = `Manifest_${batch.plateNumber.replace(/\s+/g, '_')}_${batch.id.slice(-6)}.pdf`
-  doc.save(filename)
+  exportDispatchBatchPdf(eventInfo, batch)
 }
+
 
 export function buildManifestCsv(summary: EventDispatchSummary): string {
   const header = 'Batch,Vehicle,Plate,Direction,Stage,Item,Planned,Actual,Status\n'

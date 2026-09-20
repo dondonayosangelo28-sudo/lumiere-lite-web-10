@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf'
 import type { EventDispatchSummary } from '@/lib/warehouse-dispatch'
+import type { DispatchBatch } from '@/lib/event-detail'
 import type { DeficitLine } from '@/lib/warehouse-replenishment'
 import type { ProcurementItem } from '@/lib/types'
 
@@ -706,7 +707,59 @@ export function exportWarehouseLogsPdf(
   builder.save(filename)
 }
 
-// ─── 3. Dispatch Manifest Event PDF Exporter ───
+// ─── 3. Dispatch Manifest Batch PDF Exporter ───
+export function exportDispatchBatchPdf(
+  eventInfo: { eventTitle: string; venue: string; targetDate: string },
+  batch: DispatchBatch,
+) {
+  const batchNumber = batch.id.match(/batch-(\d+)/i)?.[1]
+  const batchCode = batchNumber ? `BATCH ${Number(batchNumber) + 1}` : batch.id.slice(-6).toUpperCase()
+  const filenameBatchCode = batchNumber ? `BATCH-${Number(batchNumber) + 1}` : batch.id.slice(-6).toUpperCase()
+  const rows = batch.reconciliation.length > 0
+    ? batch.reconciliation.map((row) => [row.itemName, row.planned, row.actual, row.status])
+    : [['No assets staged yet.', '—', '—', '—']]
+
+  const builder = new PdfReportBuilder()
+  builder.drawHeader('DISPATCH MANIFEST (BATCH)', [
+    { label: 'Document Reference', value: makeReference('DSP') },
+    { label: 'Report Date', value: new Date().toLocaleDateString() },
+    { label: 'Classification', value: 'Verified Official Record' },
+    { label: 'Event', value: eventInfo.eventTitle },
+    { label: 'Venue', value: eventInfo.venue },
+    { label: 'Target Date', value: eventInfo.targetDate },
+    { label: 'Batch', value: batchCode },
+    { label: 'Vehicle / Plate', value: `${batch.vehicleType} · ${batch.plateNumber}` },
+    { label: 'Driver', value: batch.driverName || 'Unassigned' },
+    { label: 'Direction / Stage', value: `${batch.direction.toUpperCase()} · ${batch.stage}` },
+    ...(batch.crew.length > 0 ? [{ label: 'Escort Crew', value: batch.crew.map((crew) => crew.name).join(', ') }] : []),
+    ...(batch.handoffNote ? [{ label: 'Handoff Note', value: batch.handoffNote }] : []),
+  ])
+
+  builder.drawScorecard([
+    { label: 'Items', value: String(batch.reconciliation.length) },
+    { label: 'Planned Qty', value: String(batch.reconciliation.reduce((sum, row) => sum + row.planned, 0)) },
+    { label: 'Actual Qty', value: String(batch.reconciliation.reduce((sum, row) => sum + row.actual, 0)) },
+  ])
+
+  builder.drawTable([
+    { header: 'Item Name', width: 230 },
+    { header: 'Planned', width: 80, align: 'center' },
+    { header: 'Actual', width: 80, align: 'center' },
+    { header: 'Status', width: 137, align: 'right' },
+  ], rows)
+
+  builder.drawCertification(
+    'I hereby certify that the dispatch batch, vehicle assignment, and reconciliation records presented in this manifest have been extracted directly from the verified operations records of the Lumière event management system.',
+    [
+      { role: 'Dispatch Lead', org: 'Lumière Facilities & Logistics', note: 'Signature' },
+      { role: 'Driver / Recipient', org: 'Lumière Facilities & Logistics', note: 'Signature' },
+    ],
+  )
+
+  builder.save(`Manifest_${batch.plateNumber.replace(/\s+/g, '_')}_${filenameBatchCode}.pdf`)
+}
+
+// ─── 4. Dispatch Manifest Event PDF Exporter ───
 export function exportDispatchEventPdf(summary: EventDispatchSummary) {
   const builder = new PdfReportBuilder()
   builder.drawHeader('DISPATCH MANIFEST (EVENT SCOPE)', [
