@@ -22,7 +22,11 @@ export function WarehouseRail({
 
   const handleSelect = (id: WarehouseModuleId) => {
     if (id === 'dashboard') {
-      onDashboard()
+      if (activeModuleId === 'dashboard') {
+        setOpen((value) => !value)
+      } else {
+        onDashboard()
+      }
       return
     }
 
