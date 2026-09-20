@@ -834,6 +834,11 @@ export async function submitTask(id: string): Promise<void> {
 }
 
 export async function setTaskStatus(id: string, status: ManningTaskStatus): Promise<void> {
+  if (!supabase) {
+    localTasks = localTasks.map((task) => (task.id === id ? { ...task, status } : task))
+    manningUsingPreset = true
+    return
+  }
   const { error } = await supabase.from('manning_tasks').update({ status }).eq('id', id)
   if (error) throw error
 }
@@ -871,6 +876,13 @@ export async function confirmTask(id: string, confirmedBy: string): Promise<void
   }
 
   const confirmedAt = new Date().toISOString()
+  if (!supabase) {
+    localTasks = localTasks.map((task) =>
+      task.id === id ? { ...task, status: 'Confirmed', confirmed_at: confirmedAt, confirmed_by: confirmedBy } : task,
+    )
+    manningUsingPreset = true
+    return
+  }
   const { error } = await supabase
     .from('manning_tasks')
     .update({
@@ -927,6 +939,11 @@ export async function rejectTask(id: string, rejectedBy: string = 'Team Lead'): 
     return
   }
 
+  if (!supabase) {
+    localTasks = localTasks.map((task) => (task.id === id ? { ...task, status: 'Rejected' } : task))
+    manningUsingPreset = true
+    return
+  }
   const { error } = await supabase.from('manning_tasks').update({ status: 'Rejected' }).eq('id', id)
   if (!error) return
 

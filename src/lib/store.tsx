@@ -1604,6 +1604,26 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       const email = draft.email.trim().toLowerCase()
 
       // Persist the account to the database so it can authenticate at the login page.
+      if (!supabase) {
+        const localStaff: Staff = {
+          id: `s-${Date.now()}`,
+          employeeId: draft.employeeId,
+          surname: draft.surname,
+          firstName: draft.firstName,
+          middleName: draft.middleName,
+          email,
+          contact: draft.contact,
+          role,
+          sessionStatus: 'Offline Session',
+          lastAccess: '—',
+          recordKind: 'full-account',
+          accountStatus: 'Pending',
+          tempPassword: draft.tempPassword,
+        }
+        setStaff((prev) => [...prev, localStaff])
+        pushLog({ account: draft.employeeId, initiatorRole: 'Admin', action: 'New Employee Profile Created', detail: `Provisioned account for ${fullName} (${role}). Saved to the local directory.`, ip: randomIp(), status: 'Success' })
+        return
+      }
       const { data, error } = await supabase
         .from('portal_accounts')
         .insert({
@@ -1658,7 +1678,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       }
 
       // Ground crew get a matching roster record linked to their account.
-      if (role === 'Ground Crew') {
+      if (role === 'Ground Crew' && supabase) {
         await supabase.from('crew_roster').insert({
           account_id: data.id,
           employee_id: draft.employeeId,
@@ -1692,6 +1712,10 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     async (id: string) => {
       const target = staff.find((s) => s.id === id)
       // Remove from the database (crew_roster rows cascade via FK).
+      if (!supabase) {
+        setStaff((prev) => prev.filter((s) => s.id !== id))
+        return
+      }
       const { error } = await supabase.from('portal_accounts').delete().eq('id', id)
       if (error) {
         console.error('[v0] Failed to remove account:', error?.message ?? String(error))

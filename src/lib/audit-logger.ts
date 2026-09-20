@@ -66,6 +66,8 @@ export async function logAuditEvent(
     ...entry,
   }
 
+  if (!supabase) return fullEntry
+
   // Always update local storage first so prototype refreshes maintain durability
   const localLogs = getLocalAuditLogs()
   const updatedLogs = [fullEntry, ...localLogs]
@@ -104,6 +106,13 @@ export async function fetchAuditLogs(filter?: {
   module?: AuditModule
   action_type?: AuditActionType
 }): Promise<AuditLogEntry[]> {
+  if (!supabase) {
+    let logs = getLocalAuditLogs()
+    if (filter?.module) logs = logs.filter((l) => l.module === filter.module)
+    if (filter?.action_type) logs = logs.filter((l) => l.action_type === filter.action_type)
+    return logs
+  }
+
   try {
     let query = supabase.from('audit_logs').select('*').order('created_at', { ascending: false })
 

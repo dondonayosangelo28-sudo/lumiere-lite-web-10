@@ -427,16 +427,18 @@ export async function savePresetSquad(
 ): Promise<PresetSquad> {
   const isNew = !localPresetSquads.some((s) => s.id === squad.id)
 
-  try {
-    const payload = {
-      id: squad.id,
-      name: squad.name,
-      member_ids: squad.memberIds,
-      default_task: squad.defaultTask || 'Setup & Staging',
+  if (supabase) {
+    try {
+      const payload = {
+        id: squad.id,
+        name: squad.name,
+        member_ids: squad.memberIds,
+        default_task: squad.defaultTask || 'Setup & Staging',
+      }
+        await supabase.from('manning_preset_squads').upsert(payload)
+    } catch (e) {
+      console.warn('[v0] Failed to save preset squad to Supabase; using local store.', e?.message ?? String(e))
     }
-    await supabase.from('manning_preset_squads').upsert(payload)
-  } catch (e) {
-    console.warn('[v0] Failed to save preset squad to Supabase; using local store.', e?.message ?? String(e))
   }
 
   const idx = localPresetSquads.findIndex((s) => s.id === squad.id)
@@ -466,10 +468,12 @@ export async function deletePresetSquad(
 ): Promise<void> {
   const targetSquad = localPresetSquads.find((s) => s.id === squadId)
 
-  try {
-    await supabase.from('manning_preset_squads').delete().eq('id', squadId)
-  } catch (e) {
-    console.warn('[v0] Failed to delete preset squad from Supabase; using local store.', e?.message ?? String(e))
+  if (supabase) {
+    try {
+      await supabase.from('manning_preset_squads').delete().eq('id', squadId)
+    } catch (e) {
+      console.warn('[v0] Failed to delete preset squad from Supabase; using local store.', e?.message ?? String(e))
+    }
   }
 
   localPresetSquads = localPresetSquads.filter((s) => s.id !== squadId)

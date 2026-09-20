@@ -339,7 +339,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (current: string, next: string) => {
       if (!currentUser) return false
       try {
-        try {
+        if (supabase) try {
           const { data: verify, error: verifyError } = await supabase
             .from('portal_accounts')
             .select('id')

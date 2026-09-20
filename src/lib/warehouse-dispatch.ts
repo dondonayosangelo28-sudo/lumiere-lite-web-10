@@ -49,6 +49,8 @@ const globalStore = globalThis as DispatchGlobal
 let batchesByEvent: Map<string, DispatchBatch[]> = globalStore[storeKey] ?? new Map()
 
 export async function persistBatchToSupabase(eventId: string, batch: DispatchBatch) {
+  if (!supabase) return
+
   try {
     await supabase.from('manning_dispatch_batches').upsert({
       id: batch.id,
@@ -121,6 +123,7 @@ export function deleteBatch(
   })
 
   // Update Supabase dispatch batch soft-delete state
+  if (!supabase) return
   void (async () => {
     try {
       const { error } = await supabase
