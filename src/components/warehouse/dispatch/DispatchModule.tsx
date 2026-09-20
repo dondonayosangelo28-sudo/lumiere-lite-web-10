@@ -138,7 +138,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   return (
     <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
-<div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-5 sm:px-10">
+<div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-6 sm:px-10">
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="mt-1 pb-1 font-serif text-4xl font-medium leading-tight text-foreground">Dispatch &amp; Logistics</h1>
