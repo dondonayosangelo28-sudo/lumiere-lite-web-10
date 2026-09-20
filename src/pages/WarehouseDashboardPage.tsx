@@ -12,10 +12,10 @@ import type { WarehouseModuleId } from '@/lib/warehouse-modules'
 import { cn } from '@/lib/utils'
 
 const KPI_CARDS = [
-  { label: 'Total Assets', value: '24', subtitle: 'Registered inventory', icon: Boxes },
-  { label: 'Available Assets', value: '14', subtitle: 'Ready for allocation', icon: PackageCheck },
-  { label: 'Critical Deficits', value: '11', subtitle: 'Requires attention', icon: AlertTriangle, critical: true },
-  { label: 'Pending Procurement', value: '7', subtitle: 'Open replenishment items', icon: CircleDollarSign },
+  { label: 'Total Assets', value: '24', subtitle: 'Registered inventory', icon: Boxes, moduleId: 'assets' as WarehouseModuleId },
+  { label: 'Available Assets', value: '14', subtitle: 'Ready for allocation', icon: PackageCheck, moduleId: 'assets' as WarehouseModuleId },
+  { label: 'Critical Deficits', value: '11', subtitle: 'Requires attention', icon: AlertTriangle, moduleId: 'replenishment' as WarehouseModuleId, critical: true },
+  { label: 'Pending Procurement', value: '7', subtitle: 'Open replenishment items', icon: CircleDollarSign, moduleId: 'replenishment' as WarehouseModuleId },
 ] as const
 
 export function WarehouseDashboardPage() {
@@ -52,15 +52,23 @@ export function WarehouseDashboardPage() {
           <section aria-labelledby="warehouse-kpi-heading">
             <h2 id="warehouse-kpi-heading" className="sr-only">Warehouse dashboard summary</h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {KPI_CARDS.map(({ label, value, subtitle, icon: Icon, critical }) => (
-                <article key={label} className={cn('rounded-xl border border-border bg-card p-5', critical && 'border-destructive/30 bg-destructive/5')}>
+              {KPI_CARDS.map(({ label, value, subtitle, icon: Icon, moduleId, critical }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => selectModule(moduleId)}
+                  className={cn(
+                    'group rounded-xl border border-border bg-card p-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+                    critical && 'border-destructive/30 bg-destructive/5',
+                  )}
+                >
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-                    <Icon className={cn('size-4 text-primary', critical && 'text-destructive')} aria-hidden="true" />
+                    <Icon className={cn('size-4 text-primary transition-transform duration-200 group-hover:scale-110', critical && 'text-destructive')} aria-hidden="true" />
                   </div>
                   <p className={cn('mt-4 font-serif text-4xl font-medium text-foreground', critical && 'text-destructive')}>{value}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
-                </article>
+                </button>
               ))}
             </div>
           </section>
