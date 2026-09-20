@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { WAREHOUSE_MODULES, type WarehouseModuleId } from '@/lib/warehouse-modules'
 
 interface WarehouseRailProps {
-  activeModuleId: WarehouseModuleId
+  activeModuleId?: WarehouseModuleId
   onSelectModule: (id: WarehouseModuleId) => void
   onExit: () => void
   onDashboard?: () => void
@@ -32,7 +32,7 @@ export function WarehouseRail({
   }
 
   const handleSelect = (id: WarehouseModuleId) => {
-    if (id === activeModuleId) {
+    if (!activeDashboard && id === activeModuleId) {
       setOpen((value) => !value)
       return
     }
@@ -41,7 +41,7 @@ export function WarehouseRail({
   }
 
   return (
-    <aside className={cn('flex h-full min-h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
+    <aside className={cn('sticky top-0 flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
       <div className={cn('flex items-center', open ? 'justify-start px-4' : 'justify-center')}>
         <button
           type="button"

@@ -51,7 +51,6 @@ export function WarehouseHomePage() {
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <WarehouseRail
-        activeModuleId="assets"
         activeDashboard
         defaultOpen
         onSelectModule={openModule}
