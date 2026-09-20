@@ -47,10 +47,10 @@ const statusStyles: Record<string, string> = {
 
 export function EventRegistryPage() {
   const { events } = usePortal()
-  // Admin has read-only oversight; Executives manage the operations registry.
-  const { isAdmin } = useAuth()
-  const { intent, clearIntent, navigate } = useNav()
-  const readOnly = isAdmin
+  // Both administrators and executives can register and maintain events.
+  // The registry remains the single source of truth for create, view, and edit actions.
+  const { intent, clearIntent } = useNav()
+  const readOnly = false
   // A single drawer instance serves create / view / edit.
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [drawerMode, setDrawerMode] = useState<'create' | 'view' | 'edit'>('create')
