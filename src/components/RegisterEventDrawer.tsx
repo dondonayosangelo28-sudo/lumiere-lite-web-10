@@ -105,6 +105,17 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
 
   useEffect(() => {
     if (!open) return
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close()
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
     setActiveTab('details')
     setEditingAsset(null)
     if (event) {
@@ -255,9 +266,13 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
           </div>
           <button
             type="button"
-            onClick={close}
-            className="text-muted-foreground transition hover:text-foreground"
-            aria-label="Close"
+            onClick={(event) => {
+              event.stopPropagation()
+              close()
+            }}
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Close event registration"
+            data-testid="register-event-close"
           >
             <X className="size-5" />
           </button>
