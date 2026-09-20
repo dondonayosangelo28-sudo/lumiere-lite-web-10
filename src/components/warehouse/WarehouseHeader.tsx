@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Bell, CheckCircle2, Info, LogOut, Moon, Sun, TriangleAlert, User } from 'lucide-react'
+import { Bell, CheckCircle2, Info, LogOut, Moon, Search, Sun, TriangleAlert, User } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { useDarkMode } from '@/lib/theme'
 import { getDispatchActivity, type DispatchActivityEntry } from '@/lib/warehouse-dispatch'
@@ -218,7 +218,20 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
             <h1 className="mt-3 font-serif text-3xl font-medium tracking-tight text-foreground">Warehouse Dashboard</h1>
             <p className="mt-1 text-sm text-muted-foreground">Warehouse KPIs, ingress calendar, and upcoming events.</p>
           </div>
-
+          {searchInHeader && (
+            <div className="relative w-full sm:max-w-sm">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <label htmlFor="warehouse-event-search" className="sr-only">Search events</label>
+              <input
+                id="warehouse-event-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => onSearchChange(event.target.value)}
+                placeholder="Search events"
+                className="w-full rounded-full border border-border/80 bg-card py-2.5 pl-10 pr-4 text-sm text-card-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+          )}
         </div>
       </div>}
     </div>

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { Search } from 'lucide-react'
 import { usePortal } from '@/lib/store'
 import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
 import { WarehouseKpiRow } from '@/components/warehouse/WarehouseKpiRow'
@@ -33,24 +32,6 @@ export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail }: 
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} searchInHeader hideTopBar />
         <div className="flex w-full flex-col gap-8 px-5 py-6 sm:gap-10 sm:px-8">
-          <div className="flex flex-col gap-3 border-b border-border/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Event search</p>
-              <p className="mt-1 text-sm text-muted-foreground">Find an event by title, client, venue, status, or reference.</p>
-            </div>
-            <div className="relative w-full sm:max-w-sm">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-              <label htmlFor="warehouse-event-search" className="sr-only">Search events</label>
-              <input
-                id="warehouse-event-search"
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search events"
-                className="w-full rounded-full border border-border/80 bg-card py-2.5 pl-10 pr-4 text-sm text-card-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-          </div>
           <WarehouseKpiRow events={events} onOpenModule={onSelectModule} />
           <WarehouseCalendarEventsView events={visibleEvents} onSelectEvent={setSummaryEvent} />
         </div>
