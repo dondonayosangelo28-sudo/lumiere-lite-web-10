@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import { ExecutiveMobileDrawer } from '@/components/executive/ExecutiveMobileDrawer'
 import { ExecutiveRail } from '@/components/executive/ExecutiveRail'
 import { ExecutiveTopBar } from '@/components/executive/ExecutiveTopBar'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
@@ -21,6 +22,7 @@ interface ExecutiveShellProps {
 // beneath it.
 export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: ExecutiveShellProps) {
   const { executiveRailOpen, toggleExecutiveRail } = useNav()
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   const handleDestinationSelect = (id: ExecutiveDestinationId) => {
     if (id === activeId) {
@@ -41,10 +43,10 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
       />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <ExecutiveTopBar />
+        <ExecutiveTopBar onOpenMenu={() => setMobileNavOpen(true)} />
 
-        {/* Only this region scrolls. The mobile rail remains in normal flow below it. */}
-        <div className="executive-mobile-shell min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:pb-0">
+        {/* Only this region scrolls. The mobile drawer is outside the scroll area. */}
+        <div className="executive-mobile-shell min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:pb-0">
           {stickyHeader && (
             <div className="executive-mobile-sticky sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur max-sm:px-3 max-sm:pt-3 max-sm:pb-[19px] sm:px-8">
               {stickyHeader}
@@ -53,6 +55,12 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
           <div className="px-5 pt-[15px] pb-6 max-sm:px-3 max-sm:pt-[15px] max-sm:pb-3 sm:px-8">{children}</div>
         </div>
       </div>
+      <ExecutiveMobileDrawer
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        activeId={activeId}
+        onSelect={onSelect}
+      />
     </div>
   )
 }

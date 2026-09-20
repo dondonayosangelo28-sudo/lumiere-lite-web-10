@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CalendarClock, LogOut, Moon, PackageSearch, Sun, User } from 'lucide-react'
+import { CalendarClock, LogOut, Menu, Moon, PackageSearch, Sun, User } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { usePortal } from '@/lib/store'
 import { useDarkMode } from '@/lib/theme'
@@ -10,7 +10,11 @@ import { NotificationsBell, type NotificationEntry } from '@/components/Notifica
 // profile menu. Sits alongside the rail outside the scroll container so it
 // never scrolls with page content — mirrors AdminTopBar exactly, only
 // swapping the plain bell for the shared NotificationsBell.
-export function ExecutiveTopBar() {
+interface ExecutiveTopBarProps {
+  onOpenMenu?: () => void
+}
+
+export function ExecutiveTopBar({ onOpenMenu }: ExecutiveTopBarProps) {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
   const { events, inventory } = usePortal()
   const { dark, toggle } = useDarkMode()
@@ -76,9 +80,16 @@ export function ExecutiveTopBar() {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">
-      <p className="min-w-0 pr-3 leading-tight text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
+      <div className="flex min-w-0 items-center">
+        {onOpenMenu && (
+          <button type="button" onClick={onOpenMenu} aria-label="Open navigation menu" className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background md:hidden">
+            <Menu className="size-4" aria-hidden="true" />
+          </button>
+        )}
+        <p className="min-w-0 pl-2 pr-2 leading-tight text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:pl-0 sm:pr-3 sm:leading-normal sm:text-xs sm:tracking-[0.15em]">
         {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
-      </p>
+        </p>
+      </div>
 
       <div className="flex items-center gap-2">
         <NotificationsBell notifications={notifications} size="md" />
