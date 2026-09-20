@@ -166,10 +166,10 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-[0.625rem] lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
           {/* Compact two-row filter group */}
-          <div className="flex min-w-0 flex-col gap-[0.375rem]">
-            <div className="flex flex-wrap items-center gap-[0.375rem]">
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
               {CATEGORY_FILTERS.map((c) => (
                 <button
                   key={c}
@@ -177,7 +177,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                   onClick={() => setCategoryFilter(c)}
                   aria-pressed={categoryFilter === c}
                   className={cn(
-                    'rounded-[2px] px-[0.625rem] py-0.25 text-[0.14rem] font-semibold uppercase tracking-[0.02em] transition',
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
                     categoryFilter === c
                       ? 'bg-foreground text-background'
                       : 'border border-border bg-background text-muted-foreground hover:bg-muted',
@@ -195,7 +195,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                   onClick={() => setStatusFilter(s)}
                   aria-pressed={statusFilter === s}
                   className={cn(
-                    'rounded-[2px] px-[0.625rem] py-0.25 text-[0.14rem] font-semibold uppercase tracking-[0.02em] transition',
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
                     statusFilter === s
                       ? 'bg-primary text-primary-foreground'
                       : 'border border-border bg-background text-muted-foreground hover:bg-muted',
@@ -208,44 +208,44 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
 
           {/* View, create, and search controls */}
-          <div className="flex w-full shrink-0 flex-col items-end gap-[0.5rem] lg:w-auto">
-            <div className="flex items-center gap-[0.5rem]">
-              <div className="inline-flex shrink-0 rounded-[2px] border border-border bg-background p-0.25" aria-label="Asset view">
+          <div className="flex w-full shrink-0 flex-col items-end gap-2 lg:w-auto">
+            <div className="flex items-center gap-2">
+              <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
                 <button
                   type="button"
                   aria-label="Grid view"
                   aria-pressed={viewMode === 'grid'}
                   onClick={() => setViewMode('grid')}
-                  className={cn('rounded-[1px] p-[0.375rem] transition', viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
+                  className={cn('rounded-sm p-1.5 transition', viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
                 >
-                  <Grid2X2 className="size-[0.21875rem]" />
+                  <Grid2X2 className="size-3.5" />
                 </button>
                 <button
                   type="button"
                   aria-label="List view"
                   aria-pressed={viewMode === 'list'}
                   onClick={() => setViewMode('list')}
-                  className={cn('rounded-[1px] p-[0.375rem] transition', viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
+                  className={cn('rounded-sm p-1.5 transition', viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted')}
                 >
-                  <List className="size-[0.21875rem]" />
+                  <List className="size-3.5" />
                 </button>
               </div>
               <button
                 type="button"
                 onClick={() => setAddOpen(true)}
-                className="inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-[2px] bg-primary px-[0.75rem] py-[0.375rem] text-[0.15rem] font-bold uppercase tracking-[0.025em] text-primary-foreground transition hover:opacity-90"
+                className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
               >
-                <Plus className="size-[0.21875rem]" />
+                <Plus className="size-3.5" />
                 Add Item
               </button>
             </div>
-            <div className="relative w-16 max-w-full">
-              <Search className="absolute left-[0.1875rem] top-1/2 size-[0.21875rem] -translate-y-1/2 text-muted-foreground" />
+            <div className="relative w-64 max-w-full">
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search assets…"
-                className="w-full rounded-[2px] border border-input bg-background py-[0.375rem] pl-[0.5625rem] pr-[0.1875rem] text-[0.1875rem] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                className="w-full rounded-md border border-input bg-background py-1.5 pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
               />
             </div>
           </div>
