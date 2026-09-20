@@ -38,7 +38,7 @@ export function WarehouseRail({
           )}
         >
           {open ? (
-            <span className="truncate font-serif text-sm font-semibold tracking-[0.28em] text-sidebar-primary">LUMIERE</span>
+            <span className="truncate font-serif text-sm font-semibold tracking-[0.28em] text-[#a8784b]">LUMIERE</span>
           ) : (
             <span aria-hidden="true" className="font-serif text-lg font-semibold leading-none text-[#a8784b]">L</span>
           )}
