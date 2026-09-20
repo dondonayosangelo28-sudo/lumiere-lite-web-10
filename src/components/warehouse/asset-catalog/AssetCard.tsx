@@ -85,7 +85,7 @@ export function AssetCard({ asset, onOpen }: AssetCardProps) {
       onClick={onOpen}
       className="group flex flex-col overflow-hidden rounded-xl border border-border/80 bg-white dark:bg-card text-left shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-primary/50 hover:ring-1 hover:ring-primary/20"
     >
-      {/* Aspect Ratio 4:3 image for compact 6-col grid */}
+      {/* Aspect Ratio 4:3 image for 5-col grid */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
         <img
           src={asset.image || '/placeholder.svg'}
@@ -93,12 +93,12 @@ export function AssetCard({ asset, onOpen }: AssetCardProps) {
           crossOrigin="anonymous"
           className="size-full object-cover transition duration-300 group-hover:scale-105"
         />
-        <div className="absolute left-1.5 top-1.5 flex flex-wrap gap-1">
-          <Pill tone={statusTone} className="text-[0.5rem] px-1.5 py-0.5">
+        <div className="absolute left-2 top-2 flex flex-wrap gap-1">
+          <Pill tone={statusTone} className="text-[0.6rem] px-2 py-0.5">
             {asset.status}
           </Pill>
           {glance.kind === 'health' && glance.badgeLabel && (
-            <Pill tone={glance.badgeTone ?? 'positive'} className="text-[0.5rem] px-1.5 py-0.5">
+            <Pill tone={glance.badgeTone ?? 'positive'} className="text-[0.6rem] px-2 py-0.5">
               {glance.badgeLabel}
             </Pill>
           )}
@@ -106,19 +106,19 @@ export function AssetCard({ asset, onOpen }: AssetCardProps) {
       </div>
 
       {/* Proportional compact card body */}
-      <div className="flex flex-1 flex-col gap-1 p-2 sm:p-2.5">
-        <h3 className="truncate font-serif text-[0.68rem] font-medium leading-snug text-card-foreground group-hover:text-primary transition-colors">
+      <div className="flex flex-1 flex-col gap-1 p-3 sm:p-3.5">
+        <h3 className="truncate font-serif text-[0.82rem] font-medium leading-snug text-card-foreground group-hover:text-primary transition-colors">
           {asset.name}
         </h3>
 
         <div className="mt-auto pt-0.5">
           {glance.kind === 'fraction' ? (
-            <div className="flex items-center justify-between text-[0.55rem] font-semibold uppercase tracking-wider text-muted-foreground">
+            <div className="flex items-center justify-between text-[0.66rem] font-semibold uppercase tracking-wider text-muted-foreground">
               <span className="truncate">{asset.category}</span>
               <span className="shrink-0 text-card-foreground font-bold">{glance.text}</span>
             </div>
           ) : (
-            <p className="truncate text-[0.55rem] font-medium text-muted-foreground">
+            <p className="truncate text-[0.66rem] font-medium text-muted-foreground">
               <span className="font-semibold uppercase tracking-wider text-card-foreground/90">{asset.category}</span>
               <span className="opacity-80"> · {glance.text}</span>
             </p>

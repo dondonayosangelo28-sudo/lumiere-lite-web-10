@@ -268,12 +268,12 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                       {tierName} ({tierItems.length})
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-4">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-4">
                     {tierItems.map((asset) => <AssetCard key={asset.id} asset={asset} onOpen={() => setSelectedAsset(asset)} />)}
                   </div>
                 </div>
               )) : (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-4">
                   {filtered.map((asset) => <AssetCard key={asset.id} asset={asset} onOpen={() => setSelectedAsset(asset)} />)}
                 </div>
               )}
