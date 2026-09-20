@@ -140,7 +140,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
-              <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">Dispatch &amp; Logistics</h1>
+              <h1 className="mt-1 font-serif text-4xl font-medium text-foreground">Dispatch &amp; Logistics</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Dispatch manifests, vehicle assignments, and transit checkpoints.
             </p>
