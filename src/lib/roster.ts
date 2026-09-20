@@ -212,6 +212,6 @@ export async function loadRosterFromDatabase() {
     CREW.length = 0
     CREW.push(...loaded)
   } catch (err) {
-    console.error('[v0] Error loading roster from database:', err)
+    console.error('[v0] Error loading roster from database:', err?.message ?? String(err))
   }
 }

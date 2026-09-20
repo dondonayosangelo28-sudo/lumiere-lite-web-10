@@ -116,7 +116,7 @@ export async function fetchEventByIdApi(eventId: string): Promise<PortalEvent | 
     const dto: EventResponseDto = await res.json()
     return mapEventResponseToPortalEvent(dto)
   } catch (err) {
-    console.warn(`[eventsApi] GET /api/events/${eventId} fetch skipped/fallback:`, err)
+    console.warn(`[eventsApi] GET /api/events/${eventId} fetch skipped/fallback:`, err?.message ?? String(err))
     return null
   }
 }
@@ -181,7 +181,7 @@ export async function createEventApi(
     const data = await res.json().catch(() => ({}))
     return { success: true, eventId: data?.eventId || data?.id }
   } catch (err: any) {
-    console.warn('[eventsApi] POST /api/events network/runtime error:', err)
+    console.warn('[eventsApi] POST /api/events network/runtime error:', err?.message ?? String(err))
     return { success: false, error: err?.message || 'Network error' }
   }
 }

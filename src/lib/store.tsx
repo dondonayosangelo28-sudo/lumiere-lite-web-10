@@ -1627,7 +1627,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         // account so the directory stays functional. The temporary password is
         // retained and the account surfaces as "Pending" (forced first-login
         // password change) exactly like a persisted row would.
-        console.error('[v0] Falling back to local account (DB unavailable):', error)
+        console.error('[v0] Falling back to local account (DB unavailable):', error?.message ?? String(error))
         const localStaff: Staff = {
           id: `s-${Date.now()}`,
           employeeId: draft.employeeId,
@@ -1692,7 +1692,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       // Remove from the database (crew_roster rows cascade via FK).
       const { error } = await supabase.from('portal_accounts').delete().eq('id', id)
       if (error) {
-        console.error('[v0] Failed to remove account:', error)
+        console.error('[v0] Failed to remove account:', error?.message ?? String(error))
         return
       }
       setStaff((prev) => prev.filter((s) => s.id !== id))
@@ -1768,7 +1768,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         .update({ session_status: nextSession })
         .eq('id', id)
       if (error) {
-        console.error('[v0] Suspension persisted locally only (DB unavailable):', error)
+        console.error('[v0] Suspension persisted locally only (DB unavailable):', error?.message ?? String(error))
       }
       setStaff((prev) =>
         prev.map((s) =>
@@ -1845,7 +1845,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         })
         .eq('id', updated.id)
         .then(({ error }) => {
-          if (error) console.error('[v0] Failed to update account:', error)
+          if (error) console.error('[v0] Failed to update account:', error?.message ?? String(error))
         })
     },
     [pushLog],
@@ -1966,7 +1966,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
             .update({ status: 'completed' })
             .eq('id', id)
             .then(({ error }) => {
-              if (error) console.error('[v0] Failed to resolve access request:', error)
+              if (error) console.error('[v0] Failed to resolve access request:', error?.message ?? String(error))
             })
           return { ...a, status: 'completed' }
         }),

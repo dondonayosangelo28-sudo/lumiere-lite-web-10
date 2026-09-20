@@ -633,7 +633,7 @@ export function PlannerProvider({ children }: { children: ReactNode }) {
           }
         }
       })
-      .catch((err) => console.warn('[planner] POST /api/events skipped/failed:', err))
+      .catch((err) => console.warn('[planner] POST /api/events skipped/failed:', err?.message ?? String(err)))
   }, [])
 
   const selectEvent = useCallback((id: string | null) => setSelectedEventId(id), [])

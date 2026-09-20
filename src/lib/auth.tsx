@@ -293,7 +293,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return { ok: true }
         }
       } catch (err) {
-        console.warn('[Auth] API endpoint unavailable, attempting demo fallback:', err)
+        console.warn('[Auth] API endpoint unavailable, attempting demo fallback:', err?.message ?? String(err))
       }
 
       // Demo/Standalone fallback mode for standalone/static deployments (e.g., v0 preview)
@@ -364,7 +364,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         storage.setItem('_lumiere_auth_user', JSON.stringify(updated))
         return true
       } catch (err) {
-        console.error('[Auth] Password change error:', err)
+        console.error('[Auth] Password change error:', err?.message ?? String(err))
         return false
       }
     },
@@ -387,7 +387,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         return res.ok
       } catch (err) {
-        console.error('[Auth] Password verify error:', err)
+        console.error('[Auth] Password verify error:', err?.message ?? String(err))
         return false
       }
     },
