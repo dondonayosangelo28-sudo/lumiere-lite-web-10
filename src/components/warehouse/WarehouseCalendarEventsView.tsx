@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Circle, Star, Calendar as CalendarIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, MapPin, Building2, Clock, FilterX } from 'lucide-react'
 import type { PortalEvent } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { EventCalendar, parseEventDate as parseCalendarDate } from '@/components/EventCalendar'
 
 interface WarehouseCalendarEventsViewProps {
   events: PortalEvent[]
@@ -22,19 +23,6 @@ const MONTH_NAMES = [
   'NOVEMBER',
   'DECEMBER',
 ]
-
-const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-function shortCodeFor(title: string): string {
-  const words = title.trim().split(/\s+/)
-  if (words.length >= 3) {
-    return (words[0][0] + words[1][0] + words[2][0]).toUpperCase()
-  }
-  if (words.length === 2) {
-    return (words[0][0] + words[1].slice(0, 2)).toUpperCase()
-  }
-  return title.slice(0, 3).toUpperCase()
-}
 
 // Robust Event Date Parsing Helper (Handles 'Oct 14, 2026', '2026-10-14', etc.)
 function parseEventDate(dateStr: string): Date | null {
@@ -152,8 +140,8 @@ function getIngressCountdownBadge(targetDateStr: string): { label: string; style
 }
 
 export function WarehouseCalendarEventsView({ events, onSelectEvent }: WarehouseCalendarEventsViewProps) {
-  // Compute initial active calendar date matching the earliest event month so calendar cells display events immediately
-  const initialCalendarDate = useMemo(() => {
+  // Determine initial calendar view month/year from earliest seeded event
+  const initialView = useMemo(() => {
     if (events.length > 0) {
       const parsedDates = events
         .map((e) => parseEventDate(e.targetDate))
@@ -161,75 +149,53 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
         .sort((a, b) => a.getTime() - b.getTime())
 
       if (parsedDates.length > 0) {
-        // Return 1st of month of earliest seeded event
-        return new Date(parsedDates[0].getFullYear(), parsedDates[0].getMonth(), 1)
+        return { year: parsedDates[0].getFullYear(), month: parsedDates[0].getMonth() }
       }
     }
-    return new Date()
+    const now = new Date()
+    return { year: now.getFullYear(), month: now.getMonth() }
   }, [events])
 
-  const [currentDate, setCurrentDate] = useState<Date>(initialCalendarDate)
+  const [currentView, setCurrentView] = useState<{ year: number; month: number }>(initialView)
+  const [selectedDate, setSelectedDate] = useState<string>('')
 
-  // Keep currentDate synchronized if initialCalendarDate resolves after mount
+  // Keep the view synchronized if the initial view resolves after mount (e.g. events load async)
   useEffect(() => {
-    setCurrentDate(initialCalendarDate)
-  }, [initialCalendarDate])
+    setCurrentView(initialView)
+  }, [initialView])
 
-  const year = currentDate.getFullYear()
-  const month = currentDate.getMonth()
-
-  // Real runtime ISO date string for today (e.g. "2026-09-02")
-  const realNow = new Date()
-  const realTodayIso = `${realNow.getFullYear()}-${String(realNow.getMonth() + 1).padStart(2, '0')}-${String(realNow.getDate()).padStart(2, '0')}`
-
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1))
+  const handleDateSelect = (dateStr: string) => {
+    // Toggle: clicking the same date clears the selection
+    setSelectedDate((prev) => (prev === dateStr ? '' : dateStr))
   }
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1))
-  }
+  // All events for the currently selected calendar date (supports multiple events per date)
+  const selectedDateEvents = useMemo(() => {
+    if (!selectedDate) return []
+    const target = parseCalendarDate(selectedDate)
+    if (!target) return []
+    return events
+      .filter((evt) => {
+        const parts = parseCalendarDate(evt.targetDate)
+        return (
+          parts !== null &&
+          parts.year === target.year &&
+          parts.month === target.month &&
+          parts.day === target.day
+        )
+      })
+      .sort((a, b) => a.title.localeCompare(b.title))
+  }, [events, selectedDate])
 
-  // Days in current month grid
-  const calendarGrid = useMemo(() => {
-    const firstDay = new Date(year, month, 1).getDay()
-    const totalDays = new Date(year, month + 1, 0).getDate()
+  const selectedDateLabel = useMemo(() => {
+    if (!selectedDate) return ''
+    const parts = parseCalendarDate(selectedDate)
+    if (!parts) return selectedDate
+    const d = new Date(parts.year, parts.month, parts.day)
+    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+  }, [selectedDate])
 
-    const cells: Array<{ dateNum: number | null; isoDate: string | null; colIndex: number }> = []
-
-    // Padding empty cells before 1st of month
-    for (let i = 0; i < firstDay; i++) {
-      cells.push({ dateNum: null, isoDate: null, colIndex: i % 7 })
-    }
-
-    // Month days
-    for (let day = 1; day <= totalDays; day++) {
-      const colIndex = (firstDay + day - 1) % 7
-      const monthStr = String(month + 1).padStart(2, '0')
-      const dayStr = String(day).padStart(2, '0')
-      const isoDate = `${year}-${monthStr}-${dayStr}`
-      cells.push({ dateNum: day, isoDate, colIndex })
-    }
-
-    return cells
-  }, [year, month])
-
-  // Events map by ISO date for fast calendar cell lookup
-  const eventsByDate = useMemo(() => {
-    const map = new Map<string, PortalEvent[]>()
-    events.forEach((evt) => {
-      const d = parseEventDate(evt.targetDate)
-      if (d) {
-        const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-        const list = map.get(iso) ?? []
-        list.push(evt)
-        map.set(iso, list)
-      }
-    })
-    return map
-  }, [events])
-
-  // Right Side Upcoming Events List: Default-sorts automatically by nearest target date ascending
+  // Upcoming Events list: sorted by nearest target date ascending
   const upcomingEvents = useMemo(() => {
     return [...events].sort((a, b) => {
       const dateA = parseEventDate(a.targetDate)?.getTime() ?? 0
@@ -238,7 +204,7 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
     })
   }, [events])
 
-  // Group events by Month Year for month-grouped sticky headers
+  // Group upcoming events by Month Year for month-grouped sticky headers
   const monthGroups = useMemo(() => {
     const map = new Map<string, PortalEvent[]>()
     upcomingEvents.forEach((evt) => {
@@ -251,144 +217,150 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
     return Array.from(map.entries())
   }, [upcomingEvents])
 
-  const monthLabel = `${MONTH_NAMES[month]} ${year}`
-
-
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
-      {/* ─── LEFT SIDE: Month Calendar Grid (8 cols) ─── */}
-      <div className="flex flex-col min-h-[35rem] rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 lg:col-span-8 shadow-sm sm:shadow-md backdrop-blur-xs">
-        {/* Calendar Header & Month Navigation */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-4">
-          <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-6">
+      {/* ─── TOP AREA: Executive-style Calendar + Selected-Date Event List ─── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+        {/* LEFT: Month Calendar (reuses the Executive Dashboard EventCalendar) */}
+        <div className="flex flex-col rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 lg:col-span-5 shadow-sm sm:shadow-md backdrop-blur-xs">
+          <div className="flex items-center gap-3 border-b border-border/80 pb-4">
             <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/20">
               <CalendarIcon className="size-5" />
             </span>
             <div>
-              <h2 className="font-serif text-xl font-medium text-card-foreground">{monthLabel}</h2>
+              <h2 className="font-serif text-xl font-medium text-card-foreground">Event Calendar</h2>
               <p className="text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                 Monthly Event &amp; Ingress Roster
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrevMonth}
-              aria-label="Previous month"
-              className="flex size-8.5 items-center justify-center rounded-lg border border-border bg-background/80 text-foreground transition-all duration-150 hover:bg-accent hover:border-primary/40"
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-            <button
-              type="button"
-              onClick={handleNextMonth}
-              aria-label="Next month"
-              className="flex size-8.5 items-center justify-center rounded-lg border border-border bg-background/80 text-foreground transition-all duration-150 hover:bg-accent hover:border-primary/40"
-            >
-              <ChevronRight className="size-4" />
-            </button>
+          <div className="mt-4">
+            <EventCalendar
+              value={selectedDate}
+              events={events}
+              currentView={currentView}
+              onMonthChange={setCurrentView}
+              onSelect={handleDateSelect}
+              enableYearView
+              className="border-0 p-0 shadow-none"
+            />
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="my-3.5 flex flex-wrap items-center gap-5 text-xs text-muted-foreground">
-          <span className="text-[0.62rem] font-bold uppercase tracking-wider text-muted-foreground">Legend:</span>
-          <span className="flex items-center gap-1.5 text-[0.65rem] font-semibold text-card-foreground">
-            <Circle className="size-3 fill-sky-500 text-sky-500" /> Ingress/Egress
-          </span>
-          <span className="flex items-center gap-1.5 text-[0.65rem] font-semibold text-card-foreground">
-            <Star className="size-3.5 fill-amber-500 text-amber-500" /> Actual Event
-          </span>
-        </div>
-
-        {/* Days of Week Header */}
-        <div className="grid grid-cols-7 gap-1 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-muted-foreground">
-          {DAYS_OF_WEEK.map((d, colIdx) => (
-            <div
-              key={d}
-              className={cn(
-                'py-1.5 rounded-md',
-                (colIdx === 0 || colIdx === 6) && 'text-muted-foreground/75 bg-muted/20 font-bold',
-              )}
-            >
-              {d}
-            </div>
-          ))}
-        </div>
-
-        {/* Month Calendar Grid */}
-        <div className="grid grid-cols-7 gap-1.5 mt-1.5 flex-1">
-          {calendarGrid.map((cell, idx) => {
-            if (!cell.dateNum || !cell.isoDate) {
-              return (
-                <div
-                  key={`empty-${idx}`}
-                  className={cn(
-                    'min-h-[4.75rem] rounded-lg border border-border/30 bg-muted/10',
-                    (cell.colIndex === 0 || cell.colIndex === 6) && 'bg-muted/20',
-                  )}
-                />
-              )
-            }
-
-            const dayEvents = eventsByDate.get(cell.isoDate) ?? []
-            const isToday = cell.isoDate === realTodayIso
-            const isWeekend = cell.colIndex === 0 || cell.colIndex === 6
-
-            return (
-              <div
-                key={cell.isoDate}
-                className={cn(
-                  'group flex min-h-[4.75rem] flex-col rounded-lg border border-border/80 bg-background p-1.5 transition-all duration-150 hover:border-primary/50 hover:bg-accent/40',
-                  isWeekend && 'bg-muted/15',
-                  isToday && 'bg-primary/10 ring-1.5 ring-primary/40 border-primary/50',
+        {/* RIGHT: Selected-Date Event List (shows ALL events on the clicked date) */}
+        <div className="flex min-h-[35rem] flex-col rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 lg:col-span-7 shadow-sm sm:shadow-md backdrop-blur-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-4">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif text-lg font-medium text-card-foreground">
+                  {selectedDate ? 'Events on this date' : 'Select a date'}
+                </h3>
+                {selectedDate && (
+                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-[0.65rem] font-bold text-foreground">
+                    {selectedDateEvents.length}
+                  </span>
                 )}
-              >
-                <div className="flex items-center justify-between">
-                  {isToday ? (
-                    <span className="flex size-6 items-center justify-center rounded-full bg-primary text-[0.65rem] font-bold text-primary-foreground shadow-xs">
-                      {cell.dateNum}
-                    </span>
-                  ) : (
-                    <span className="text-right text-[0.65rem] font-bold text-muted-foreground group-hover:text-foreground">
-                      {cell.dateNum}
-                    </span>
-                  )}
-                </div>
-
-                {/* Calendar Cell Event Markers */}
-                <div className="mt-1 flex flex-col gap-1 overflow-y-auto max-h-[3.3rem]">
-                  {dayEvents.map((evt, i) => {
-                    const isActualEvent = i % 2 === 0
-                    return (
-                      <button
-                        key={evt.id}
-                        type="button"
-                        onClick={() => onSelectEvent(evt)}
-                        className="flex w-full items-center gap-1 rounded bg-card border border-border/60 px-1 py-0.5 text-left text-[0.55rem] font-semibold text-card-foreground shadow-xs transition hover:border-primary hover:bg-primary/10 hover:text-primary truncate"
-                      >
-                        {isActualEvent ? (
-                          <Star className="size-2.5 shrink-0 fill-amber-500 text-amber-500" />
-                        ) : (
-                          <Circle className="size-2 shrink-0 fill-sky-500 text-sky-500" />
-                        )}
-                        <span className="font-bold shrink-0">{shortCodeFor(evt.title)}</span>
-                        <span className="truncate opacity-85">{evt.title}</span>
-                      </button>
-                    )
-                  })}
-                </div>
               </div>
-            )
-          })}
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {selectedDate ? selectedDateLabel : 'Click any day in the calendar to see all scheduled events.'}
+              </p>
+            </div>
+
+            {selectedDate && (
+              <button
+                type="button"
+                onClick={() => setSelectedDate('')}
+                className="flex items-center gap-1.5 self-start rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <FilterX className="size-3.5" />
+                <span>Clear</span>
+              </button>
+            )}
+          </div>
+
+          <div className="mt-4 flex-1 space-y-3 overflow-y-auto pr-1 scrollbar-thin">
+            {!selectedDate ? (
+              <div className="flex h-full flex-col items-center justify-center gap-3 py-12 text-center">
+                <span className="flex size-12 items-center justify-center rounded-full bg-muted/50 text-muted-foreground">
+                  <CalendarIcon className="size-6" />
+                </span>
+                <p className="text-sm font-medium text-card-foreground">No date selected</p>
+                <p className="max-w-xs text-xs text-muted-foreground">
+                  Select a day on the calendar to view all events scheduled for that date.
+                </p>
+              </div>
+            ) : selectedDateEvents.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-3 py-12 text-center">
+                <span className="flex size-12 items-center justify-center rounded-full bg-muted/50 text-muted-foreground">
+                  <CalendarIcon className="size-6" />
+                </span>
+                <p className="text-sm font-medium text-card-foreground">No events on this date</p>
+                <p className="max-w-xs text-xs text-muted-foreground">
+                  There are no events scheduled for {selectedDateLabel}.
+                </p>
+              </div>
+            ) : (
+              selectedDateEvents.map((evt) => {
+                const countdown = getIngressCountdownBadge(evt.targetDate)
+                return (
+                  <button
+                    key={evt.id}
+                    type="button"
+                    onClick={() => onSelectEvent(evt)}
+                    className="group flex w-full flex-col gap-2 rounded-xl border border-border/80 bg-background/90 p-4 text-left shadow-xs transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent/40 hover:shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[0.62rem] font-bold uppercase tracking-wider text-muted-foreground">
+                          {evt.refId}
+                        </span>
+                        <h4 className="mt-0.5 font-serif text-sm font-medium text-card-foreground transition-colors group-hover:text-primary">
+                          {evt.title}
+                        </h4>
+                      </div>
+                      <span
+                        className={cn(
+                          'shrink-0 rounded-full border px-2.5 py-0.5 text-[0.55rem] uppercase tracking-wider',
+                          countdown.style,
+                        )}
+                      >
+                        {countdown.label}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.68rem] text-muted-foreground">
+                      {evt.client && (
+                        <span className="flex items-center gap-1 font-medium text-foreground/80">
+                          <Building2 className="size-3 text-muted-foreground" />
+                          <span className="truncate max-w-[180px]">{evt.client}</span>
+                        </span>
+                      )}
+                      {evt.venue && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="size-3 text-muted-foreground" />
+                          <span className="truncate max-w-[200px]">{evt.venue}</span>
+                        </span>
+                      )}
+                      {(evt.installationStart || evt.installationEnd) && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="size-3 text-muted-foreground" />
+                          <span>
+                            {evt.installationStart || '08:00'} - {evt.installationEnd || '23:00'}
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                )
+              })
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ─── RIGHT SIDE: Upcoming Events Side Panel (Month-Grouped Sticky Headers) ─── */}
-      <div className="flex flex-col h-[35rem] max-h-[35rem] rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 lg:col-span-4 shadow-sm sm:shadow-md backdrop-blur-xs overflow-hidden">
-        {/* Side Panel Header (Static / Non-Scrolling) */}
+      {/* ─── BELOW: Upcoming Events (Month-Grouped) ─── */}
+      <div className="flex max-h-[32rem] flex-col overflow-hidden rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 shadow-sm sm:shadow-md backdrop-blur-xs">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-4 shrink-0">
           <div>
             <h3 className="font-serif text-lg font-medium text-card-foreground">
@@ -400,22 +372,21 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
           </div>
         </div>
 
-        {/* Scrollable Row List with Sticky Month Headers */}
         <div className="mt-3 flex-1 overflow-y-auto pr-1.5 space-y-4 scrollbar-thin">
           {monthGroups.length === 0 ? (
             <p className="py-8 text-center text-xs text-muted-foreground">No upcoming events found.</p>
           ) : (
             monthGroups.map(([groupKey, groupEvents]) => (
-                <div key={groupKey} className="space-y-2">
-                  {/* Sticky Month Section Header */}
-                  <div className="sticky top-0 z-10 border-b border-border/80 bg-card/95 py-1.5 backdrop-blur-sm">
-                    <span className="text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary">
+              <div key={groupKey} className="space-y-2">
+                {/* Sticky Month Section Header */}
+                <div className="sticky top-0 z-10 border-b border-border/80 bg-card/95 py-1.5 backdrop-blur-sm">
+                  <span className="text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary">
                     {groupKey} ({groupEvents.length})
                   </span>
                 </div>
 
                 {/* Event Row Buttons for this Month Group */}
-                <div className="space-y-2.5">
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
                   {groupEvents.map((evt) => {
                     const countdown = getIngressCountdownBadge(evt.targetDate)
                     return (
