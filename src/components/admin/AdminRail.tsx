@@ -24,7 +24,7 @@ export function AdminRail({ activeId, onSelect }: AdminRailProps) {
   }
 
   return (
-    <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
+    <aside className={cn('flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200 sm:flex max-sm:hidden', open ? 'w-64 items-stretch' : 'w-16 items-center')}>
       <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
         <button
           type="button"

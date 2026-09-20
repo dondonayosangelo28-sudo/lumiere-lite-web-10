@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { LogOut, Moon, Sun, User, ShieldAlert, UserPlus, Activity, KeyRound, Check, X as XIcon } from 'lucide-react'
+import { LogOut, Menu, Moon, Sun, User, ShieldAlert, UserPlus, Activity, KeyRound, Check, X as XIcon } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 import { useDarkMode } from '@/lib/theme'
@@ -16,7 +16,11 @@ const ADMIN_NOTIFICATIONS: NotificationEntry[] = [
 // Constant top bar for the Admin console: live date/time, notification bell,
 // and a profile menu. Sits alongside the rail outside the scroll container so
 // it never scrolls with page content.
-export function AdminTopBar() {
+interface AdminTopBarProps {
+  onOpenMenu?: () => void
+}
+
+export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
   const { dark, toggle } = useDarkMode()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -51,9 +55,21 @@ export function AdminTopBar() {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">
-      <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
-        {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
-      </p>
+      <div className="flex min-w-0 items-center">
+        {onOpenMenu && (
+          <button
+            type="button"
+            onClick={onOpenMenu}
+            aria-label="Open navigation menu"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background sm:hidden"
+          >
+            <Menu className="size-4" aria-hidden="true" />
+          </button>
+        )}
+        <p className="min-w-0 pl-2 pr-2 leading-tight text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:pl-0 sm:pr-3 sm:leading-normal sm:text-xs sm:tracking-[0.15em]">
+          {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
+        </p>
+      </div>
 
       <div className="flex items-center gap-2">
         <NotificationsBell notifications={ADMIN_NOTIFICATIONS} size="md" />

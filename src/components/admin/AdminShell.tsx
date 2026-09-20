@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import { AdminMobileDrawer } from '@/components/admin/AdminMobileDrawer'
 import { AdminRail } from '@/components/admin/AdminRail'
 import { AdminTopBar } from '@/components/admin/AdminTopBar'
 import type { AdminDestinationId } from '@/lib/admin-destinations'
@@ -23,23 +24,31 @@ interface AdminShellProps {
 // scroll wrapper to stay `overflow-visible` on the y axis, which the CSS spec
 // doesn't allow once `overflow-x` is set to anything but `visible`.
 export function AdminShell({ activeId, onSelect, stickyHeader, children }: AdminShellProps) {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
   return (
-    <div className="fixed inset-0 flex bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background sm:fixed sm:inset-0 sm:h-auto sm:flex-row">
       <AdminRail activeId={activeId} onSelect={onSelect} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <AdminTopBar />
+      <div className="flex min-w-0 flex-1 flex-col sm:min-h-0">
+        <AdminTopBar onOpenMenu={() => setMobileNavOpen(true)} />
 
-        {/* Only this region scrolls. */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Mobile uses normal document scrolling; desktop keeps the content scroller. */}
+        <div className="flex-1 overflow-x-hidden overflow-visible pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] max-sm:overflow-visible sm:min-h-0 sm:overflow-y-auto sm:pb-0">
           {stickyHeader && (
-            <div className="sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur sm:px-8">
+            <div className="sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur max-sm:top-0 max-sm:px-3 max-sm:pt-3 max-sm:pb-[19px] sm:px-8">
               {stickyHeader}
             </div>
           )}
-          <div className="px-5 py-6 sm:px-8">{children}</div>
+          <div className="px-5 pt-[15px] pb-6 max-sm:px-3 max-sm:pt-[15px] max-sm:pb-3 sm:px-8">{children}</div>
         </div>
       </div>
+      <AdminMobileDrawer
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        activeId={activeId}
+        onSelect={onSelect}
+      />
     </div>
   )
 }
