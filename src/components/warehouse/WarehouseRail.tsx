@@ -39,22 +39,22 @@ export function WarehouseRail({
   }
 
   return (
-    <aside className={cn('relative z-50 flex h-screen min-h-0 shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
-      <div className={cn('flex items-center pt-3', open ? 'justify-start px-4' : 'justify-center')}>
+    <aside className={cn('relative z-50 flex h-screen min-h-0 shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
+      <div className={cn('flex items-center', open ? 'justify-start px-4' : 'justify-center')}>
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-label={open ? 'Collapse navigation' : 'Expand navigation'}
           aria-expanded={open}
           className={cn(
-            'flex items-center rounded-lg transition-colors hover:bg-sidebar-accent',
-            open ? 'h-10 w-full justify-start px-3' : 'size-10 justify-center bg-sidebar-primary',
+            'flex h-10 items-center rounded-lg text-sidebar-primary-foreground transition-colors hover:bg-sidebar-accent',
+            open ? 'w-full justify-start px-3' : 'size-10 justify-center bg-sidebar-primary',
           )}
         >
           {open ? (
-            <span className="truncate font-serif text-sm font-medium tracking-[0.34em] text-sidebar-primary">LUMIERE</span>
+            <span className="truncate font-serif text-sm font-semibold tracking-[0.28em] text-sidebar-primary">LUMIERE</span>
           ) : (
-            <span aria-hidden="true" className="font-serif text-lg font-medium leading-none text-sidebar-primary-foreground">L</span>
+            <span aria-hidden="true" className="font-serif text-lg font-semibold leading-none">L</span>
           )}
         </button>
       </div>
@@ -64,15 +64,12 @@ export function WarehouseRail({
         onClick={onExit}
         aria-label="Back to dashboard"
         title="Back to dashboard"
-        className={cn(
-          'flex size-10 items-center justify-center text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-          open ? 'ml-2 mt-7' : 'mt-7',
-        )}
+        className="mt-7 flex size-10 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
       </button>
 
-      <div className={cn('mt-5 h-px bg-sidebar-border', open ? 'mx-4' : 'w-9')} aria-hidden="true" />
+      <div className={cn('my-4 h-px bg-sidebar-border', open ? 'mx-4' : 'w-9')} aria-hidden="true" />
 
       <nav className={cn('flex flex-col gap-2', open ? 'items-stretch px-3' : 'items-center')} aria-label="Warehouse modules">
         {WAREHOUSE_MODULES.map((module) => {
