@@ -24,19 +24,20 @@ export function ExecutiveMobileDrawer({ open, onClose, activeId, onSelect }: Exe
     }
   }, [open, onClose])
 
+  if (!open) return null
+
   return (
     <>
       <div
         aria-hidden="true"
-        className={cn('fixed inset-0 z-40 bg-black/40 transition-opacity duration-200 md:hidden', open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0')}
+        className="fixed inset-0 z-40 bg-black/40 md:hidden"
         onClick={onClose}
       />
       <aside
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        aria-hidden={!open}
-        className={cn('fixed inset-y-0 left-0 z-50 flex h-[100dvh] w-72 max-w-[85%] flex-col border-r border-sidebar-border bg-sidebar shadow-2xl transition-transform duration-200 ease-out md:hidden', open ? 'translate-x-0' : '-translate-x-full')}
+        className="fixed inset-y-0 left-0 z-50 flex h-[100dvh] w-72 max-w-[85%] flex-col border-r border-sidebar-border bg-sidebar shadow-2xl md:hidden"
       >
         <div className="px-4 pt-5">
           <div className="font-serif text-lg font-medium tracking-[0.18em] text-sidebar-primary">LUMIERE</div>
