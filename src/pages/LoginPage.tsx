@@ -102,7 +102,7 @@ export function LoginPage() {
               onPassword={setPassword}
               onToggleShow={() => setShowPassword((s) => !s)}
               onRemember={() => setRemember((r) => !r)}
-              onSubmit={handleSignIn}
+              onSubmit={(event) => handleSignIn(event)}
               onForgot={() => {
                 setRequestError('')
                 setRequestType('forgot-password')
@@ -191,7 +191,7 @@ function SignInView(props: {
             />
             <button
               type="button"
-              onClick={props.onToggleShow}
+              onClick={() => props.onToggleShow()}
               aria-label={props.showPassword ? 'Hide password' : 'Show password'}
               className="flex size-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
             >
@@ -224,7 +224,7 @@ function SignInView(props: {
         <div className="flex items-center gap-4 text-foreground/80">
           <button
             type="button"
-            onClick={props.onForgot}
+            onClick={() => props.onForgot()}
             className="transition-colors hover:text-foreground"
           >
             Forgot Password?
@@ -232,7 +232,7 @@ function SignInView(props: {
           <span className="text-border">|</span>
           <button
             type="button"
-            onClick={props.onRequest}
+            onClick={() => props.onRequest()}
             className="transition-colors hover:text-foreground"
           >
             Request Access
@@ -317,7 +317,7 @@ function RequestView(props: {
 
       <button
         type="button"
-        onClick={props.onBack}
+        onClick={() => props.onBack()}
         className="mt-10 self-start text-base text-foreground/80 transition-colors hover:text-foreground"
       >
         {'< Back to Sign-In'}
@@ -342,7 +342,7 @@ function SentView(props: { onReturn: () => void }) {
         received, return to the portal to log in.
       </p>
 
-      <SubmitButton className="mt-12" onClick={props.onReturn}>
+      <SubmitButton className="mt-12" onClick={() => props.onReturn()}>
         RETURN TO PORTAL
       </SubmitButton>
     </div>
@@ -421,7 +421,7 @@ function SubmitButton({
   return (
     <button
       type={onClick ? 'button' : 'submit'}
-      onClick={onClick}
+      onClick={() => onClick?.()}
       disabled={disabled}
       className={`w-full rounded-md border-2 border-foreground bg-transparent py-5 text-center text-base font-medium uppercase tracking-[0.3em] text-foreground transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-50 max-sm:py-3 max-sm:text-sm max-sm:tracking-[0.2em] ${className}`}
     >
