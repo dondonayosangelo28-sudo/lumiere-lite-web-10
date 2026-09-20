@@ -50,7 +50,14 @@ export function WarehouseHomePage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <WarehouseRail activeModuleId="assets" onSelectModule={openModule} onExit={() => setDrilldown(null)} />
+      <WarehouseRail
+        activeModuleId="assets"
+        activeDashboard
+        defaultOpen
+        onSelectModule={openModule}
+        onDashboard={() => undefined}
+        onExit={() => setDrilldown(null)}
+      />
       <main className="min-w-0 flex-1">
         <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-6 px-5 py-5 sm:gap-7 sm:px-10 sm:py-7">
           <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
