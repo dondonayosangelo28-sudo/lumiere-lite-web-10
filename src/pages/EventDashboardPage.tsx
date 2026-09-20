@@ -320,18 +320,16 @@ function EventDashboardContent() {
             {eventDate?.toLocaleDateString('en-US', { weekday: 'short' }) ?? '—'}
           </span>
         </span>
-        <span className="min-w-0 flex-1">
-          <span className="min-w-0 truncate text-xs font-medium text-card-foreground">{event.title}</span>
-          <span className="mt-1.5 flex items-center gap-2">
-            <span className="h-1.5 min-w-0 flex-1 rounded-full bg-muted">
-              <span
-                className={cn('block h-full rounded-full', progress < 20 ? 'bg-amber-500' : 'bg-primary')}
-                style={{ width: `${progress}%` }}
-              />
-            </span>
-            <span className="w-8 shrink-0 text-right text-[0.6rem] font-semibold text-muted-foreground">
-              {progress}%
-            </span>
+        <span className="min-w-0 flex-1 truncate text-xs font-medium text-card-foreground">{event.title}</span>
+        <span className="flex shrink-0 items-center gap-2">
+          <span className="h-1.5 w-20 rounded-full bg-muted">
+            <span
+              className={cn('block h-full rounded-full', progress < 20 ? 'bg-amber-500' : 'bg-primary')}
+              style={{ width: `${progress}%` }}
+            />
+          </span>
+          <span className="w-8 text-right text-[0.6rem] font-semibold text-muted-foreground">
+            {progress}%
           </span>
         </span>
       </button>
