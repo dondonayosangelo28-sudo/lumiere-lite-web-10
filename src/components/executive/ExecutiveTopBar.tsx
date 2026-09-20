@@ -60,6 +60,7 @@ export function ExecutiveTopBar({ onOpenMenu }: ExecutiveTopBarProps) {
         text: `"${awaitingEvent.title}" is awaiting confirmation.`,
         time: 'Event Operations',
         unread: true,
+        destination: { route: 'registry' },
       })
     }
 
@@ -72,6 +73,7 @@ export function ExecutiveTopBar({ onOpenMenu }: ExecutiveTopBarProps) {
         text: `${restock.name} (${restock.assetId}) is running low on stock.`,
         time: 'Asset Inventory',
         unread: false,
+        destination: { route: 'inventory' },
       })
     }
 

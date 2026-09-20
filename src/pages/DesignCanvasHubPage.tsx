@@ -351,6 +351,7 @@ const PLANNER_NOTIFICATIONS: NotificationEntry[] = DEMO_NOTIFICATIONS.map((n) =>
   time: n.time,
   unread: n.unread,
   ...NOTIFICATION_META[n.kind],
+  destination: { route: 'canvas' },
 }))
 
 /* ─── Profile Settings Sidebar ─── */

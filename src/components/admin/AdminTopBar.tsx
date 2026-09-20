@@ -8,9 +8,9 @@ import { SECURITY_EVENTS, type SecurityEvent } from '@/lib/security-events'
 import { MaskedPinInput } from '@/components/admin/MaskedPinInput'
 
 const ADMIN_NOTIFICATIONS: NotificationEntry[] = [
-  { id: 'admin-1', icon: ShieldAlert, color: 'text-destructive', text: 'A privileged account was locked after repeated sign-in failures.', time: '12 minutes ago', unread: true },
-  { id: 'admin-2', icon: UserPlus, color: 'text-primary', text: 'A new workforce account is waiting for activation.', time: '1 hour ago', unread: true },
-  { id: 'admin-3', icon: Activity, color: 'text-muted-foreground', text: 'System health review completed successfully.', time: 'Yesterday', unread: false },
+  { id: 'admin-1', icon: ShieldAlert, color: 'text-destructive', text: 'A privileged account was locked after repeated sign-in failures.', time: '12 minutes ago', unread: true, destination: { route: 'workforce', intent: { kind: 'unlock-user' } } },
+  { id: 'admin-2', icon: UserPlus, color: 'text-primary', text: 'A new workforce account is waiting for activation.', time: '1 hour ago', unread: true, destination: { route: 'workforce' } },
+  { id: 'admin-3', icon: Activity, color: 'text-muted-foreground', text: 'System health review completed successfully.', time: 'Yesterday', unread: false, announcement: { title: 'System health review completed', body: 'The latest system health review completed successfully. No follow-up action is required at this time.', source: 'System Operations', date: 'Yesterday' } },
 ]
 
 // Constant top bar for the Admin console: live date/time, notification bell,

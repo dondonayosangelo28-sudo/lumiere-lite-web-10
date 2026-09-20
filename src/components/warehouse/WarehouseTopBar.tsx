@@ -39,6 +39,7 @@ export function WarehouseTopBar() {
       text: entry.message,
       time: 'Dispatch Activity',
       unread: entry.tone === 'warning',
+      destination: { route: 'dispatch' },
     }))
     const lowStock = getLowStockAssets(getCatalogAssets()).slice(0, 3).map((asset) => ({
       id: `low-${asset.id}`,
@@ -47,6 +48,7 @@ export function WarehouseTopBar() {
       text: `${asset.name} (${asset.assetId}) is running low on stock.`,
       time: 'Asset Inventory',
       unread: false,
+      destination: { route: 'inventory' },
     }))
     const event = events.find((item) => item.status === 'Initialized' || item.status === 'On Hold')
     if (event) activity.unshift({
@@ -56,6 +58,7 @@ export function WarehouseTopBar() {
       text: `"${event.title}" is awaiting confirmation.`,
       time: 'Event Operations',
       unread: true,
+      destination: { route: 'registry' },
     })
     return [...activity, ...lowStock]
   }, [events])
