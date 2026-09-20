@@ -216,18 +216,18 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             </div>
             <button
               type="button"
+              onClick={() => setAddOpen(true)}
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+            >
+              Add Item
+            </button>
+            <button
+              type="button"
               onClick={exportReport}
               className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
             >
               <Download className="size-3.5" />
               Export Report (PDF)
-            </button>
-            <button
-              type="button"
-              onClick={() => setAddOpen(true)}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
-            >
-              Add Item
             </button>
             {openCandidates.length > 0 && (
               <button
