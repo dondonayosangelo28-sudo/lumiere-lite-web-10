@@ -76,7 +76,7 @@ export function ExecutiveTopBar() {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">
-      <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
+      <p className="min-w-0 pr-3 leading-tight text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
         {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}
       </p>
 
