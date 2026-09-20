@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { usePortal } from '@/lib/store'
 import { WarehouseHeader } from '@/components/warehouse/WarehouseHeader'
+import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { WarehouseKpiRow } from '@/components/warehouse/WarehouseKpiRow'
 import { WarehouseCalendarEventsView } from '@/components/warehouse/WarehouseCalendarEventsView'
 import { WomInputSummaryModal } from '@/components/warehouse/WomInputSummaryModal'
@@ -28,8 +29,8 @@ export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail }: 
 
   return (
     <div className="flex min-w-0 flex-1 flex-col bg-background">
-      <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} topBarOnly />
-      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+      <WarehouseTopBar />
+      <div className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} searchInHeader hideTopBar />
         <div className="flex w-full flex-col gap-8 px-5 py-6 sm:gap-10 sm:px-8">
           <WarehouseKpiRow events={events} onOpenModule={onSelectModule} />

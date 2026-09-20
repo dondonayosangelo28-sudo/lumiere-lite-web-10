@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Grid2X2, List, Plus, Search } from 'lucide-react'
+import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import {
   addCatalogAsset,
   useCatalogAssets,
@@ -154,7 +155,8 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   }
 
   return (
-    <div className="relative flex h-full flex-1 flex-col overflow-y-auto">
+    <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <WarehouseTopBar />
       {/* Header controls & filters */}
 <div className="flex flex-col gap-4 border-b border-border px-6 py-5 sm:px-10">
           <div className="flex items-start justify-between gap-4">

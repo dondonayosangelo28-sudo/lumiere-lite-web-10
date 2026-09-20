@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Download, Plus, Search } from 'lucide-react'
+import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
 import { getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
 import { createDeficitItemApi, fetchDeficitQueueApi, updateDeficitStatusApi } from '@/lib/deficitApi'
@@ -163,7 +164,8 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
   const openCandidates = lines.filter((line) => line.status === 'Not Purchased')
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-y-auto">
+    <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <WarehouseTopBar />
 <div className="flex flex-col gap-4 border-b border-border px-6 py-5 sm:px-10">
           <div className="flex items-start justify-between gap-4">
             <div>
