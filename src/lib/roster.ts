@@ -140,6 +140,7 @@ export function findCrewByEmail(email: string): CrewMember | null {
 export async function loadRosterFromDatabase() {
   try {
     const { supabase } = await import('./supabase')
+    if (!supabase) return
 
     // Fetch crew from database with their event allocations
     const { data: crewData, error } = await supabase
