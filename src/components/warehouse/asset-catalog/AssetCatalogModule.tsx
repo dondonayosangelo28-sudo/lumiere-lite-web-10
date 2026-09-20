@@ -204,7 +204,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
 
           {/* View, create, and search controls */}
-          <div className="flex w-full shrink-0 flex-col items-end gap-2 lg:w-auto">
+          <div className="-mt-1 flex w-full shrink-0 flex-col items-end gap-1 lg:w-auto">
             <div className="flex items-center gap-2">
               <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
                 <button
