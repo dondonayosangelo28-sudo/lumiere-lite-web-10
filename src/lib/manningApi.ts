@@ -53,7 +53,7 @@ export async function fetchManningForEvent(eventId: string): Promise<ManningReco
     const data = await res.json()
     return Array.isArray(data) ? data : []
   } catch (err) {
-    console.warn(`[manningApi] GET /api/manning/event/${eventId} failed:`, err)
+    console.warn(`[manningApi] GET /api/manning/event/${eventId} failed:`, err?.message ?? String(err))
     return []
   }
 }
@@ -73,7 +73,7 @@ export async function fetchManningForUser(userId: string): Promise<ManningRecord
     const data = await res.json()
     return Array.isArray(data) ? data : []
   } catch (err) {
-    console.warn(`[manningApi] GET /api/manning/user/${userId} failed:`, err)
+    console.warn(`[manningApi] GET /api/manning/user/${userId} failed:`, err?.message ?? String(err))
     return []
   }
 }
@@ -119,7 +119,7 @@ export async function assignManningApi(req: AssignManningRequestDto): Promise<Ma
     }
     return await res.json()
   } catch (err) {
-    console.warn('[manningApi] POST /api/manning/assign failed:', err)
+    console.warn('[manningApi] POST /api/manning/assign failed:', err?.message ?? String(err))
     return null
   }
 }
@@ -135,7 +135,7 @@ export async function deleteManningApi(id: string): Promise<boolean> {
     })
     return res.ok || res.status === 204
   } catch (err) {
-    console.warn(`[manningApi] DELETE /api/manning/${id} failed:`, err)
+    console.warn(`[manningApi] DELETE /api/manning/${id} failed:`, err?.message ?? String(err))
     return false
   }
 }

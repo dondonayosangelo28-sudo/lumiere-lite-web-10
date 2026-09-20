@@ -23,7 +23,7 @@ export async function prepareEventDispatch(eventId: string): Promise<boolean> {
     })
     return res.ok
   } catch (err) {
-    console.warn('[dispatchApi] Prepare dispatch skipped/fallback:', err)
+    console.warn('[dispatchApi] Prepare dispatch skipped/fallback:', err?.message ?? String(err))
     return true
   }
 }
@@ -40,7 +40,7 @@ export async function forceDispatchEvent(eventId: string): Promise<boolean> {
     })
     return res.ok
   } catch (err) {
-    console.warn('[dispatchApi] Force dispatch skipped/fallback:', err)
+    console.warn('[dispatchApi] Force dispatch skipped/fallback:', err?.message ?? String(err))
     return true
   }
 }
@@ -58,7 +58,7 @@ export async function updateAssetDispatchStatus(assetId: string, targetState: st
     })
     return res.ok
   } catch (err) {
-    console.warn('[dispatchApi] Update asset dispatch status skipped/fallback:', err)
+    console.warn('[dispatchApi] Update asset dispatch status skipped/fallback:', err?.message ?? String(err))
     return true
   }
 }

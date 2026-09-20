@@ -40,7 +40,7 @@ export async function fetchAssetsApi(): Promise<Partial<CatalogAsset>[]> {
     // consumes the item collection directly.
     return Array.isArray(payload) ? payload : Array.isArray(payload.items) ? payload.items : []
   } catch (err){
-    console.warn('[assetsApi] Fetch assets API call skipped/fallback:', err)
+    console.warn('[assetsApi] Fetch assets API call skipped/fallback:', err?.message ?? String(err))
     return []
   }
 }
@@ -56,7 +56,7 @@ export async function createAssetApi(asset: Partial<CatalogAsset>): Promise<Part
     if (!res.ok) return null
     return await res.json()
   } catch (err) {
-    console.warn('[assetsApi] Create asset API call skipped/fallback:', err)
+    console.warn('[assetsApi] Create asset API call skipped/fallback:', err?.message ?? String(err))
     return null
   }
 }
@@ -71,7 +71,7 @@ export async function updateAssetApi(id: string, asset: Partial<CatalogAsset>): 
     })
     return res.ok
   } catch (err) {
-    console.warn('[assetsApi] Update asset API call skipped/fallback:', err)
+    console.warn('[assetsApi] Update asset API call skipped/fallback:', err?.message ?? String(err))
     return true
   }
 }

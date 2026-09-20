@@ -1912,7 +1912,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
             setEvents((prev) => prev.map((e) => (e.id === tempId ? { ...e, id: res.eventId! } : e)))
           }
         })
-        .catch((err) => console.warn('[store] createEventApi skipped/failed:', err))
+        .catch((err) => console.warn('[store] createEventApi skipped/failed:', err?.message ?? String(err)))
     },
     [pushLog],
   )

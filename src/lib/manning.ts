@@ -450,7 +450,7 @@ export async function fetchAssignments(): Promise<ManningAssignment[]> {
     return localAssignments
   } catch (error) {
     manningUsingPreset = true
-    console.warn('[v0] Manning assignments unavailable; using preset example data.', error)
+    console.warn('[v0] Manning assignments unavailable; using preset example data.', error?.message ?? String(error))
     return localAssignments
   }
 }
@@ -526,7 +526,7 @@ export async function createAssignment(
   }
   localAssignments = dedupeActiveAssignments([fallback, ...localAssignments])
   manningUsingPreset = true
-  console.warn('[v0] Assignment save unavailable; applied the assignment to preset data.', error)
+  console.warn('[v0] Assignment save unavailable; applied the assignment to preset data.', error?.message ?? String(error))
   return fallback
 }
 
@@ -617,9 +617,9 @@ export async function closeAssignment(
       .from('manning_assignments')
       .update({ status: 'Closed' })
       .eq('id', id)
-    if (error) console.warn('[v0] Supabase close assignment fallback:', error)
+    if (error) console.warn('[v0] Supabase close assignment fallback:', error?.message ?? String(error))
   } catch (e) {
-    console.warn('[v0] Failed to close assignment in Supabase; updating local state.', e)
+    console.warn('[v0] Failed to close assignment in Supabase; updating local state.', e?.message ?? String(e))
   }
 
   localAssignments = localAssignments.map((a) => (a.id === id ? { ...a, status: 'Closed' } : a))
@@ -695,7 +695,7 @@ export async function handleCrewLeaveAutoRelease(
         })
         .eq('id', assignment.id)
     } catch (e) {
-      console.warn('[v0] Supabase auto-release assignment sync fallback:', e)
+      console.warn('[v0] Supabase auto-release assignment sync fallback:', e?.message ?? String(e))
     }
 
     // Evaluate Team Lead quota deficit (Foundation F minimum quota threshold)
@@ -755,7 +755,7 @@ export async function fetchTasks(): Promise<ManningTask[]> {
     return localTasks
   } catch (error) {
     manningUsingPreset = true
-    console.warn('[v0] Manning tasks unavailable; using preset example data.', error)
+    console.warn('[v0] Manning tasks unavailable; using preset example data.', error?.message ?? String(error))
     return localTasks
   }
 }
@@ -805,7 +805,7 @@ export async function createTask(
   }
   localTasks = [fallback, ...localTasks]
   manningUsingPreset = true
-  console.warn('[v0] Task save unavailable; applied the task to preset data.', error)
+  console.warn('[v0] Task save unavailable; applied the task to preset data.', error?.message ?? String(error))
   return fallback
 }
 
@@ -889,7 +889,7 @@ export async function confirmTask(id: string, confirmedBy: string): Promise<void
         : task,
     )
     manningUsingPreset = true
-    console.warn('[v0] Confirm update unavailable; applied the change to preset task data.', error)
+    console.warn('[v0] Confirm update unavailable; applied the change to preset task data.', error?.message ?? String(error))
     return
   }
 
@@ -933,7 +933,7 @@ export async function rejectTask(id: string, rejectedBy: string = 'Team Lead'): 
   if (localTasks.some((task) => task.id === id)) {
     localTasks = localTasks.map((task) => (task.id === id ? { ...task, status: 'Rejected' } : task))
     manningUsingPreset = true
-    console.warn('[v0] Reject update unavailable; applied the change to preset task data.', error)
+    console.warn('[v0] Reject update unavailable; applied the change to preset task data.', error?.message ?? String(error))
     return
   }
 
@@ -970,7 +970,7 @@ export async function fetchWarnings(): Promise<ManningWarning[]> {
     return localWarnings
   } catch (error) {
     manningUsingPreset = true
-    console.warn('[v0] Manning warnings unavailable; using preset example data.', error)
+    console.warn('[v0] Manning warnings unavailable; using preset example data.', error?.message ?? String(error))
     return localWarnings
   }
 }
@@ -1007,7 +1007,7 @@ export async function fetchIncidents(): Promise<IncidentReport[]> {
     return localIncidents
   } catch (error) {
     incidentsUsingPreset = true
-    console.warn('[v0] Incident reports unavailable; using preset example data.', error)
+    console.warn('[v0] Incident reports unavailable; using preset example data.', error?.message ?? String(error))
     return localIncidents
   }
 }
@@ -1052,7 +1052,7 @@ export async function createIncident(
   }
   localIncidents = [fallback, ...localIncidents]
   incidentsUsingPreset = true
-  console.warn('[v0] Incident save unavailable; applied the report to preset data.', error)
+  console.warn('[v0] Incident save unavailable; applied the report to preset data.', error?.message ?? String(error))
   return fallback
 }
 
@@ -1069,7 +1069,7 @@ export async function reviewIncident(id: string): Promise<void> {
       incident.id === id ? { ...incident, status: 'Under Review' } : incident,
     )
     incidentsUsingPreset = true
-    console.warn('[v0] Review update unavailable; applied the change to preset incident data.', error)
+    console.warn('[v0] Review update unavailable; applied the change to preset incident data.', error?.message ?? String(error))
     return
   }
 
@@ -1108,7 +1108,7 @@ export async function resolveIncident(
         : incident,
     )
     incidentsUsingPreset = true
-    console.warn('[v0] Incident resolution unavailable; applied the change to preset data.', error)
+    console.warn('[v0] Incident resolution unavailable; applied the change to preset data.', error?.message ?? String(error))
     return
   }
 
@@ -1132,7 +1132,7 @@ export async function fetchIncidentPin(): Promise<string> {
     return configuredPin || DEFAULT_WOM_REVIEW_PIN
   } catch (error) {
     // The settings table is optional for the preset/demo workspace.
-    console.warn('[v0] WOM settings unavailable; using the default review PIN.', error)
+    console.warn('[v0] WOM settings unavailable; using the default review PIN.', error?.message ?? String(error))
     return DEFAULT_WOM_REVIEW_PIN
   }
 }
@@ -1191,7 +1191,7 @@ export function useManningData(): ManningData {
       try {
         escalated = await escalateOverdueTasks(t)
       } catch (error) {
-        console.warn('[v0] Manning SLA sweep unavailable; keeping preset task data.', error)
+        console.warn('[v0] Manning SLA sweep unavailable; keeping preset task data.', error?.message ?? String(error))
       }
       setAssignments(a)
       setWarnings(w)

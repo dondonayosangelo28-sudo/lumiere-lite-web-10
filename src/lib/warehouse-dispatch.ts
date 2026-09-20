@@ -66,7 +66,7 @@ export async function persistBatchToSupabase(eventId: string, batch: DispatchBat
       updated_at: new Date().toISOString(),
     })
   } catch (e) {
-    console.warn('[v0] Supabase dispatch batch persist fallback to local store.', e)
+    console.warn('[v0] Supabase dispatch batch persist fallback to local store.', e?.message ?? String(e))
   }
 }
 
@@ -133,10 +133,10 @@ export function deleteBatch(
         })
         .eq('id', batchId)
       if (error) {
-        console.warn('[v0] Supabase archive batch error; falling back to local store.', error)
+        console.warn('[v0] Supabase archive batch error; falling back to local store.', error?.message ?? String(error))
       }
     } catch (e) {
-      console.warn('[v0] Supabase archive batch network fallback to local store.', e)
+      console.warn('[v0] Supabase archive batch network fallback to local store.', e?.message ?? String(e))
     }
   })()
 }

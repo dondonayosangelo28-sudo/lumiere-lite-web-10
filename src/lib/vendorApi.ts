@@ -80,7 +80,7 @@ export async function fetchVendorsApi(): Promise<VendorDto[]> {
     const data = await res.json()
     return Array.isArray(data) ? data : []
   } catch (err) {
-    console.warn('[vendorApi] GET /api/vendors failed:', err)
+    console.warn('[vendorApi] GET /api/vendors failed:', err?.message ?? String(err))
     return []
   }
 }
@@ -101,7 +101,7 @@ export async function createVendorApi(req: CreateVendorRequestDto): Promise<Vend
     }
     return await res.json()
   } catch (err) {
-    console.warn('[vendorApi] POST /api/vendors failed:', err)
+    console.warn('[vendorApi] POST /api/vendors failed:', err?.message ?? String(err))
     return null
   }
 }
@@ -125,7 +125,7 @@ export async function createVendorRepresentativeApi(
     }
     return await res.json()
   } catch (err) {
-    console.warn(`[vendorApi] POST /api/vendors/${vendorId}/representatives failed:`, err)
+    console.warn(`[vendorApi] POST /api/vendors/${vendorId}/representatives failed:`, err?.message ?? String(err))
     return null
   }
 }
@@ -145,7 +145,7 @@ export async function createVendorContactApi(
     })
     return res.ok
   } catch (err) {
-    console.warn(`[vendorApi] POST /api/vendors/${vendorId}/contacts failed:`, err)
+    console.warn(`[vendorApi] POST /api/vendors/${vendorId}/contacts failed:`, err?.message ?? String(err))
     return false
   }
 }
@@ -165,7 +165,7 @@ export async function createVendorPlatformApi(
     })
     return res.ok
   } catch (err) {
-    console.warn(`[vendorApi] POST /api/vendors/${vendorId}/platforms failed:`, err)
+    console.warn(`[vendorApi] POST /api/vendors/${vendorId}/platforms failed:`, err?.message ?? String(err))
     return false
   }
 }

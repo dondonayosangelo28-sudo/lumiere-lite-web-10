@@ -49,7 +49,7 @@ function saveLocalAuditLogs(logs: AuditLogEntry[]): void {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(logs))
   } catch (err) {
-    console.warn('[AuditLogger] Failed to save audit logs to localStorage:', err)
+    console.warn('[AuditLogger] Failed to save audit logs to localStorage:', err?.message ?? String(err))
   }
 }
 
@@ -91,7 +91,7 @@ export async function logAuditEvent(
       return data as AuditLogEntry
     }
   } catch (err) {
-    console.warn('[AuditLogger] Supabase audit log insert fallback to localStorage.', err)
+    console.warn('[AuditLogger] Supabase audit log insert fallback to localStorage.', err?.message ?? String(err))
   }
 
   return fullEntry
@@ -119,7 +119,7 @@ export async function fetchAuditLogs(filter?: {
       return data as AuditLogEntry[]
     }
   } catch (err) {
-    console.warn('[AuditLogger] Supabase fetch audit logs fallback to localStorage.', err)
+    console.warn('[AuditLogger] Supabase fetch audit logs fallback to localStorage.', err?.message ?? String(err))
   }
 
   let logs = getLocalAuditLogs()

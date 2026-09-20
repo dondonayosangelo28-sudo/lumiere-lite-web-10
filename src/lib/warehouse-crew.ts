@@ -412,7 +412,7 @@ export async function fetchPresetSquads(staff: Staff[]): Promise<PresetSquad[]> 
       return localPresetSquads
     }
   } catch (e) {
-    console.warn('[v0] Supabase preset squads unavailable; using local cache/defaults.', e)
+    console.warn('[v0] Supabase preset squads unavailable; using local cache/defaults.', e?.message ?? String(e))
   }
 
   return getPresetSquads(staff)
@@ -436,7 +436,7 @@ export async function savePresetSquad(
     }
     await supabase.from('manning_preset_squads').upsert(payload)
   } catch (e) {
-    console.warn('[v0] Failed to save preset squad to Supabase; using local store.', e)
+    console.warn('[v0] Failed to save preset squad to Supabase; using local store.', e?.message ?? String(e))
   }
 
   const idx = localPresetSquads.findIndex((s) => s.id === squad.id)
@@ -469,7 +469,7 @@ export async function deletePresetSquad(
   try {
     await supabase.from('manning_preset_squads').delete().eq('id', squadId)
   } catch (e) {
-    console.warn('[v0] Failed to delete preset squad from Supabase; using local store.', e)
+    console.warn('[v0] Failed to delete preset squad from Supabase; using local store.', e?.message ?? String(e))
   }
 
   localPresetSquads = localPresetSquads.filter((s) => s.id !== squadId)

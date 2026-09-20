@@ -67,7 +67,7 @@ export async function fetchDeficitQueueApi(): Promise<DeficitQueueItemDto[]> {
     const data = await res.json()
     return Array.isArray(data) ? data : []
   } catch (err) {
-    console.warn('[deficitApi] GET /api/deficit-queue failed:', err)
+    console.warn('[deficitApi] GET /api/deficit-queue failed:', err?.message ?? String(err))
     return []
   }
 }
@@ -88,7 +88,7 @@ export async function createDeficitItemApi(req: CreateDeficitItemRequestDto): Pr
     }
     return await res.json()
   } catch (err) {
-    console.warn('[deficitApi] POST /api/deficit-queue failed:', err)
+    console.warn('[deficitApi] POST /api/deficit-queue failed:', err?.message ?? String(err))
     return null
   }
 }
@@ -105,7 +105,7 @@ export async function updateDeficitStatusApi(id: string, status: string): Promis
     })
     return res.ok || res.status === 204
   } catch (err) {
-    console.warn(`[deficitApi] PATCH /api/deficit-queue/${id}/status failed:`, err)
+    console.warn(`[deficitApi] PATCH /api/deficit-queue/${id}/status failed:`, err?.message ?? String(err))
     return false
   }
 }

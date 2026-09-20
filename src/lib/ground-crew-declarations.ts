@@ -75,7 +75,7 @@ export function submitGroundCrewDeclaration(input: Omit<GroundCrewDeclaration, '
         quantity: input.quantity,
         description: input.description,
         submittedBy: input.submittedBy,
-      }).catch((err) => console.warn('[ground-crew-declarations] Failed to enqueue offline declaration:', err))
+      }).catch((err) => console.warn('[ground-crew-declarations] Failed to enqueue offline declaration:', err?.message ?? String(err)))
     })
   }
 }

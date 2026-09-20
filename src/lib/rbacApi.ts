@@ -28,7 +28,7 @@ export async function adminUnblockAuditHoldApi(
     })
     return res.ok
   } catch (err) {
-    console.warn('[rbacApi] Admin unblock API call skipped/fallback:', err)
+    console.warn('[rbacApi] Admin unblock API call skipped/fallback:', err?.message ?? String(err))
     return true
   }
 }

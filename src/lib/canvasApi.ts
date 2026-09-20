@@ -50,7 +50,7 @@ export async function fetchCanvasLayoutApi(eventId: string): Promise<CanvasRespo
     if (!res.ok) return null
     return await res.json()
   } catch (err) {
-    console.warn(`[canvasApi] GET /api/canvas/event/${eventId} fetch skipped/fallback:`, err)
+    console.warn(`[canvasApi] GET /api/canvas/event/${eventId} fetch skipped/fallback:`, err?.message ?? String(err))
     return null
   }
 }
@@ -72,7 +72,7 @@ export async function saveCanvasLayoutApi(eventId: string, canvasStateJson: stri
     })
     return res.ok
   } catch (err) {
-    console.warn(`[canvasApi] PUT /api/canvas/event/${eventId} save skipped/fallback:`, err)
+    console.warn(`[canvasApi] PUT /api/canvas/event/${eventId} save skipped/fallback:`, err?.message ?? String(err))
     return true
   }
 }

@@ -58,7 +58,7 @@ export async function bulkReserveAssets(request: BulkReservationRequest): Promis
       committedCount: data.committedCount || request.assetIds.length,
     }
   } catch (err: any) {
-    console.warn('[reservationsApi] Failed to post bulk reservation, returning fallback state in dev:', err)
+    console.warn('[reservationsApi] Failed to post bulk reservation, returning fallback state in dev:', err?.message ?? String(err))
     // Return dev fallback if API is unreachable
     if (import.meta.env.DEV) {
       return { success: true, committedCount: request.assetIds.length }

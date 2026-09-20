@@ -61,7 +61,7 @@ export async function triggerOfflineReplay(): Promise<{ syncedCount: number; err
           errors++
         }
       } catch (err) {
-        console.warn(`[offlineReplay] Failed to replay declaration ${item.id}:`, err)
+        console.warn(`[offlineReplay] Failed to replay declaration ${item.id}:`, err?.message ?? String(err))
         errors++
       }
     }

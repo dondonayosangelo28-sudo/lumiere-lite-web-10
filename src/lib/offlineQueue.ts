@@ -60,7 +60,7 @@ export async function enqueueDeclaration(
       tx.onerror = reject
     })
   } catch (err) {
-    console.warn('[offlineQueue] IndexedDB write failed, falling back to localStorage:', err)
+    console.warn('[offlineQueue] IndexedDB write failed, falling back to localStorage:', err?.message ?? String(err))
     const existing = getFallbackQueue()
     existing.push(queuedItem)
     setFallbackQueue(existing)
