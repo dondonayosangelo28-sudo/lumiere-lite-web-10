@@ -32,9 +32,11 @@ interface WarehouseHeaderProps {
   searchQuery: string
   onSearchChange: (value: string) => void
   searchInHeader?: boolean
+  topBarOnly?: boolean
+  hideTopBar?: boolean
 }
 
-export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false }: WarehouseHeaderProps) {
+export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false, topBarOnly = false, hideTopBar = false }: WarehouseHeaderProps) {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
   const { dark, toggle } = useDarkMode()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -89,8 +91,8 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
   const liveTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
   return (
-    <div className="-mx-5 -mt-5 sm:-mx-10 sm:-mt-7">
-      <div className="flex items-center justify-between border-b border-border bg-background px-5 py-3 sm:px-10">
+    <div className={topBarOnly ? '' : 'warehouse-header'}>
+      {!hideTopBar && <div className="flex items-center justify-between border-b border-border bg-background px-5 py-3 sm:px-10">
         <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-muted-foreground">{liveDate} <span className="mx-1 text-border">|</span> {liveTime}</p>
         <div className="flex items-center gap-2">
       {/* Right Header Action Cluster: Compact Search Bar + Notifications + Account Menu */}
@@ -229,8 +231,8 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
         </div>
       </div>
       </div>
-      </div>
-      <div className="border-b border-border px-5 py-5 sm:px-10">
+      </div>}
+      {!topBarOnly && <div className="border-b border-border px-5 py-5 sm:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-primary">Warehouse Operations Manager</span>
@@ -245,7 +247,7 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
             </div>
           ) : <div className="relative w-full max-w-xs">{null}</div>}
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

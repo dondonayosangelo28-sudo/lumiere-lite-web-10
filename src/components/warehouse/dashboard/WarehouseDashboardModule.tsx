@@ -18,11 +18,14 @@ export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail }: 
   const [summaryEvent, setSummaryEvent] = useState<PortalEvent | null>(null)
 
   return (
-    <div className="h-full flex-1 overflow-y-auto bg-background">
-      <div className="mx-auto flex w-full max-w-[90rem] flex-col gap-8 px-6 py-8 sm:gap-10 sm:px-10 sm:py-12">
-        <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <WarehouseKpiRow events={events} onOpenModule={onSelectModule} />
-        <WarehouseCalendarEventsView events={events} onSelectEvent={setSummaryEvent} />
+    <div className="flex min-w-0 flex-1 flex-col bg-background">
+      <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} topBarOnly />
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} searchInHeader hideTopBar />
+        <div className="flex w-full flex-col gap-8 px-5 py-6 sm:gap-10 sm:px-8">
+          <WarehouseKpiRow events={events} onOpenModule={onSelectModule} />
+          <WarehouseCalendarEventsView events={events} onSelectEvent={setSummaryEvent} />
+        </div>
       </div>
 
       {summaryEvent && (
