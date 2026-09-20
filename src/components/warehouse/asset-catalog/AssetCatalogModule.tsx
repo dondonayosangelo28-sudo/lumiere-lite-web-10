@@ -158,7 +158,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
       {/* Header controls & filters */}
-<div className="flex flex-col gap-8 border-b border-border px-6 py-8 sm:px-10">
+        <div className="flex flex-col border-b border-border px-6 py-6 sm:px-10">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
@@ -166,9 +166,9 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-4 flex flex-col items-start gap-0 pb-0 lg:flex-row lg:justify-between">
           {/* Compact two-row filter group */}
-          <div className="flex min-w-0 flex-col gap-1.5">
+          <div className="flex min-w-0 flex-col gap-2">
             <div className="flex flex-wrap items-center gap-1.5">
               {CATEGORY_FILTERS.map((c) => (
                 <button
@@ -208,7 +208,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
           </div>
 
           {/* View, create, and search controls */}
-          <div className="flex w-full shrink-0 flex-col items-end gap-2 lg:w-auto">
+          <div className="flex w-full shrink-0 flex-col items-start gap-2 lg:w-auto lg:items-end">
             <div className="flex items-center gap-2">
               <div className="inline-flex shrink-0 rounded-md border border-border bg-background p-1" aria-label="Asset view">
                 <button
