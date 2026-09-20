@@ -12,8 +12,16 @@ import { cn } from '@/lib/utils'
 import { exportReplenishmentDeficitPdf } from '@/lib/pdf-exporter'
 
 type ViewMode = 'grouped' | 'consolidated' | 'draft'
+type SummaryFilter = 'open' | 'critical' | 'high' | 'po'
 
 const PREVIEW_LIMIT = 8
+
+const SUMMARY_FILTERS: Array<{ id: SummaryFilter; label: string; dot: string }> = [
+  { id: 'open', label: 'Open deficits', dot: 'bg-destructive' },
+  { id: 'critical', label: 'Critical', dot: 'bg-destructive' },
+  { id: 'high', label: 'High priority', dot: 'bg-amber-500' },
+  { id: 'po', label: 'PO candidates', dot: 'bg-primary' },
+]
 
 interface ReplenishmentModuleProps {
   onClose: () => void
@@ -31,6 +39,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
   const [bulkOpen, setBulkOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set())
+  const [summaryFilter, setSummaryFilter] = useState<SummaryFilter | null>(null)
 
   useEffect(() => {
     let active = true
@@ -72,6 +81,21 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
         (line.eventTitle ?? 'general stockroom').toLowerCase().includes(q),
     )
   }, [lines, query])
+
+  const openCandidates = lines.filter((line) => line.status === 'Not Purchased')
+
+  const summaryLines = useMemo(() => {
+    if (!summaryFilter) return []
+    const base = summaryFilter === 'open'
+      ? lines.filter((line) => line.status !== 'Received')
+      : summaryFilter === 'critical'
+        ? lines.filter((line) => line.priority === 'Critical')
+        : summaryFilter === 'high'
+          ? lines.filter((line) => line.priority === 'High')
+          : openCandidates
+    const q = query.trim().toLowerCase()
+    return q ? base.filter((line) => `${line.itemName} ${line.eventTitle ?? ''} ${line.category}`.toLowerCase().includes(q)) : base
+  }, [lines, openCandidates, query, summaryFilter])
 
   const grouped = useMemo(() => {
     const withEvent = filtered.filter((line) => line.eventId)
@@ -163,8 +187,6 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
     exportReplenishmentDeficitPdf(filtered)
   }
 
-  const openCandidates = lines.filter((line) => line.status === 'Not Purchased')
-
   return (
     <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
@@ -245,20 +267,34 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
 
       <div className="flex-1 px-6 py-6 sm:px-10">
         <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            ['Open deficits', lines.filter((line) => line.status !== 'Received').length, 'bg-destructive'],
-            ['Critical', lines.filter((line) => line.priority === 'Critical').length, 'bg-destructive'],
-            ['High priority', lines.filter((line) => line.priority === 'High').length, 'bg-amber-500'],
-            ['PO candidates', openCandidates.length, 'bg-primary'],
-          ].map(([label, value, dot]) => (
-            <div key={label} className="rounded-lg border border-border bg-card px-4 py-3">
-              <div className="flex items-center gap-2">
-                <span className={cn('size-1.5 rounded-full', dot)} />
-                <p className="text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
-              </div>
-              <p className="mt-2 text-xl font-semibold text-card-foreground">{value}</p>
-            </div>
-          ))}
+          {SUMMARY_FILTERS.map(({ id, label, dot }) => {
+            const value = id === 'open'
+              ? lines.filter((line) => line.status !== 'Received').length
+              : id === 'critical'
+                ? lines.filter((line) => line.priority === 'Critical').length
+                : id === 'high'
+                  ? lines.filter((line) => line.priority === 'High').length
+                  : openCandidates.length
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => {
+                  setQuery('')
+                  setSummaryFilter(id)
+                }}
+                className="group rounded-lg border border-border bg-card px-4 py-3 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/50 hover:shadow-md active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={`View ${label}`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className={cn('size-1.5 rounded-full', dot)} />
+                  <span className="text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</span>
+                  <span className="ml-auto text-primary opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                </span>
+                <span className="mt-2 block text-xl font-semibold text-card-foreground">{value}</span>
+              </button>
+            )
+          })}
         </div>
 
         {viewMode === 'consolidated' ? (
@@ -415,6 +451,57 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
         )}
       </div>
 
+      {summaryFilter && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/40" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSummaryFilter(null) }}>
+          <aside
+            className="flex h-full w-full max-w-xl flex-col border-l border-border bg-card shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="summary-detail-title"
+          >
+            <header className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+              <div>
+                <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-primary">Deficit details</p>
+                <h2 id="summary-detail-title" className="mt-1 font-serif text-2xl font-medium text-card-foreground">
+                  {SUMMARY_FILTERS.find((filter) => filter.id === summaryFilter)?.label}
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">{summaryLines.length} matching record{summaryLines.length === 1 ? '' : 's'}</p>
+              </div>
+              <button type="button" onClick={() => setSummaryFilter(null)} className="rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground" aria-label="Close deficit details">
+                Close
+              </button>
+            </header>
+            <div className="border-b border-border px-6 py-4">
+              <label className="flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
+                <Search className="size-4 text-muted-foreground" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search deficits..." className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" aria-label="Search filtered deficits" />
+              </label>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+              <div className="flex flex-col gap-2">
+                {summaryLines.length === 0 ? (
+                  <p className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">No records match this filter.</p>
+                ) : summaryLines.map((line) => (
+                  <button key={line.id} type="button" onClick={() => setPoLine(line)} className="rounded-lg border border-border bg-background p-4 text-left transition hover:border-primary/50 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <span className="flex items-start justify-between gap-4">
+                      <span className="min-w-0">
+                        <span className="block truncate font-serif text-sm font-medium text-card-foreground">{line.itemName}</span>
+                        <span className="mt-1 block truncate text-xs text-muted-foreground">{line.eventTitle ?? 'General stockroom'} · {line.category}</span>
+                      </span>
+                      <span className="shrink-0 rounded-full bg-muted px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.08em] text-muted-foreground">{line.priority}</span>
+                    </span>
+                    <span className="mt-3 grid grid-cols-3 gap-3 text-xs">
+                      <span><span className="block text-muted-foreground">Deficit</span><span className="font-semibold text-card-foreground">{line.quantityNeeded} {line.unit}</span></span>
+                      <span><span className="block text-muted-foreground">Stock</span><span className="font-semibold text-card-foreground">{line.currentStock}</span></span>
+                      <span><span className="block text-muted-foreground">Status</span><span className="font-semibold text-card-foreground">{line.status}</span></span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
       {poLine && <GeneratePOModal line={poLine} onClose={() => setPoLine(null)} onGenerate={handleGeneratePO} />}
       {editLine && <AddMasterItemModal initial={editLine} onClose={() => setEditLine(null)} onSave={handleSaveEdit} />}
       {addOpen && (
