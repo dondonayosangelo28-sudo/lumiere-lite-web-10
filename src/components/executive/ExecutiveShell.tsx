@@ -32,7 +32,7 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
   }
 
   return (
-    <div className="fixed inset-0 flex bg-background">
+    <div className="fixed inset-x-0 top-0 h-[100dvh] flex flex-col bg-background md:inset-0 md:h-auto md:flex-row">
       <ExecutiveRail
         activeId={activeId}
         onSelect={handleDestinationSelect}
@@ -40,11 +40,11 @@ export function ExecutiveShell({ activeId, onSelect, stickyHeader, children }: E
         onToggle={toggleExecutiveRail}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <ExecutiveTopBar />
 
-        {/* Only this region scrolls. The bottom padding clears the mobile rail. */}
-        <div className="executive-mobile-shell flex-1 overflow-x-hidden overflow-y-auto pb-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:pb-0">
+        {/* Only this region scrolls. The mobile rail remains in normal flow below it. */}
+        <div className="executive-mobile-shell min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:pb-0">
           {stickyHeader && (
             <div className="executive-mobile-sticky sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur max-sm:px-3 max-sm:pt-3 max-sm:pb-[19px] sm:px-8">
               {stickyHeader}
