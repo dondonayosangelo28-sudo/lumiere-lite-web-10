@@ -1475,7 +1475,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
       if (!active) return
       if (error) {
-        console.error('[v0] Failed to load staff from database:', error)
+        console.error('[v0] Failed to load staff from database:', error?.message ?? String(error))
         return
       }
       if (data) {
@@ -1505,7 +1505,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
       if (!active) return
       if (error) {
-        console.error('[v0] Failed to load access requests:', error)
+        console.error('[v0] Failed to load access requests:', error?.message ?? String(error))
         return
       }
       if (data) {

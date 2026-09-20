@@ -552,7 +552,7 @@ export function PlannerProvider({ children }: { children: ReactNode }) {
 
       if (!active) return
       if (error) {
-        console.error('[v0] Failed to load planner assets:', error)
+        console.error('[v0] Failed to load planner assets:', error?.message ?? String(error))
         return
       }
       if (data && data.length > 0) {

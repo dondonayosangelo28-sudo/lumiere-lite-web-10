@@ -175,7 +175,7 @@ export async function loadRosterFromDatabase() {
       .order('employee_id')
 
     if (error) {
-      console.error('[v0] Failed to load roster from database:', error)
+      console.error('[v0] Failed to load roster from database:', error?.message ?? String(error))
       return
     }
 

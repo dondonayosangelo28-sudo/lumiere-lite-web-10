@@ -99,7 +99,7 @@ export async function fetchEventsApi(): Promise<PortalEvent[]> {
 
     return items.map((dto, idx) => mapEventResponseToPortalEvent(dto, idx))
   } catch (err) {
-    console.warn('[eventsApi] GET /api/events fetch skipped/fallback:', err)
+    console.warn('[eventsApi] GET /api/events fetch skipped/fallback:', err?.message ?? String(err))
     return []
   }
 }
