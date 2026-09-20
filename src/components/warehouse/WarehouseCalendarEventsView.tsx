@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, Circle, Star, Calendar as CalendarIcon } from 'lucide-react'
 import type { PortalEvent } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -169,10 +169,6 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
   }, [events])
 
   const [currentDate, setCurrentDate] = useState<Date>(initialCalendarDate)
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
-  const rosterScrollRef = useRef<HTMLDivElement>(null)
-  const groupHeaderRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const eventCardRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   // Keep currentDate synchronized if initialCalendarDate resolves after mount
   useEffect(() => {
@@ -257,39 +253,6 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
 
   const monthLabel = `${MONTH_NAMES[month]} ${year}`
 
-  const monthKeyForEvent = (event: PortalEvent) => {
-    const date = parseEventDate(event.targetDate)
-    return date ? `${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}` : 'OTHER EVENTS'
-  }
-
-  const scrollRosterTo = (element: HTMLElement | null) => {
-    const container = rosterScrollRef.current
-    if (!container || !element) return
-    container.scrollTo({ top: element.offsetTop - container.offsetTop, behavior: 'smooth' })
-  }
-
-  const selectEvent = (event: PortalEvent) => {
-    const date = parseEventDate(event.targetDate)
-    if (date) setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1))
-    setSelectedEventId(event.id)
-    onSelectEvent(event)
-    requestAnimationFrame(() => scrollRosterTo(eventCardRefs.current[event.id]))
-  }
-
-  useEffect(() => {
-    if (!monthGroups.length) return
-    const desiredKey = `${MONTH_NAMES[month]} ${year}`
-    const desiredIndex = monthGroups.findIndex(([key]) => key === desiredKey)
-    const currentMonthStart = new Date(year, month, 1).getTime()
-    const nextIndex = monthGroups.findIndex(([, groupEvents]) => {
-      const date = parseEventDate(groupEvents[0]?.targetDate)
-      return date ? new Date(date.getFullYear(), date.getMonth(), 1).getTime() >= currentMonthStart : false
-    })
-    const targetIndex = desiredIndex >= 0 ? desiredIndex : nextIndex
-    const fallbackIndex = targetIndex >= 0 ? targetIndex : monthGroups.length - 1
-    const targetKey = monthGroups[fallbackIndex]?.[0]
-    requestAnimationFrame(() => scrollRosterTo(groupHeaderRefs.current[targetKey]))
-  }, [month, year, monthGroups])
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
@@ -403,8 +366,8 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
                       <button
                         key={evt.id}
                         type="button"
-                        onClick={() => selectEvent(evt)}
-                        className={cn('flex w-full items-center gap-1 rounded bg-card border border-border/60 px-1 py-0.5 text-left text-[0.55rem] font-semibold text-card-foreground shadow-xs transition hover:border-primary hover:bg-primary/10 hover:text-primary truncate', selectedEventId === evt.id && 'ring-2 ring-primary/70')}
+                        onClick={() => onSelectEvent(evt)}
+                        className="flex w-full items-center gap-1 rounded bg-card border border-border/60 px-1 py-0.5 text-left text-[0.55rem] font-semibold text-card-foreground shadow-xs transition hover:border-primary hover:bg-primary/10 hover:text-primary truncate"
                       >
                         {isActualEvent ? (
                           <Star className="size-2.5 shrink-0 fill-amber-500 text-amber-500" />
@@ -424,7 +387,7 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
       </div>
 
       {/* ─── RIGHT SIDE: Upcoming Events Side Panel (Month-Grouped Sticky Headers) ─── */}
-      <div className="flex h-full min-h-0 flex-col self-stretch rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 lg:col-span-4 shadow-sm sm:shadow-md backdrop-blur-xs overflow-hidden">
+      <div className="flex flex-col h-[35rem] max-h-[35rem] rounded-2xl border border-border/90 bg-card/95 p-5 sm:p-6 lg:col-span-4 shadow-sm sm:shadow-md backdrop-blur-xs overflow-hidden">
         {/* Side Panel Header (Static / Non-Scrolling) */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-4 shrink-0">
           <div>
@@ -438,15 +401,15 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
         </div>
 
         {/* Scrollable Row List with Sticky Month Headers */}
-        <div ref={rosterScrollRef} className="mt-3 min-h-0 flex-1 overflow-y-auto pr-1.5 space-y-4 scrollbar-thin">
+        <div className="mt-3 flex-1 overflow-y-auto pr-1.5 space-y-4 scrollbar-thin">
           {monthGroups.length === 0 ? (
             <p className="py-8 text-center text-xs text-muted-foreground">No upcoming events found.</p>
           ) : (
             monthGroups.map(([groupKey, groupEvents]) => (
                 <div key={groupKey} className="space-y-2">
                   {/* Sticky Month Section Header */}
-                  <div ref={(element) => { groupHeaderRefs.current[groupKey] = element }} className={cn('sticky top-0 z-10 border-b border-border/80 bg-card/95 py-1.5 backdrop-blur-sm', groupKey === `${MONTH_NAMES[month]} ${year}` && 'bg-primary/10')}>
-                    <span className={cn('text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary', groupKey === `${MONTH_NAMES[month]} ${year}` && 'text-primary')}>
+                  <div className="sticky top-0 z-10 border-b border-border/80 bg-card/95 py-1.5 backdrop-blur-sm">
+                    <span className="text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary">
                     {groupKey} ({groupEvents.length})
                   </span>
                 </div>
@@ -458,10 +421,9 @@ export function WarehouseCalendarEventsView({ events, onSelectEvent }: Warehouse
                     return (
                       <button
                         key={evt.id}
-                        ref={(element) => { eventCardRefs.current[evt.id] = element }}
                         type="button"
-                        onClick={() => selectEvent(evt)}
-                        className={cn('group flex w-full flex-col gap-1.5 rounded-xl border border-border/80 bg-background/90 p-3.5 text-left shadow-xs transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent/40 hover:shadow-sm', selectedEventId === evt.id && 'ring-2 ring-primary/70')}
+                        onClick={() => onSelectEvent(evt)}
+                        className="group flex w-full flex-col gap-1.5 rounded-xl border border-border/80 bg-background/90 p-3.5 text-left shadow-xs transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent/40 hover:shadow-sm"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <h4 className="font-serif text-sm font-medium text-card-foreground group-hover:text-primary transition-colors">
