@@ -269,7 +269,7 @@ export function EventCalendar({
 
       {enableYearView && yearPopupOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 p-0 sm:items-center sm:p-4"
           role="presentation"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setYearPopupOpen(false)
@@ -279,12 +279,11 @@ export function EventCalendar({
             role="dialog"
             aria-modal="true"
             aria-labelledby="calendar-year-title"
-            className="max-h-[92vh] w-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-[28px] rounded-b-none border border-white/40 dark:border-white/10 bg-card/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl backdrop-saturate-150 transition duration-[220ms] ease-out motion-reduce:transition-opacity sm:max-w-4xl sm:rounded-[28px] sm:p-7"
+            className="max-h-[92vh] w-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-2xl rounded-b-none border border-border bg-card p-5 shadow-[0_18px_50px_rgba(0,0,0,0.12)] transition duration-[220ms] ease-out motion-reduce:transition-opacity sm:max-w-4xl sm:rounded-2xl sm:p-8"
           >
-            <div className="mx-auto mt-2 mb-4 h-1.5 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
             <div className="flex items-start justify-between gap-4 pb-4">
               <div>
-                <h2 id="calendar-year-title" className="text-4xl font-semibold tracking-tight text-foreground">{popupYear}</h2>
+                <h2 id="calendar-year-title" className="font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">{popupYear}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {Array.from({ length: 12 }, (_, month) =>
                     Array.from({ length: new Date(popupYear, month + 1, 0).getDate() }, (_, i) => i + 1)
@@ -293,14 +292,14 @@ export function EventCalendar({
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => setPopupYear((year) => year - 1)} className="flex size-9 items-center justify-center rounded-full bg-muted/60 text-foreground/80 backdrop-blur transition hover:bg-muted active:scale-95" aria-label="Previous year"><ChevronLeft className="size-4" /></button>
-                <button type="button" onClick={() => setPopupYear((year) => year + 1)} className="flex size-9 items-center justify-center rounded-full bg-muted/60 text-foreground/80 backdrop-blur transition hover:bg-muted active:scale-95" aria-label="Next year"><ChevronRight className="size-4" /></button>
-                <button type="button" onClick={() => setPopupYear(new Date().getFullYear())} className="rounded-full bg-muted/60 px-3.5 py-1.5 text-xs font-semibold text-primary backdrop-blur hover:bg-muted">Today</button>
-                <button type="button" onClick={() => setYearPopupOpen(false)} className="flex size-9 items-center justify-center rounded-full bg-muted/60 text-foreground/80 backdrop-blur transition hover:bg-muted active:scale-95" aria-label="Close year view"><X className="size-4" /></button>
+                <button type="button" onClick={() => setPopupYear((year) => year - 1)} className="flex size-9 items-center justify-center rounded-md border border-border bg-background/50 text-muted-foreground transition hover:bg-muted active:scale-95" aria-label="Previous year"><ChevronLeft className="size-4" /></button>
+                <button type="button" onClick={() => setPopupYear((year) => year + 1)} className="flex size-9 items-center justify-center rounded-md border border-border bg-background/50 text-muted-foreground transition hover:bg-muted active:scale-95" aria-label="Next year"><ChevronRight className="size-4" /></button>
+                <button type="button" onClick={() => setPopupYear(new Date().getFullYear())} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-semibold text-primary transition hover:bg-muted">Today</button>
+                <button type="button" onClick={() => setYearPopupOpen(false)} className="flex size-9 items-center justify-center rounded-md border border-border bg-background/50 text-muted-foreground transition hover:bg-muted active:scale-95" aria-label="Close year view"><X className="size-4" /></button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
               {MONTHS.map((monthName, month) => {
                 const monthDays = new Date(popupYear, month + 1, 0).getDate()
                 const start = new Date(popupYear, month, 1).getDay()
@@ -310,11 +309,11 @@ export function EventCalendar({
                 const isCurrentMonth = now.getFullYear() === popupYear && now.getMonth() === month
                 return (
                   <div key={monthName}>
-                    <button type="button" onClick={() => { const next = { year: popupYear, month }; setInternalView(next); onMonthChange?.(next); setYearPopupOpen(false) }} className={cn('text-base font-semibold tracking-tight hover:opacity-80', isDisplayedMonth || isCurrentMonth ? 'text-primary' : 'text-foreground')}>{monthName}</button>
-                    <div className="mt-2 grid grid-cols-7 text-center text-[0.6rem] font-medium text-muted-foreground/70">{WEEKDAYS.map((day) => <span key={day}>{day.slice(0, 1)}</span>)}</div>
+                    <button type="button" onClick={() => { const next = { year: popupYear, month }; setInternalView(next); onMonthChange?.(next); setYearPopupOpen(false) }} className={cn('text-sm font-semibold uppercase tracking-[0.08em] hover:opacity-80', isDisplayedMonth || isCurrentMonth ? 'text-primary' : 'text-foreground')}>{monthName}</button>
+                    <div className="mt-2 grid grid-cols-7 text-center text-[0.6rem] font-semibold text-muted-foreground">{WEEKDAYS.map((day) => <span key={day}>{day.slice(0, 1)}</span>)}</div>
                     <div className="mt-1 grid grid-cols-7 justify-items-center gap-y-1 text-center text-[0.72rem] tabular-nums">
                       {miniCells.map((day, index) => {
-                        if (day === null) return <span key={`empty-${index}`} className="h-6 w-6" />
+                        if (day === null) return <span key={`empty-${index}`} className="h-7 w-7" />
                         const key = dayKey(popupYear, month, day)
                         const isBooked = booked.has(key)
                         const isSelected = selectedParts?.year === popupYear && selectedParts.month === month && selectedParts.day === day
@@ -328,7 +327,7 @@ export function EventCalendar({
                 )
               })}
             </div>
-            <div className="mt-6 flex items-center justify-center gap-4 text-[0.65rem] text-muted-foreground"><span><span className="text-rose-500">●</span> Event day</span><span><span className="text-primary">●</span> Today</span></div>
+            <div className="mt-6 text-center text-[0.65rem] text-muted-foreground"><span className="text-rose-500">●</span> Event day&nbsp;&nbsp;&nbsp; <span className="text-primary">●</span> Today</div>
           </div>
         </div>
       )}
