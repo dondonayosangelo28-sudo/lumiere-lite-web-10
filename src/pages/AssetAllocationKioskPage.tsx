@@ -442,7 +442,7 @@ export function AssetAllocationKioskPage() {
     <>
       <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
         {/* Two-pane kiosk layout */}
-        <div className="grid h-[60vh] grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
+        <div className="grid h-auto grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
           {/* ---- Visual category menu ---- */}
           <aside className="min-w-0 sm:max-h-[65vh]">
             <div className="mb-2 flex items-center justify-between">
@@ -484,7 +484,7 @@ export function AssetAllocationKioskPage() {
           </aside>
 
           {/* ---- Right pane 80% — thumbnail grid ---- */}
-          <div className="h-full min-h-0 min-w-0 overflow-x-hidden overflow-y-auto pr-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:h-auto sm:flex-1 sm:overflow-visible">
+          <div className="h-auto min-w-0 overflow-x-hidden overflow-visible pr-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:h-auto sm:flex-1 sm:overflow-visible">
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="font-serif text-xl font-medium text-card-foreground">{activeCategory === ALL_CATEGORY ? 'All Assets' : categories.find((category) => category.id === activeCategory)?.label}</h2>
               <div className="flex shrink-0 items-center rounded-lg border border-border bg-card p-0.5">
