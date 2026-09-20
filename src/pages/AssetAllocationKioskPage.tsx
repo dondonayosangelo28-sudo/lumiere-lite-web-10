@@ -403,44 +403,50 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div
-      className="group flex flex-col gap-3 overflow-anchor-none transition-[padding] duration-[250ms] ease-out max-sm:py-2"
-      data-collapsed={headerCollapsed}
-    >
-      <div className="grid transition-[grid-template-rows,opacity] duration-[250ms] ease-out motion-reduce:transition-none max-sm:group-data-[collapsed=true]:grid-rows-[0fr] max-sm:group-data-[collapsed=true]:opacity-0 max-sm:group-data-[collapsed=false]:grid-rows-[1fr] max-sm:group-data-[collapsed=false]:opacity-100 sm:grid-rows-[1fr] sm:opacity-100">
-        <div className="min-h-0 overflow-hidden">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
-              <Sparkles className="size-3" />
-              Asset Kiosk
-            </span>
-          </div>
-          <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
-            Asset Allocation
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+    <div className="flex flex-col gap-3">
+      <div>
+        <div className={cn(
+          'flex items-center gap-2 max-sm:overflow-hidden max-sm:transition-[max-height,opacity,margin] max-sm:duration-[250ms] max-sm:ease-out motion-reduce:transition-none',
+          headerCollapsed ? 'max-sm:max-h-0 max-sm:opacity-0 max-sm:mt-0' : 'max-sm:max-h-8 max-sm:opacity-100',
+        )}>
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
+            <Sparkles className="size-3" />
+            Asset Kiosk
+          </span>
+        </div>
+        <h1 className={cn(
+          'mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl max-sm:overflow-hidden max-sm:transition-[max-height,opacity,margin] max-sm:duration-[250ms] max-sm:ease-out motion-reduce:transition-none',
+          headerCollapsed ? 'max-sm:max-h-0 max-sm:opacity-0 max-sm:mt-0' : 'max-sm:max-h-12 max-sm:opacity-100',
+        )}>
+          Asset Allocation
+        </h1>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className={cn(
+            'mt-1 text-xs text-muted-foreground sm:text-sm max-sm:overflow-hidden max-sm:transition-[max-height,opacity,margin] max-sm:duration-[250ms] max-sm:ease-out motion-reduce:transition-none',
+            headerCollapsed ? 'max-sm:max-h-0 max-sm:opacity-0 max-sm:mt-0' : 'max-sm:max-h-20 max-sm:opacity-100',
+          )}>
             Browse, search, and allocate assets by classification. Quantity assignment routes to the deficit queue.
           </p>
-        </div>
-      </div>
 
-      {/* Search */}
-      <div className="flex w-full justify-end sm:w-auto">
+          {/* Search */}
+          <div className="flex w-full justify-end sm:w-auto">
             <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name, tag, classification..."
-            className="w-full rounded-lg border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30"
-          />
-          {query && (
-            <button type="button" onClick={() => setQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-muted-foreground hover:text-foreground">✕</button>
-          )}
+              <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by name, tag, classification..."
+                className="w-full rounded-lg border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30"
+              />
+              {query && (
+                <button type="button" onClick={() => setQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-muted-foreground hover:text-foreground">✕</button>
+              )}
             </div>
           </div>
+        </div>
+      </div>
     </div>
   )
 
