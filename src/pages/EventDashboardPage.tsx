@@ -153,6 +153,20 @@ function EventDashboardContent() {
     }).length
   }, [events, currentView])
 
+  const monthPreviewEvents = useMemo(() => {
+    return events
+      .filter((ev) => {
+        const parts = parseEventDate(ev.targetDate)
+        return parts && parts.year === currentView.year && parts.month === currentView.month
+      })
+      .sort((a, b) => {
+        const aParts = parseEventDate(a.targetDate)
+        const bParts = parseEventDate(b.targetDate)
+        if (!aParts || !bParts) return 0
+        return new Date(aParts.year, aParts.month, aParts.day).getTime() - new Date(bParts.year, bParts.month, bParts.day).getTime()
+      })
+  }, [events, currentView])
+
   const handleDateSelect = (dateStr: string) => {
     if (selectedDate === dateStr) {
       setSelectedDate('')
@@ -269,16 +283,59 @@ function EventDashboardContent() {
 
               {/* Month Summary Card */}
               <div className="rounded-xl border border-border bg-card p-4 shadow-sm max-sm:p-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[0.65rem]">
-                    {MONTH_NAMES[currentView.month]} {currentView.year} Summary
-                  </span>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[0.62rem] font-bold text-primary">
-                    {totalEventsInViewMonth} {totalEventsInViewMonth === 1 ? 'Event' : 'Events'}
-                  </span>
-                </div>
+  <div className="flex items-center justify-between text-xs">
+  <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[0.65rem]">
+  {MONTH_NAMES[currentView.month]} {currentView.year} Summary
+  </span>
+  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[0.62rem] font-bold text-primary">
+  {totalEventsInViewMonth} {totalEventsInViewMonth === 1 ? 'Event' : 'Events'}
+  </span>
+  </div>
 
-                <div className="mt-3 flex flex-wrap gap-2 pt-2 border-t border-border/60">
+  <div className="mt-3">
+  {monthPreviewEvents.length === 0 ? (
+  <p className="py-1.5 text-xs text-muted-foreground">No events scheduled.</p>
+  ) : (
+  <>
+  <div>
+  {monthPreviewEvents.slice(0, 4).map((event, index) => {
+    const parts = parseEventDate(event.targetDate)
+    const status = statusStyles[event.status] ?? { dot: 'bg-muted-foreground' }
+    const eventDate = parts ? new Date(parts.year, parts.month, parts.day) : null
+    return (
+      <button
+        key={event.id}
+        type="button"
+        onClick={() => openView(event)}
+        title={`${event.title} — ${event.status}`}
+        className={cn(
+          'flex w-full cursor-pointer items-center gap-2.5 rounded-md py-1.5 text-left hover:bg-muted/50',
+          index < Math.min(monthPreviewEvents.length, 4) - 1 && 'border-b border-border/40',
+        )}
+      >
+        <span className="flex size-8 shrink-0 flex-col items-center justify-center rounded-md border border-border bg-muted/40">
+          <span className="font-serif text-sm leading-none text-card-foreground">{parts?.day ?? '—'}</span>
+          <span className="text-[0.5rem] uppercase leading-tight text-muted-foreground">
+            {eventDate?.toLocaleDateString('en-US', { weekday: 'short' }) ?? '—'}
+          </span>
+        </span>
+        <span className="min-w-0 flex-1 truncate text-xs font-medium text-card-foreground">{event.title}</span>
+        <span className="flex shrink-0 items-center gap-1.5 text-[0.58rem] font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className={cn('size-1.5 rounded-full', status.dot)} />
+          <span className="max-sm:hidden">{event.status}</span>
+        </span>
+      </button>
+    )
+  })}
+  </div>
+  {monthPreviewEvents.length > 4 && (
+    <p className="mt-1 text-xs text-muted-foreground">+{monthPreviewEvents.length - 4} more this month</p>
+  )}
+  </>
+  )}
+  </div>
+  
+  <div className="mt-3 flex flex-wrap gap-2 pt-2 border-t border-border/60">
                   <button
                     type="button"
                     onClick={() => navigate('registry')}
