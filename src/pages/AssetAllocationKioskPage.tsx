@@ -13,6 +13,7 @@ import { createDeficitItemApi } from '@/lib/deficitApi'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
 import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
+import { useScrollCollapsed } from '@/lib/use-scroll-collapsed'
 import type { PortalEvent } from '@/lib/types'
 
 const STATE_BADGE: Record<string, string> = {
@@ -374,6 +375,8 @@ export function AssetAllocationKioskPage() {
     })
   }, [assets, activeCategory, query])
 
+  const headerCollapsed = useScrollCollapsed({ collapseAt: 80, expandAt: 8 })
+
   const mobilePageSize = 48
   const mobilePageCount = Math.max(1, Math.ceil(displayed.length / mobilePageSize))
   const visibleAssets = isPhone
@@ -400,24 +403,29 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-3">
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
-            <Sparkles className="size-3" />
-            Asset Kiosk
-          </span>
-        </div>
-        <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
-          Asset Allocation
-        </h1>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      className="group flex flex-col gap-3 overflow-anchor-none transition-[padding] duration-[250ms] ease-out max-sm:py-2"
+      data-collapsed={headerCollapsed}
+    >
+      <div className="grid transition-[grid-template-rows,opacity] duration-[250ms] ease-out motion-reduce:transition-none max-sm:group-data-[collapsed=true]:grid-rows-[0fr] max-sm:group-data-[collapsed=true]:opacity-0 max-sm:group-data-[collapsed=false]:grid-rows-[1fr] max-sm:group-data-[collapsed=false]:opacity-100 sm:grid-rows-[1fr] sm:opacity-100">
+        <div className="min-h-0 overflow-hidden">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary">
+              <Sparkles className="size-3" />
+              Asset Kiosk
+            </span>
+          </div>
+          <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            Asset Allocation
+          </h1>
           <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
             Browse, search, and allocate assets by classification. Quantity assignment routes to the deficit queue.
           </p>
+        </div>
+      </div>
 
-          {/* Search */}
-          <div className="flex w-full justify-end sm:w-auto">
+      {/* Search */}
+      <div className="flex w-full justify-end sm:w-auto">
             <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -433,8 +441,6 @@ export function AssetAllocationKioskPage() {
           )}
             </div>
           </div>
-        </div>
-      </div>
     </div>
   )
 
