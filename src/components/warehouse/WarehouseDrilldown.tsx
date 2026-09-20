@@ -20,7 +20,14 @@ export function WarehouseDrilldown({ entry, onExit }: WarehouseDrilldownProps) {
     <div className="fixed inset-0 z-40 flex bg-background">
       <WarehouseRail
         activeModuleId={activeModuleId}
-        onSelectModule={setActiveModuleId}
+        onSelectModule={(id) => {
+          if (id === 'dashboard') {
+            onExit()
+            return
+          }
+          setActiveModuleId(id)
+        }}
+        onDashboard={onExit}
         onExit={onExit}
         defaultOpen={false}
       />

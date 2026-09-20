@@ -7,8 +7,7 @@ interface WarehouseRailProps {
   activeModuleId?: WarehouseModuleId
   onSelectModule: (id: WarehouseModuleId) => void
   onExit: () => void
-  onDashboard?: () => void
-  activeDashboard?: boolean
+  onDashboard: () => void
   defaultOpen?: boolean
 }
 
@@ -17,22 +16,17 @@ export function WarehouseRail({
   onSelectModule,
   onExit,
   onDashboard,
-  activeDashboard = false,
   defaultOpen = false,
 }: WarehouseRailProps) {
   const [open, setOpen] = useState(defaultOpen)
 
-  const handleDashboard = () => {
-    if (activeDashboard) {
-      setOpen((value) => !value)
+  const handleSelect = (id: WarehouseModuleId) => {
+    if (id === 'dashboard') {
+      onDashboard()
       return
     }
 
-    onDashboard?.()
-  }
-
-  const handleSelect = (id: WarehouseModuleId) => {
-    if (!activeDashboard && id === activeModuleId) {
+    if (id === activeModuleId) {
       setOpen((value) => !value)
       return
     }
@@ -74,32 +68,6 @@ export function WarehouseRail({
       <div className={cn('my-4 h-px bg-sidebar-border', open ? 'mx-4' : 'w-9')} aria-hidden="true" />
 
       <nav className={cn('flex flex-col gap-2', open ? 'items-stretch px-3' : 'items-center')} aria-label="Warehouse modules">
-        {onDashboard && (
-          <button
-            type="button"
-            onClick={handleDashboard}
-            aria-label="Dashboard"
-            aria-current={activeDashboard ? 'page' : undefined}
-            title="Dashboard"
-            className={cn(
-              'flex h-10 items-center gap-3 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring',
-              open ? 'w-full justify-start px-3' : 'w-10 justify-center',
-              activeDashboard
-                ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-            )}
-          >
-            <span className="flex size-4 shrink-0 items-center justify-center" aria-hidden="true">
-              <span className="grid size-3 grid-cols-2 gap-0.5">
-                <span className="rounded-[1px] bg-current" />
-                <span className="rounded-[1px] bg-current" />
-                <span className="rounded-[1px] bg-current" />
-                <span className="rounded-[1px] bg-current" />
-              </span>
-            </span>
-            <span className={cn('truncate text-sm font-medium', !open && 'sr-only')}>Dashboard</span>
-          </button>
-        )}
         {WAREHOUSE_MODULES.map((module) => {
           const Icon = module.icon
           const active = module.id === activeModuleId

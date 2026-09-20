@@ -51,10 +51,10 @@ export function WarehouseHomePage() {
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <WarehouseRail
-        activeDashboard
+        activeModuleId="dashboard"
         defaultOpen
         onSelectModule={openModule}
-        onDashboard={() => undefined}
+        onDashboard={() => setDrilldown(null)}
         onExit={() => setDrilldown(null)}
       />
       <main className="min-w-0 flex-1">
