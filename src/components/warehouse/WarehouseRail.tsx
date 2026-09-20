@@ -26,26 +26,19 @@ export function WarehouseRail({
 
   return (
     <aside className={cn('flex h-full min-h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-4 transition-[width] duration-200', open ? 'w-64 items-stretch' : 'w-[4.5rem] items-center')}>
-      <div className={cn('flex items-center', open ? 'justify-start px-4' : 'justify-center')}>
+      <div className={cn('flex items-center', open ? 'justify-between px-4' : 'justify-center')}>
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Collapse navigation' : 'Expand navigation'}
+          aria-label={open ? 'Lumiere brand, collapse navigation' : 'Lumiere brand, expand navigation'}
           aria-expanded={open}
-          className={cn(
-            'flex h-10 items-center rounded-lg text-sidebar-primary-foreground transition-colors hover:bg-sidebar-accent',
-            open ? 'w-full justify-start px-3' : 'size-10 justify-center',
-          )}
+          className={cn('flex items-center rounded-lg text-sidebar-primary transition-colors hover:bg-sidebar-accent', open ? 'px-1' : 'size-9 justify-center')}
         >
-          {open ? (
-            <span className="truncate font-serif text-sm font-semibold tracking-[0.28em] text-[#a8784b]">LUMIERE</span>
-          ) : (
-            <span aria-hidden="true" className="font-serif text-lg font-semibold leading-none text-[#a8784b]">L</span>
-          )}
+          {open ? <span className="font-serif text-lg font-medium tracking-[0.18em]">LUMIERE</span> : <span className="font-serif text-lg font-medium leading-none">L</span>}
         </button>
       </div>
 
-      <div className={cn('my-4 h-px bg-sidebar-border', open ? 'mx-4' : 'w-9')} aria-hidden="true" />
+      <div className={cn('my-3 h-px bg-sidebar-border', open ? 'mx-4' : 'w-8')} aria-hidden="true" />
 
       <nav className={cn('flex flex-col gap-2', open ? 'items-stretch px-3' : 'items-center')} aria-label="Warehouse modules">
         {WAREHOUSE_MODULES.map((module) => {
