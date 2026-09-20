@@ -179,13 +179,13 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 overflow-x-auto lg:flex-row lg:flex-nowrap lg:items-center lg:justify-start [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
           <div className="flex shrink-0 rounded-lg border border-border bg-card p-1">
             <button
               type="button"
               onClick={() => setViewMode('grouped')}
               className={cn(
-                'shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                'shrink-0 whitespace-nowrap rounded-md px-2.5 py-2 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition',
                 viewMode === 'grouped'
                   ? 'bg-foreground text-background shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -197,7 +197,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               type="button"
               onClick={() => setViewMode('consolidated')}
               className={cn(
-                'shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition',
+                'shrink-0 whitespace-nowrap rounded-md px-2.5 py-2 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition',
                 viewMode === 'consolidated'
                   ? 'bg-foreground text-background shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -207,27 +207,27 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             </button>
           </div>
 
-          <div className="flex shrink-0 flex-nowrap items-center gap-2">
+          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2">
             <div className="relative h-10">
               <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search items or events…"
-                className="h-10 w-56 rounded-md border border-input bg-background pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                className="h-10 w-44 rounded-md border border-input bg-background pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
               />
             </div>
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
             >
               Add Item
             </button>
             <button
               type="button"
               onClick={exportReport}
-              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
             >
               <Download className="size-3.5" />
               Export Report (PDF)
@@ -235,7 +235,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             <button
               type="button"
               onClick={() => setViewMode('draft')}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90"
             >
               Draft Master PO ({openCandidates.length})
             </button>
