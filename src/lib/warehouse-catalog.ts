@@ -711,12 +711,18 @@ export function addCatalogAsset(asset: CatalogAsset): CatalogAsset {
   return asset
 }
 
-export function updateCatalogAsset(id: string, changes: Partial<Omit<CatalogAsset, 'id'>>) {
+  export async function updateCatalogAsset(id: string, changes: Partial<Omit<CatalogAsset, 'id'>>): Promise<boolean> {
   const existing = getCatalogAssets()
+  const target = existing.find((asset) => asset.id === id)
+  if (!target) return false
+
+  const persisted = await updateAssetApi(id, { ...target, ...changes })
+  if (!persisted) return false
+
   cachedCatalog = existing.map((asset) => (asset.id === id ? { ...asset, ...changes } : asset))
   publishCatalog()
-  void updateAssetApi(id, changes)
-}
+  return true
+  }
 
 // Any Event Asset / Stockroom line sitting under its reorder threshold.
 export function getLowStockAssets(assets: CatalogAsset[] = getCatalogAssets()): CatalogAsset[] {

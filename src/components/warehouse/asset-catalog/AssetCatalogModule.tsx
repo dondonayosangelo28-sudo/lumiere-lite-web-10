@@ -11,6 +11,7 @@ import {
 } from '@/lib/warehouse-catalog'
 import { AssetCard, ASSET_STATUS_TONE, getTierGlanceDisplay } from '@/components/warehouse/asset-catalog/AssetCard'
 import { AssetDetailModal } from '@/components/warehouse/asset-catalog/AssetDetailModal'
+import { AssetUpdateModal } from '@/components/warehouse/asset-catalog/AssetUpdateModal'
 import { AddAssetModal, type NewAssetDraft } from '@/components/warehouse/asset-catalog/AddAssetModal'
 import { GridRevealContainer } from '@/components/GridRevealContainer'
 import { Pill } from '@/components/warehouse/shared/Pill'
@@ -57,6 +58,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   const [statusFilter, setStatusFilter] = useState<AssetStatus | 'All'>('All')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedAsset, setSelectedAsset] = useState<CatalogAsset | null>(null)
+  const [updateMode, setUpdateMode] = useState<'edit' | 'stock' | null>(null)
   const [addOpen, setAddOpen] = useState(false)
 
   const filtered = useMemo(() => {
@@ -311,7 +313,25 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
         <Plus className="size-6" aria-hidden="true" />
       </button>
 
-      {selectedAsset && <AssetDetailModal asset={selectedAsset} onClose={() => setSelectedAsset(null)} />}
+      {selectedAsset && (
+        <AssetDetailModal
+          asset={selectedAsset}
+          onClose={() => setSelectedAsset(null)}
+          onEdit={() => setUpdateMode('edit')}
+          onUpdateStock={() => setUpdateMode('stock')}
+        />
+      )}
+      {updateMode && selectedAsset && (
+        <AssetUpdateModal
+          asset={selectedAsset}
+          mode={updateMode}
+          onClose={() => setUpdateMode(null)}
+          onSaved={(updated) => {
+            setSelectedAsset(updated)
+            setUpdateMode(null)
+          }}
+        />
+      )}
       {addOpen && <AddAssetModal onClose={() => setAddOpen(false)} onCreate={handleCreate} />}
     </div>
   )

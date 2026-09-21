@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { X, Layers, Tag as TagIcon, ShieldCheck, Clock, User, Plus, Check } from 'lucide-react'
+import { X, Layers, Tag as TagIcon, ShieldCheck, Clock, User, Plus, Check, Pencil, ClipboardCheck } from 'lucide-react'
 import {
   computeStockHealth,
   formatSmartDuration,
@@ -27,9 +27,11 @@ interface AssetDetailModalProps {
   asset: CatalogAsset
   onClose: () => void
   onCompleteMaintenance?: () => void
+  onEdit?: () => void
+  onUpdateStock?: () => void
 }
 
-export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: AssetDetailModalProps) {
+export function AssetDetailModal({ asset, onClose, onCompleteMaintenance, onEdit, onUpdateStock }: AssetDetailModalProps) {
   const [tab, setTab] = useState<TabId>('overview')
   const glance = getTierGlanceDisplay(asset)
   const tone = ASSET_STATUS_TONE[asset.status]
@@ -104,6 +106,9 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
             </div>
             <h2 className="mt-1 font-serif text-xl font-medium text-card-foreground">{asset.name}</h2>
           </div>
+          <div className="flex items-center gap-2">
+            {onEdit && <button type="button" onClick={onEdit} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-2 text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="size-3" /> Edit Asset</button>}
+            {onUpdateStock && (asset.category === 'Event Asset' || asset.category === 'Stockroom') && <button type="button" onClick={onUpdateStock} className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-2 text-[0.6rem] font-bold uppercase tracking-wider text-primary-foreground hover:opacity-90"><ClipboardCheck className="size-3" /> Physical Count</button>}
           <button
             type="button"
             onClick={onClose}
@@ -112,6 +117,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
           >
             <X className="size-4" aria-hidden="true" />
           </button>
+          </div>
         </div>
 
         {/* Modal Tabs Bar */}

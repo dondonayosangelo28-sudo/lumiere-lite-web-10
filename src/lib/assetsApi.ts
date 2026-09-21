@@ -71,7 +71,7 @@ export async function updateAssetApi(id: string, asset: Partial<CatalogAsset>): 
     })
     return res.ok
   } catch (err) {
-    console.warn('[assetsApi] Update asset API call skipped/fallback:', err?.message ?? String(err))
-    return true
+    console.warn('[assetsApi] Update asset API call failed:', err?.message ?? String(err))
+    return false
   }
 }
