@@ -249,6 +249,8 @@ export function AdminSecurityAuditPage() {
     else if (id === 'security-audit') setExpanded(null)
     }
 
+  const dateError = fromDate && toDate && fromDate > toDate ? 'From date must be before To date.' : ''
+
   const stickyHeader = (
     <div>
       <p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -261,6 +263,17 @@ export function AdminSecurityAuditPage() {
         A read-only, cross-account trail of security and access events — logins, lockouts,
         permission requests, and password resets.
       </p>
+      <div className="relative z-10 mt-4 border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 md:hidden">
+        <SearchAndDateFilters
+          query={query}
+          onQueryChange={setQuery}
+          fromDate={fromDate}
+          toDate={toDate}
+          onFromDateChange={setFromDate}
+          onToDateChange={setToDate}
+          dateError={dateError}
+        />
+      </div>
     </div>
   )
 
@@ -298,29 +311,20 @@ export function AdminSecurityAuditPage() {
           <div className="mb-5 flex flex-col gap-5">
             <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-start lg:justify-between">
               <div className="flex flex-col gap-3 lg:flex-col-reverse lg:items-end">
-                <div className="relative min-w-0 flex-1 lg:w-80">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search action, Employee ID, or Log ID"
-                    className="w-full max-md:text-base rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary"
+                <div className="max-md:hidden">
+                  <SearchAndDateFilters
+                    query={query}
+                    onQueryChange={setQuery}
+                    fromDate={fromDate}
+                    toDate={toDate}
+                    onFromDateChange={setFromDate}
+                    onToDateChange={setToDate}
+                    dateError={dateError}
                   />
                 </div>
-                <div className="grid gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-3 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
-                  <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
-                    <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
-                    <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} aria-label="From date" className="h-9 w-full max-md:min-w-0 max-md:text-base lg:w-[9.5rem] lg:shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary" />
-                  </div>
-                  <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
-                    <span className="text-[0.6rem] font-bold uppercase tracking-wider">To:</span>
-                    <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} aria-label="To date" className="h-9 w-full max-md:min-w-0 max-md:text-base lg:w-[9.5rem] lg:shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary" />
-                  </div>
-                  {(fromDate || toDate) && <button type="button" onClick={() => { setFromDate(''); setToDate('') }} className="col-span-2 text-right text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground underline hover:text-foreground">Clear</button>}
-                  <button type="button" onClick={downloadPdf} className="col-span-2 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90 lg:w-auto">
-                    <Download className="size-3.5" aria-hidden="true" />Download PDF
-                  </button>
-                </div>
+                <button type="button" onClick={downloadPdf} className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90 lg:w-auto">
+                  <Download className="size-3.5" aria-hidden="true" />Download PDF
+                </button>
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2 max-md:grid max-md:grid-cols-3 max-md:gap-2 lg:flex-row lg:flex-wrap lg:items-center">
@@ -483,6 +487,52 @@ export function AdminSecurityAuditPage() {
         </>
       )}
     </AdminShell>
+  )
+}
+
+interface SearchAndDateFiltersProps {
+  query: string
+  onQueryChange: (value: string) => void
+  fromDate: string
+  toDate: string
+  onFromDateChange: (value: string) => void
+  onToDateChange: (value: string) => void
+  dateError: string
+}
+
+function SearchAndDateFilters({
+  query,
+  onQueryChange,
+  fromDate,
+  toDate,
+  onFromDateChange,
+  onToDateChange,
+  dateError,
+}: SearchAndDateFiltersProps) {
+  return (
+    <div className="flex flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
+      <div className="relative min-w-0 flex-1 lg:w-80">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          value={query}
+          onChange={(event) => onQueryChange(event.target.value)}
+          placeholder="Search action, Employee ID, or Log ID"
+          className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:text-base"
+        />
+      </div>
+      <div className="grid gap-3 max-md:grid-cols-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
+        <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
+          <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
+          <input type="date" value={fromDate} onChange={(event) => onFromDateChange(event.target.value)} aria-label="From date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:min-w-0 max-md:text-base lg:w-[9.5rem] lg:shrink-0" />
+        </div>
+        <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
+          <span className="text-[0.6rem] font-bold uppercase tracking-wider">To:</span>
+          <input type="date" value={toDate} onChange={(event) => onToDateChange(event.target.value)} aria-label="To date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:min-w-0 max-md:text-base lg:w-[9.5rem] lg:shrink-0" />
+        </div>
+        {(fromDate || toDate) && <button type="button" onClick={() => { onFromDateChange(''); onToDateChange('') }} className="col-span-2 text-right text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground underline hover:text-foreground">Clear</button>}
+      </div>
+      {dateError && <p className="text-xs text-destructive" role="alert">{dateError}</p>}
+    </div>
   )
 }
 
