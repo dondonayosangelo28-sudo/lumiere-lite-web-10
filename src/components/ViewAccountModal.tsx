@@ -188,31 +188,32 @@ export function ViewAccountModal({
               {readField(staff.lastAccess)}
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-[0.65rem] font-bold uppercase tracking-[0.1em] text-foreground">
-                Temporary Password:
-              </label>
-              <div className="relative">
-                <input
-                  type={showPwd ? 'text' : 'password'}
-                  value={tempPassword}
-                  onChange={(e) => onTempPasswordChange(e.target.value)}
-                  className={inputClass}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPwd((v) => !v)}
-                  className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                  aria-label={showPwd ? 'Hide password' : 'Show password'}
-                >
-                  {showPwd ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                </button>
+            {editable && (
+              <div>
+                <label className="block text-[0.65rem] font-bold uppercase tracking-[0.1em] text-foreground">
+                  Account Password:
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPwd ? 'text' : 'password'}
+                    value={tempPassword}
+                    onChange={(e) => onTempPasswordChange(e.target.value)}
+                    className={inputClass}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd((v) => !v)}
+                    className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                    aria-label={showPwd ? 'Hide password' : 'Show password'}
+                  >
+                    {showPwd ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
+                <p className="mt-1.5 text-[0.65rem] italic text-muted-foreground">
+                  User will be prompted to change password upon first login.
+                </p>
               </div>
-              <p className="mt-1.5 text-[0.65rem] italic text-muted-foreground">
-                User will be prompted to change password upon first login.
-              </p>
-            </div>
+            )}
           </div>
 
           {/* Footer */}
