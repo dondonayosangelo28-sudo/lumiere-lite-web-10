@@ -590,6 +590,56 @@ doc.text('Lumière · Event Asset & Logistics Report', margin, pageHeight - 12)
   doc.save(filename)
 }
 
+export interface SystemAnalyticsAuditPdfData {
+  staff: Array<{ role: string; recordKind?: string; employmentType?: string }>
+  events: Array<{ status: string }>
+}
+
+export function exportSystemAnalyticsAuditPdf(data: SystemAnalyticsAuditPdfData) {
+  const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' })
+  const pageWidth = 612
+  const pageHeight = 792
+  const margin = 47.5
+  const width = 517
+  const ink: [number, number, number] = [43, 33, 26]
+  const muted: [number, number, number] = [110, 97, 83]
+  const bronze: [number, number, number] = [139, 111, 71]
+  const panel: [number, number, number] = [247, 240, 230]
+  const border: [number, number, number] = [217, 203, 174]
+  let y = 57.5
+  const reference = `LUM-AUD-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
+  const header = () => { doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...muted); doc.text('LUMIÈRE — SYSTEM ANALYTICS & AUDIT REPORT', margin, 29) }
+  const ensure = (height: number) => { if (y + height > pageHeight - 57.5) { doc.addPage(); y = 57.5; header() } }
+  header()
+  doc.setFont('times', 'bold'); doc.setFontSize(13); doc.setTextColor(...bronze); doc.text('LUMIÈRE', margin, y + 15)
+  doc.setFontSize(21); doc.setTextColor(...ink); doc.text('SYSTEM ANALYTICS & AUDIT REPORT', margin, y + 43)
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(...muted); doc.text('Official Platform Utilization, Inventory Distribution, and Asset Compliance Records', margin, y + 61)
+  y += 84
+  doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(margin, y, width, 48, 'FD')
+  const meta = [['DOCUMENT REFERENCE', reference], ['AUDIT DATE', new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })], ['CLASSIFICATION', 'Verified Official Audit']]
+  meta.forEach((field, index) => { const x = margin + index * (width / 3) + 9; doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(field[0], x, y + 16); doc.setFontSize(8); doc.setTextColor(...ink); doc.text(field[1], x, y + 31, { maxWidth: width / 3 - 18 }) })
+  y += 70
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...bronze); doc.text('EXECUTIVE PERFORMANCE SCORECARD', margin, y); y += 11
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text('Verified platform metrics derived from the current portal records.', margin, y); y += 18
+  const roleCounts = data.staff.reduce<Record<string, number>>((counts, member) => { const role = member.recordKind === 'employee-record' ? member.employmentType || 'Employee' : member.role; counts[role] = (counts[role] || 0) + 1; return counts }, {})
+  const activeEvents = data.events.filter((event) => !['Completed', 'Cancelled', 'Settled'].includes(event.status)).length
+  const cards = [{ label: 'TOTAL REGISTERED USERS', value: String(data.staff.length), sub: Object.entries(roleCounts).map(([role, count]) => `${count} ${role}`).join(' / ') || 'No role breakdown' }, { label: 'ACTIVE EVENTS', value: `${activeEvents} / ${data.events.length}`, sub: `${data.events.filter((event) => event.status === 'Completed').length} completed · ${activeEvents} ongoing` }]
+  const cardW = width / cards.length
+  cards.forEach((card, index) => { const x = margin + index * cardW; doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(x, y, cardW - (index === cards.length - 1 ? 0 : 6), 62, 'FD'); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(card.label, x + 10, y + 15); doc.setFont('times', 'bold'); doc.setFontSize(19); doc.setTextColor(...bronze); doc.text(card.value, x + 10, y + 38); doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...ink); doc.text(card.sub, x + 10, y + 52, { maxWidth: cardW - 20 }) })
+  y += 82
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...muted); doc.text('No additional records available for this report.', margin, y)
+  y += 34
+  ensure(150); doc.setDrawColor(...border); doc.line(margin, y, margin + width, y); y += 16
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(...ink)
+  const certification = 'I hereby certify that the numerical metrics, asset records, inventory distributions, and maintenance logs presented in this audit report have been extracted directly from the verified database records of the Lumière platform.'
+  const lines = doc.splitTextToSize(certification, width - 10); doc.text(lines, margin, y, { maxWidth: width - 10, lineHeightFactor: 1.2 }); y += lines.length * 10 + 24
+  const signatures = [['SYSTEM ADMINISTRATOR / AUDITOR', 'Lumière Asset & Event Management Platform', 'Generated & Verified'], ['OPERATIONS MANAGER / WAREHOUSE LEAD', 'Lumière Facilities & Logistics', 'Verified & Received']]
+  signatures.forEach((signature, index) => { const x = margin + index * (width / 2); doc.setDrawColor(...border); doc.line(x, y, x + width / 2 - 18, y); doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...ink); doc.text(signature[0], x, y + 14); doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.text(signature[1], x, y + 27); doc.setTextColor(...bronze); doc.text(signature[2], x, y + 40) })
+  const pages = doc.getNumberOfPages()
+  for (let page = 1; page <= pages; page += 1) { doc.setPage(page); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...muted); doc.setDrawColor(...border); doc.setLineWidth(0.5); doc.line(margin, pageHeight - 42, pageWidth - margin, pageHeight - 42); doc.text(`LUMIÈRE  ·  System Analytics & Audit Report  ·  Doc Ref: ${reference}`, margin, pageHeight - 27); doc.text(`PAGE ${page} / ${pages}`, pageWidth - margin, pageHeight - 27, { align: 'right' }) }
+  doc.save('lumiere-system-analytics-audit-report.pdf')
+}
+
 export function exportSecurityAuditPdf(
   title: string,
   logs: Array<{

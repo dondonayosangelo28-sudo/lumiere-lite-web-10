@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
@@ -17,6 +18,7 @@ import {
   type AdminDestinationId,
 } from '@/lib/admin-destinations'
 import type { UserAction } from '@/lib/types'
+import { exportSystemAnalyticsAuditPdf } from '@/lib/pdf-exporter'
 
 /* ----------------------------- Stat card ----------------------------- */
 
@@ -81,7 +83,7 @@ function AdminPlaceholder({ id }: { id: AdminDestinationId }) {
 
 export function AdminSystemDashboardPage() {
   const { navigate } = useNav()
-  const { staff, userActions, resolveUserAction } = usePortal()
+  const { staff, events, userActions, resolveUserAction } = usePortal()
   const [activeId, setActiveId] = useState<AdminDestinationId>('system-dashboard')
   // Pending-action confirmation state. The action is applied ONLY when the
   // admin confirms — nothing mutates on the initial button click.
@@ -135,8 +137,19 @@ export function AdminSystemDashboardPage() {
 
   const isDashboard = activeId === 'system-dashboard'
 
+  const handleSystemPdfExport = () => {
+    try {
+      exportSystemAnalyticsAuditPdf({
+        staff,
+        events,
+      })
+    } catch (error) {
+      console.error('Failed to export system analytics and audit report', error)
+    }
+  }
+
   const stickyHeader = isDashboard ? (
-    <div>
+    <div className="flex items-start justify-between gap-4">
       <div>
         <h1 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           System Dashboard
@@ -145,6 +158,15 @@ export function AdminSystemDashboardPage() {
           A read-only glance at users, access requests, and system health.
         </p>
       </div>
+      <button
+        type="button"
+        onClick={handleSystemPdfExport}
+        aria-label="Export System Analytics and Audit Report as PDF"
+        className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+      >
+        <Download className="size-3.5" aria-hidden="true" />
+        PDF EXPORT
+      </button>
     </div>
   ) : (
     <h1 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
