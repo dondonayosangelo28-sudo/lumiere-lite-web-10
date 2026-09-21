@@ -181,10 +181,10 @@ export function AdminWorkforcePage() {
           </div>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            {STATUS_FILTERS.map((s) => (
-              <button key={s} type="button" onClick={() => setStatus(s)} className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${status === s ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`} aria-pressed={status === s}>{s}</button>
-            ))}
+  <div className="flex flex-wrap items-center gap-2 max-md:flex max-md:flex-nowrap max-md:gap-1.5 max-md:w-full max-md:min-w-0 max-md:overflow-x-auto max-md:overscroll-x-contain max-md:pr-3 max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden">
+  {STATUS_FILTERS.map((s) => (
+  <button key={s} type="button" onClick={() => setStatus(s)} className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition max-md:shrink-0 max-md:whitespace-nowrap max-md:px-3 max-md:py-1.5 max-md:text-[12px] ${status === s ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`} aria-pressed={status === s}>{s}</button>
+  ))}
           </div>
           <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <ArrowUpDown className="size-3.5" aria-hidden="true" />
