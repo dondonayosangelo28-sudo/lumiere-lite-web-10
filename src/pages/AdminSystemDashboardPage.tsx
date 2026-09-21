@@ -149,7 +149,7 @@ export function AdminSystemDashboardPage() {
   }
 
   const stickyHeader = isDashboard ? (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-end justify-between gap-4">
       <div>
         <h1 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           System Dashboard
@@ -162,7 +162,7 @@ export function AdminSystemDashboardPage() {
         type="button"
         onClick={handleSystemPdfExport}
         aria-label="Export System Analytics and Audit Report as PDF"
-        className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
       >
         <Download className="size-3.5" aria-hidden="true" />
         PDF EXPORT
