@@ -296,115 +296,51 @@ export function AdminSecurityAuditPage() {
       ) : (
         <>
           <div className="mb-5 flex flex-col gap-5">
-        <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-start lg:justify-between">
-          <div className="flex flex-col gap-3 lg:flex-col-reverse lg:items-end">
-            <div className="relative min-w-0 flex-1 lg:w-80">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search action, Employee ID, or Log ID"
-                className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary"
-              />
-            </div>
-
-            <div className="flex flex-nowrap items-center gap-2">
-            <div className="flex h-9 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                aria-label="From date"
-                className="h-9 w-[9.5rem] shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary"
-              />
-            </div>
-            <div className="flex h-9 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider">To:</span>
-              <input
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                aria-label="To date"
-                className="h-9 w-[9.5rem] shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary"
-              />
-            </div>
-            {(fromDate || toDate) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setFromDate('')
-                  setToDate('')
-                }}
-                className="text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground underline px-1"
-              >
-                Clear
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={downloadPdf}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
-            >
-              <Download className="size-3.5" aria-hidden="true" />
-              Download PDF
-            </button>
+            <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-start lg:justify-between">
+              <div className="flex flex-col gap-3 lg:flex-col-reverse lg:items-end">
+                <div className="relative min-w-0 flex-1 lg:w-80">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search action, Employee ID, or Log ID"
+                    className="w-full max-md:text-base rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary"
+                  />
+                </div>
+                <div className="grid gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-3 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
+                  <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
+                    <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
+                    <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} aria-label="From date" className="h-9 w-full max-md:min-w-0 max-md:text-base lg:w-[9.5rem] lg:shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary" />
+                  </div>
+                  <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
+                    <span className="text-[0.6rem] font-bold uppercase tracking-wider">To:</span>
+                    <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} aria-label="To date" className="h-9 w-full max-md:min-w-0 max-md:text-base lg:w-[9.5rem] lg:shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary" />
+                  </div>
+                  {(fromDate || toDate) && <button type="button" onClick={() => { setFromDate(''); setToDate('') }} className="col-span-2 text-right text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground underline hover:text-foreground">Clear</button>}
+                  <button type="button" onClick={downloadPdf} className="col-span-2 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90 lg:w-auto">
+                    <Download className="size-3.5" aria-hidden="true" />Download PDF
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 max-md:grid max-md:grid-cols-3 max-md:gap-2 lg:flex-row lg:flex-wrap lg:items-center">
+                  <span className="mr-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Status</span>
+                  {STATUS_FILTERS.map((s) => <button key={s} type="button" onClick={() => setStatus(s)} aria-pressed={status === s} className={cn('rounded-full border px-3.5 py-1.5 text-xs font-semibold transition max-md:w-full max-md:justify-center max-md:px-2 max-md:whitespace-nowrap', status === s ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground')}>{s}</button>)}
+                </div>
+                <div className="flex flex-col gap-2 max-md:grid max-md:grid-cols-3 max-md:gap-2 lg:flex-row lg:flex-wrap lg:items-center">
+                  <span className="mr-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Account</span>
+                  {ACCOUNT_FILTERS.map((a) => <button key={a} type="button" onClick={() => setAccount(a)} aria-pressed={account === a} className={cn('rounded-full border px-3.5 py-1.5 text-xs font-semibold transition max-md:w-full max-md:justify-center max-md:px-2 max-md:whitespace-nowrap', account === a ? 'border-foreground bg-foreground text-background' : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground')}>{getRoleLabel(a)}</button>)}
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Status
-            </span>
-            {STATUS_FILTERS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setStatus(s)}
-                aria-pressed={status === s}
-                className={cn(
-                  'rounded-full border px-3.5 py-1.5 text-xs font-semibold transition',
-                  status === s
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground',
-                )}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Account
-            </span>
-            {ACCOUNT_FILTERS.map((a) => (
-              <button
-                key={a}
-                type="button"
-                onClick={() => setAccount(a)}
-                aria-pressed={account === a}
-                className={cn(
-                  'rounded-full border px-3.5 py-1.5 text-xs font-semibold transition',
-                  account === a
-                    ? 'border-foreground bg-foreground text-background'
-                    : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground',
-                )}
-              >
-{getRoleLabel(a)}
-  </button>
-            ))}
-          </div>
-          </div>
-        </div>
-      </div>
 
       <p className="mb-4 text-xs text-muted-foreground">
         Showing {rows.length} of {SECURITY_AUDIT_LOG.length} security events. Click a row to reveal
         raw IP, terminal, and token metadata.
       </p>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="max-md:hidden overflow-hidden rounded-xl border border-border bg-card">
         {/* This div is the scroll container for BOTH axes (a lone `overflow-x-auto` computes
             `overflow-y: auto` too per the CSS spec, which would silently create a second,
             non-scrolling ancestor and break `position: sticky` on the thead below). Giving it
@@ -518,6 +454,31 @@ export function AdminSecurityAuditPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="md:hidden flex flex-col gap-3">
+        {rows.length === 0 ? (
+          <EmptyState title="No audit entries found" message="No security events match your search query, status, or role filters." />
+        ) : rows.map((entry) => {
+          const open = expanded === entry.id
+          const toggle = () => setExpanded(open ? null : entry.id)
+          return (
+            <div key={entry.id} role="button" tabIndex={0} aria-expanded={open} onClick={toggle} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle() } }} className="rounded-xl border border-border bg-card p-3.5">
+              <div className="flex items-start justify-between gap-3">
+                <div><p className="text-sm font-bold text-card-foreground">{entry.timestamp}</p><p className="text-xs text-muted-foreground">{entry.date}</p></div>
+                <span className={cn('inline-block rounded-full px-2.5 py-1 text-[0.55rem] font-bold uppercase tracking-[0.1em]', statusStyles[entry.status])}>{entry.status}</span>
+              </div>
+              <p className="mt-3 text-sm font-medium text-card-foreground">{entry.action}</p>
+              <div className="mt-3 flex items-center gap-2">
+                <span className={cn('rounded px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.1em]', roleStyles[entry.role])}>{getRoleLabel(entry.role)}</span>
+                <span className="text-xs font-semibold text-card-foreground">{entry.employeeId}</span>
+                <span className="text-[0.65rem] text-muted-foreground">{entry.logId}</span>
+                <ChevronDown className={cn('ml-auto size-4 text-muted-foreground transition-transform', open && 'rotate-180')} aria-hidden="true" />
+              </div>
+              {open && <div className="mt-3 border-t border-border/60 pt-3"><div className="grid grid-cols-1 gap-3"><MetaField label="IP Address" value={entry.ip} /><MetaField label="Terminal" value={entry.terminal} /><MetaField label="Session Token" value={entry.token} /></div><p className="mt-4 text-xs leading-relaxed text-muted-foreground">{entry.note}</p></div>}
+            </div>
+          )
+        })}
       </div>
         </>
       )}

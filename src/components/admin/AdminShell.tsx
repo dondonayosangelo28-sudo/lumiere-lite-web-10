@@ -30,7 +30,7 @@ export function AdminShell({ activeId, onSelect, stickyHeader, children }: Admin
     <div className="flex min-h-[100dvh] flex-col bg-background sm:fixed sm:inset-0 sm:h-auto sm:flex-row">
       <AdminRail activeId={activeId} onSelect={onSelect} />
 
-      <div className="flex min-w-0 flex-1 flex-col sm:min-h-0">
+      <div className="flex min-w-0 flex-1 flex-col max-md:w-full max-md:min-w-0 sm:min-h-0">
         <AdminTopBar onOpenMenu={() => setMobileNavOpen(true)} />
 
         {/* Mobile uses normal document scrolling; desktop keeps the content scroller. */}
