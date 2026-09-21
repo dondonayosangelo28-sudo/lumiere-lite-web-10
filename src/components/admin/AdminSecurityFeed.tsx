@@ -41,7 +41,7 @@ export function AdminSecurityFeed({ onSystemLogs }: AdminSecurityFeedProps) {
         Live Security Feed
       </h2>
 
-      <div className="mt-4 min-h-0 flex-1 overflow-y-auto">
+      <div className="mt-4 min-h-0 flex-1 overflow-y-auto max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden">
         {feedEvents.length === 0 ? (
           <p className="text-sm italic text-muted-foreground">No recent security events.</p>
         ) : (

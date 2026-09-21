@@ -34,7 +34,7 @@ export function AdminShell({ activeId, onSelect, stickyHeader, children }: Admin
         <AdminTopBar onOpenMenu={() => setMobileNavOpen(true)} />
 
         {/* Mobile uses normal document scrolling; desktop keeps the content scroller. */}
-        <div className="flex-1 overflow-x-hidden overflow-visible pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] max-sm:overflow-visible sm:min-h-0 sm:overflow-y-auto sm:pb-0">
+        <div className="flex-1 overflow-x-hidden overflow-visible pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] max-sm:overflow-visible max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden sm:min-h-0 sm:overflow-y-auto sm:pb-0">
           {stickyHeader && (
             <div className="sticky top-0 z-20 border-b border-border bg-background/95 px-5 py-6 backdrop-blur max-sm:top-0 max-sm:px-3 max-sm:pt-3 max-sm:pb-[19px] sm:px-8">
               {stickyHeader}

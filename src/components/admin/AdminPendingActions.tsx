@@ -20,7 +20,7 @@ export function AdminPendingActions({
 }: AdminPendingActionsProps) {
   const isEmpty = items.length === 0
   return (
-    <section className="flex max-h-[24rem] w-full flex-col rounded-xl border border-border bg-card p-5 text-card-foreground">
+    <section className="flex max-h-[24rem] w-full flex-col rounded-xl border border-border bg-card p-5 text-card-foreground max-md:max-h-none">
       <h2 className="shrink-0 font-serif text-2xl font-medium leading-tight text-card-foreground text-balance sm:text-3xl">
         Pending Actions
       </h2>
@@ -30,7 +30,7 @@ export function AdminPendingActions({
           No pending actions — all clear.
         </p>
       ) : (
-        <ul className="mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <ul className="mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto max-md:overflow-visible">
           {items.map((item) => {
             const isForgot = item.type === 'forgot-password'
             const completed = item.status === 'completed'
