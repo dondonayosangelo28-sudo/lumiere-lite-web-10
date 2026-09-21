@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { X, Eye, EyeOff } from 'lucide-react'
 import { STAFF_ROLES, type Staff } from '@/lib/types'
+import { getRoleLabel } from '@/lib/role-labels'
 
 interface Props {
   open: boolean
@@ -168,7 +169,7 @@ export function ViewAccountModal({
                   ))}
                 </select>
               ) : (
-                readField(staff.role)
+                readField(getRoleLabel(staff.role))
               )}
             </div>
 

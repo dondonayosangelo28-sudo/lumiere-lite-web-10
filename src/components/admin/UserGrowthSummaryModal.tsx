@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, ChevronLeft, ChevronRight, TrendingUp, X } from 'lucide-react'
 import type { Staff } from '@/lib/types'
+import { getRoleLabel } from '@/lib/role-labels'
 
 interface Props {
   open: boolean
@@ -171,7 +172,7 @@ export function UserGrowthSummaryModal({ open, staff, onClose, onViewInWorkforce
                           {s.firstName} {s.surname}
                         </p>
                         <p className="truncate text-[0.7rem] text-muted-foreground">
-                          {s.role} · {s.dateAdded}
+                          {getRoleLabel(s.role)} · {s.dateAdded}
                         </p>
                       </div>
                       <span className="flex shrink-0 items-center gap-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-primary">

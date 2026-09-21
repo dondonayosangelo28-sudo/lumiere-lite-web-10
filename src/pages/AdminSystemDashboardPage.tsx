@@ -98,11 +98,11 @@ export function AdminSystemDashboardPage() {
   ).length
 
   const roleCounts = useMemo(() => {
-    const tally: Record<string, number> = { Admin: 0, Executive: 0, WOM: 0 }
+    const tally: Record<string, number> = { Admin: 0, Executive: 0, Warehouse: 0 }
     staff.forEach((s) => {
       const seg = s.recordKind === 'employee-record'
         ? s.employmentType
-        : s.role === 'Warehouse Manager' || s.role === 'WOM (Warehouse Operations Manager)' ? 'WOM' : s.role
+        : s.role === 'Warehouse Manager' || s.role === 'WOM (Warehouse Operations Manager)' || s.role === 'WOM' ? 'Warehouse' : s.role
       if (seg && seg in tally) tally[seg] += 1
     })
     return tally

@@ -37,7 +37,7 @@ function MetricCard({ label, value, caption, accent }: MetricCardProps) {
 const ROLE_SEGMENTS = [
   { label: 'Admin', color: 'text-emerald-500', dot: 'bg-emerald-500' },
   { label: 'Executive', color: 'text-sky-500', dot: 'bg-sky-500' },
-  { label: 'WOM', color: 'text-amber-500', dot: 'bg-amber-500' },
+  { label: 'Warehouse', color: 'text-amber-500', dot: 'bg-amber-500' },
 ]
 
 function UserDistributionChart({ counts }: { counts: Record<string, number> }) {
@@ -99,8 +99,8 @@ function UserDistributionChart({ counts }: { counts: Record<string, number> }) {
 
 // Map a staff role onto the donut segment label it belongs to.
 function roleToSegment(role: string): string {
-  if (role === 'Admin' || role === 'Executive' || role === 'WOM') return role
-  return 'WOM'
+  if (role === 'Admin' || role === 'Executive') return role
+  return 'Warehouse'
 }
 
 export function OverviewPage() {

@@ -79,7 +79,7 @@ export function WarehouseHomePage() {
         </div>
       </main>
 
-        {/* WOM Input Summary Modal */}
+        {/* Warehouse Input Summary Modal */}
         {summaryEvent && (
           <WomInputSummaryModal
             event={summaryEvent}

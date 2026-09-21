@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import type { AdminDestinationId } from '@/lib/admin-destinations'
 import { SECURITY_EVENTS } from '@/lib/security-events'
 import { downloadPdfReport } from '@/lib/pdf-report'
+import { getRoleLabel } from '@/lib/role-labels'
 
 /* ----------------------------- Domain ----------------------------- */
 
@@ -389,8 +390,8 @@ export function AdminSecurityAuditPage() {
                     : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground',
                 )}
               >
-                {a}
-              </button>
+{getRoleLabel(a)}
+  </button>
             ))}
           </div>
         </div>
@@ -463,8 +464,8 @@ export function AdminSecurityAuditPage() {
                               roleStyles[entry.role],
                             )}
                           >
-                            {entry.role}
-                          </span>
+{getRoleLabel(entry.role)}
+  </span>
                         </td>
                         <td className="max-w-md px-4 py-4 text-xs font-medium text-card-foreground">
                           {entry.action}

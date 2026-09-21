@@ -43,7 +43,7 @@ interface ManningSlaModuleProps {
 
 export function ManningSlaModule({ onClose }: ManningSlaModuleProps) {
   const { adminName, adminEmail } = useAuth()
-  const actor = adminName || adminEmail || 'WOM'
+  const actor = adminName || adminEmail || 'Warehouse'
   const { assignments, tasks, warnings, loading, error, reload } = useManningData()
   const declarations = useGroundCrewDeclarations()
   const [tab, setTab] = useState<Tab>('assignments')

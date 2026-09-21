@@ -726,7 +726,7 @@ const seedLogs: ActivityLog[] = [
 
 const seedUserActions: UserAction[] = [
   // Each row points at a real active application account and roster member
-  // (see seedStaff above) using only Admin, Executive, or WOM account types.
+  // (see seedStaff above) using only Admin, Executive, or Warehouse account types.
   {
     id: 'ua-1',
     type: 'account-locked',
@@ -2118,7 +2118,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
                 account: 'SYS-ROOT',
                 initiatorRole,
                 action: 'Damage Exception Second Sign-off Rejected',
-                detail: `Exception ${i.logId}: ${signOff.staffName} attempted to provide both sign-offs — rejected. A different qualifying WOM user is required.`,
+                detail: `Exception ${i.logId}: ${signOff.staffName} attempted to provide both sign-offs — rejected. A different qualifying Warehouse user is required.`,
                 ip: randomIp(),
                 status: 'Flagged',
               })

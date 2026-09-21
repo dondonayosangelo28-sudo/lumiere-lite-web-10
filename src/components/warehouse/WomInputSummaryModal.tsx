@@ -99,7 +99,7 @@ export function WomInputSummaryModal({ event, onClose, onOpenFullDetail }: WomIn
           <div>
             <div className="flex items-center gap-2">
               <span className="rounded bg-primary/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary">
-                WOM Input Summary
+                Warehouse Input Summary
               </span>
               <span className="text-[0.65rem] font-semibold text-muted-foreground">{execRegistry.registryRef}</span>
             </div>

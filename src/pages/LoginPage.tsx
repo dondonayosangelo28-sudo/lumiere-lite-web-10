@@ -258,8 +258,8 @@ function DemoAccounts() {
       <div className="mt-3 space-y-1.5 font-mono text-[0.7rem] leading-relaxed">
         <p>Admin · admin@lumiere.com — lumiere2026</p>
         <p>Executive · executive@lumiere.com — lumiere2026</p>
-        <p>WOM · warehouseops@lumiere.com — lumiere2026</p>
-        <p className="pt-1 text-muted-foreground/70">WOM manages purchasing, inventory, and replenishments.</p>
+        <p>Warehouse · warehouseops@lumiere.com — lumiere2026</p>
+        <p className="pt-1 text-muted-foreground/70">Warehouse manages purchasing, inventory, and replenishments.</p>
       </div>
     </details>
   )

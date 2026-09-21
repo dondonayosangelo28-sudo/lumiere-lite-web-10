@@ -1,4 +1,5 @@
 import { KeyRound, Lock } from 'lucide-react'
+import { getRoleLabel } from '@/lib/role-labels'
 import { cn } from '@/lib/utils'
 import type { UserAction } from '@/lib/types'
 
@@ -54,7 +55,7 @@ export function AdminPendingActions({
                       <p className="text-xs font-semibold text-card-foreground">{title}</p>
                       {item.accountType && (
                         <span className="inline-flex items-center rounded-full border border-border bg-muted px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
-                          {item.accountType}
+                          {getRoleLabel(item.accountType)}
                         </span>
                       )}
                     </div>

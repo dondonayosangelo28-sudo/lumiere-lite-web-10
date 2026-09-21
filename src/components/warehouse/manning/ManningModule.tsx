@@ -62,7 +62,7 @@ interface ManningModuleProps {
 export function ManningModule({ onClose }: ManningModuleProps) {
   const { staff, events } = usePortal()
   const { adminName, adminEmail } = useAuth()
-  const actor = adminName || adminEmail || 'WOM'
+  const actor = adminName || adminEmail || 'Warehouse'
 
   // Shared Crew Data
   const crewRows = useCrewRows(staff, events)

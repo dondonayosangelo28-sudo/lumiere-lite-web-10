@@ -53,7 +53,7 @@ namespace Lumiere.Infrastructure.Data
             {
                 ("admin@lumiere.com", "Admin User", "Admin"),
                 ("executive@lumiere.com", "Executive User", "Executive"),
-                ("warehouseops@lumiere.com", "WOM User", "WOM")
+                ("warehouseops@lumiere.com", "Warehouse User", "WOM")
             };
 
             var allRoles = await context.Roles.ToListAsync();

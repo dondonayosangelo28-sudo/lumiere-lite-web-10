@@ -83,7 +83,7 @@ export const STRUCTURAL_ROLES: StructuralRole[] = [
   },
   {
     id: 'wom',
-    name: 'WOM (Warehouse Operations Manager)',
+    name: 'Warehouse Operations Manager',
     scope: 'Inventory, replenishment & purchasing',
     description:
       'Manages warehouse operations across inventory, replenishment, and purchasing workflows.',

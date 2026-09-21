@@ -198,7 +198,7 @@ namespace Lumiere.Application.Services
 
                         if (firstSignerEmail.Equals(currentUserEmail, StringComparison.OrdinalIgnoreCase))
                         {
-                            throw new InvalidOperationException("Second sign-off must be performed by a distinct WOM user account.");
+                            throw new InvalidOperationException("Second sign-off must be performed by a distinct Warehouse user account.");
                         }
 
                         report.SecondSignOff = signOffJson;

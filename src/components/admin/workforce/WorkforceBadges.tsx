@@ -1,10 +1,12 @@
 import type { AccountStatus, StaffRole } from '@/lib/types'
+import { getRoleLabel } from '@/lib/role-labels'
 
 // Categorical role encoding. Subtle tints keep the warm-neutral console intact
 // while still making each role scannable at a glance.
 const ROLE_STYLES: Record<string, string> = {
   Admin: 'bg-primary/15 text-primary border-primary/25',
   Executive: 'bg-amber-400/15 text-amber-700 dark:text-amber-300 border-amber-400/30',
+  WOM: 'bg-sky-400/15 text-sky-700 dark:text-sky-300 border-sky-400/30',
   'Warehouse Manager': 'bg-sky-400/15 text-sky-700 dark:text-sky-300 border-sky-400/30',
   'Event Planner': 'bg-violet-400/15 text-violet-700 dark:text-violet-300 border-violet-400/30',
   'Ground Crew': 'bg-emerald-400/15 text-emerald-700 dark:text-emerald-300 border-emerald-400/30',
@@ -17,7 +19,7 @@ export function RoleBadge({ role }: { role: StaffRole }) {
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.65rem] font-semibold ${style}`}
     >
-      {role}
+      {getRoleLabel(role)}
     </span>
   )
 }

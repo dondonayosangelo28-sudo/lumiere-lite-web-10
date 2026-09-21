@@ -24,7 +24,7 @@ interface IncidentReportingModuleProps {
 
 export function IncidentReportingModule({ onClose }: IncidentReportingModuleProps) {
   const { adminName, adminEmail } = useAuth()
-  const actor = adminName || adminEmail || 'WOM'
+  const actor = adminName || adminEmail || 'Warehouse'
   const { incidents, loading, error, reload } = useIncidentData()
   const [tab, setTab] = useState<Tab>('report')
   const [newIncidents, setNewIncidents] = useState<IncidentReport[]>([])
@@ -33,7 +33,7 @@ export function IncidentReportingModule({ onClose }: IncidentReportingModuleProp
     return [...newIncidents.filter((incident) => !existingIds.has(incident.id)), ...incidents]
   }, [incidents, newIncidents])
 
-  // PIN gate for the WOM review queue (default 246810, stored in manning_settings).
+  // PIN gate for the Warehouse review queue (default 246810, stored in manning_settings).
   const [unlocked, setUnlocked] = useState(false)
 
   const stats = useMemo(
@@ -54,7 +54,7 @@ export function IncidentReportingModule({ onClose }: IncidentReportingModuleProp
             <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
             <h1 className="mt-1 font-serif text-2xl font-medium text-foreground">Incident Reporting</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Crews file incidents; the WOM reviews and resolves them behind a PIN-gated queue.
+              Crews file incidents; the Warehouse team reviews and resolves them behind a PIN-gated queue.
             </p>
           </div>
           <button
@@ -90,7 +90,7 @@ export function IncidentReportingModule({ onClose }: IncidentReportingModuleProp
           {(
             [
               { id: 'report', label: 'File Report', icon: Plus },
-              { id: 'queue', label: 'WOM Review Queue', icon: ShieldCheck },
+              { id: 'queue', label: 'Warehouse Review Queue', icon: ShieldCheck },
             ] as const
           ).map((t) => (
             <button
@@ -201,7 +201,7 @@ function ReportForm({ actor, onFiled }: { actor: string; onFiled: (created: Inci
         <div className="mb-5 flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-4 py-3 text-sm text-primary">
           <ShieldCheck className="size-4 shrink-0" />
           <span>
-            Incident <strong>{filed}</strong> filed and routed to the WOM review queue.
+            Incident <strong>{filed}</strong> filed and routed to the Warehouse review queue.
           </span>
         </div>
       )}
@@ -339,7 +339,7 @@ function PinGate({ onUnlock, onCancel }: { onUnlock: () => void; onCancel?: () =
       <span className="mx-auto flex size-12 items-center justify-center rounded-lg bg-primary/15 text-primary">
         <Lock className="size-6" aria-hidden="true" />
       </span>
-      <p className="mt-4 text-sm font-semibold text-card-foreground">WOM review queue locked</p>
+      <p className="mt-4 text-sm font-semibold text-card-foreground">Warehouse review queue locked</p>
       <p className="mt-1 text-sm text-muted-foreground">Enter the manning review PIN to view and action reports.</p>
       <input
         value={pin}
