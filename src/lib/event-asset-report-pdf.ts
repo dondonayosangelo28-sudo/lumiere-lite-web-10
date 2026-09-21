@@ -13,7 +13,7 @@ const DOCX_SPEC = {
   headings: { before: 19.5, after: 6, bottomBorderColor: '#D9CBAE', bottomBorderWidth: 0.55 },
   infoGrid: { columns: [125.5, 125.5, 125.5, 125.5], rowHeight: 39, cellMargins: 7, shading: '#F7F0E6', borderColor: '#D9CBAE', borderWidth: 0.45, labelSize: 6.5, valueSize: 8 },
   stats: { columns: [83.666, 83.666, 83.666, 83.666, 83.666, 83.666], height: 42, numberSize: 17, labelSize: 5.8, shading: '#F7F0E6', borderColor: '#D9CBAE', borderWidth: 0.45 },
-  assets: { columns: [140, 76, 45, 45, 45, 45, 38, 68], headerHeight: 21, rowHeight: 25, headerFill: '#8B6F47', headerSize: 8, bodySize: 12, cellMargins: 7, borderColor: '#D9CBAE', borderWidth: 0.45, statusSize: 12 },
+  assets: { columns: [140, 76, 45, 45, 45, 45, 38, 68], headerHeight: 21, rowHeight: 25, headerFill: '#8B6F47', headerSize: 8, bodySize: 10, cellMargins: 7, borderColor: '#D9CBAE', borderWidth: 0.45, statusSize: 10 },
   overview: { size: 8.5, color: '#2B211A', lineSpacing: 11, italic: true },
   footer: { size: 7, color: '#6E6153', hairlineWidth: 0.55 },
 } as const
