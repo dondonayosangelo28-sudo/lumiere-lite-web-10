@@ -30,19 +30,7 @@ const SAMPLE_REPORT_DATA: ReportData = {
 function rgb(hex: string): [number, number, number] { const n = Number.parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255] }
 function safeReference(ref: string) { return ref.replace(/[^A-Za-z0-9_-]/g, '_') || 'event' }
 function formatGeneratedAt(date = new Date()) { return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(date) }
-const REPORT_FONT_FILES = [
-  ['Carlito-Regular.ttf', new URL('../assets/fonts/Carlito-Regular.ttf', import.meta.url), 'Carlito', 'normal'],
-  ['Carlito-Bold.ttf', new URL('../assets/fonts/Carlito-Bold.ttf', import.meta.url), 'Carlito', 'bold'],
-  ['Carlito-Italic.ttf', new URL('../assets/fonts/Carlito-Italic.ttf', import.meta.url), 'Carlito', 'italic'],
-  ['Carlito-BoldItalic.ttf', new URL('../assets/fonts/Carlito-BoldItalic.ttf', import.meta.url), 'Carlito', 'bolditalic'],
-  ['Caladea-Bold.ttf', new URL('../assets/fonts/Caladea-Bold.ttf', import.meta.url), 'Caladea', 'bold'],
-] as const
-type ReportFontData = [string, string, string, string]
-let reportFontsReady: Promise<ReportFontData[]> | undefined
-let reportFontsLoaded = false
-function toBase64(buffer: ArrayBuffer) { let binary = ''; const bytes = new Uint8Array(buffer); const chunkSize = 0x8000; for (let i = 0; i < bytes.length; i += chunkSize) binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize)); return btoa(binary) }
-function loadReportFonts(doc: jsPDF) { const fontPromise = reportFontsReady ?? (reportFontsReady = Promise.all(REPORT_FONT_FILES.map(async ([file, url, family, style]) => { const response = await fetch(url); if (!response.ok) throw new Error(`Unable to load ${file}`); return [file, toBase64(await response.arrayBuffer()), family, style] as ReportFontData })).catch(() => [] as ReportFontData[])); return fontPromise.then(fonts => { reportFontsLoaded = fonts.length > 0; fonts.forEach(([file, base64, family, style]) => { doc.addFileToVFS(file, base64); doc.addFont(file, family, style) }); return reportFontsLoaded }) }
-function text(doc: jsPDF, value: string, x: number, y: number, size: number, color: string, font = 'helvetica', style = 'normal', align: 'left' | 'center' | 'right' = 'left') { const family = font === 'times' ? (reportFontsLoaded ? 'Caladea' : 'times') : font === 'helvetica' ? (reportFontsLoaded ? 'Carlito' : 'helvetica') : font; const safeStyle = font === 'times' ? 'bold' : style; doc.setFont(family, safeStyle); doc.setFontSize(size); doc.setTextColor(...rgb(color)); doc.text(value, x, y, { align }) }
+function text(doc: jsPDF, value: string, x: number, y: number, size: number, color: string, font = 'helvetica', style = 'normal', align: 'left' | 'center' | 'right' = 'left') { doc.setFont(font, style); doc.setFontSize(size); doc.setTextColor(...rgb(color)); doc.text(value, x, y, { align }) }
 function heading(doc: jsPDF, label: string, y: number) { const match = label.match(/^(\d+\.)(.*)$/); if (match) { text(doc, match[1], 55, y, 10, DOCX_SPEC.colors.accent, 'helvetica', 'bold'); text(doc, match[2], 72, y, 10, DOCX_SPEC.colors.ink, 'helvetica', 'bold') } else text(doc, label, 55, y, 10, DOCX_SPEC.colors.ink, 'helvetica', 'bold'); doc.setDrawColor(...rgb(DOCX_SPEC.colors.ink)); doc.setLineWidth(DOCX_SPEC.headings.bottomBorderWidth); doc.line(55, y + 4, 557, y + 4) }
 function statusFor(row: AssetRow) { if (row.returned < row.deployed) return { label: 'DEFICIT', color: DOCX_SPEC.colors.red }; if (row.damaged || row.lost) return { label: 'REVIEW', color: DOCX_SPEC.colors.amber }; return { label: 'COMPLETE', color: DOCX_SPEC.colors.green } }
 function panel(doc: jsPDF, x: number, y: number, w: number, h: number) { doc.setFillColor(...rgb(DOCX_SPEC.colors.panel)); doc.setDrawColor(...rgb(DOCX_SPEC.colors.border)); doc.setLineWidth(0.45); doc.rect(x, y, w, h, 'FD') }
@@ -54,7 +42,7 @@ function footer(doc: jsPDF, ref: string) { const y = 742; doc.setDrawColor(...rg
 export async function exportEventAssetLogisticsReport(event: PortalEvent, isExecutive: boolean): Promise<void> {
   if (!isExecutive) return
   const data = { ...SAMPLE_REPORT_DATA, reference: event.refId || SAMPLE_REPORT_DATA.reference, title: event.title || SAMPLE_REPORT_DATA.title, generated: formatGeneratedAt() }
-  const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' }); await loadReportFonts(doc); const totals = data.rows.reduce((a, r) => ({ planned: a.planned + r.planned, deployed: a.deployed + r.deployed, returned: a.returned + r.returned, damaged: a.damaged + r.damaged, lost: a.lost + r.lost }), { planned: 0, deployed: 0, returned: 0, damaged: 0, lost: 0 }); const pending = Math.max(totals.planned - totals.deployed, 0); let y = 57.5
+  const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' }); const totals = data.rows.reduce((a, r) => ({ planned: a.planned + r.planned, deployed: a.deployed + r.deployed, returned: a.returned + r.returned, damaged: a.damaged + r.damaged, lost: a.lost + r.lost }), { planned: 0, deployed: 0, returned: 0, damaged: 0, lost: 0 }); const pending = Math.max(totals.planned - totals.deployed, 0); let y = 57.5
   const newPage = () => { footer(doc, data.reference); doc.addPage(); y = 57.5 }
   const ensure = (height: number) => { if (y + height > 720) newPage() }
   text(doc, 'LUMIÈRE', 306, y + 22, 28, DOCX_SPEC.colors.accent, 'times', 'bold', 'center'); text(doc, 'EVENT ASSET & LOGISTICS REPORT', 306, y + 43, 10, DOCX_SPEC.colors.ink, 'helvetica', 'bold', 'center'); y += 56
