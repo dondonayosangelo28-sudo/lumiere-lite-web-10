@@ -263,16 +263,8 @@ export function AdminSecurityAuditPage() {
         A read-only, cross-account trail of security and access events — logins, lockouts,
         permission requests, and password resets.
       </p>
-      <div className="relative z-10 mt-4 border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 md:hidden">
-        <SearchAndDateFilters
-          query={query}
-          onQueryChange={setQuery}
-          fromDate={fromDate}
-          toDate={toDate}
-          onFromDateChange={setFromDate}
-          onToDateChange={setToDate}
-          dateError={dateError}
-        />
+      <div className="sticky top-0 z-20 mt-4 border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 max-md:py-2 md:hidden">
+        <SearchFilter query={query} onQueryChange={setQuery} />
       </div>
     </div>
   )
@@ -309,6 +301,15 @@ export function AdminSecurityAuditPage() {
       ) : (
         <>
           <div className="mb-5 flex flex-col gap-5">
+            <div className="max-md:static max-md:mt-4 md:hidden">
+              <DateFilters
+                fromDate={fromDate}
+                toDate={toDate}
+                onFromDateChange={setFromDate}
+                onToDateChange={setToDate}
+                dateError={dateError}
+              />
+            </div>
             <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-start lg:justify-between">
               <div className="flex flex-col gap-3 lg:flex-col-reverse lg:items-end">
                 <div className="max-md:hidden">
@@ -500,26 +501,23 @@ interface SearchAndDateFiltersProps {
   dateError: string
 }
 
-function SearchAndDateFilters({
-  query,
-  onQueryChange,
-  fromDate,
-  toDate,
-  onFromDateChange,
-  onToDateChange,
-  dateError,
-}: SearchAndDateFiltersProps) {
+function SearchFilter({ query, onQueryChange }: Pick<SearchAndDateFiltersProps, 'query' | 'onQueryChange'>) {
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
-      <div className="relative min-w-0 flex-1 lg:w-80">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
-          placeholder="Search action, Employee ID, or Log ID"
-          className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:text-base"
-        />
-      </div>
+    <div className="relative min-w-0 flex-1 lg:w-80">
+      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <input
+        value={query}
+        onChange={(event) => onQueryChange(event.target.value)}
+        placeholder="Search action, Employee ID, or Log ID"
+        className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:text-base"
+      />
+    </div>
+  )
+}
+
+function DateFilters({ fromDate, toDate, onFromDateChange, onToDateChange, dateError }: Pick<SearchAndDateFiltersProps, 'fromDate' | 'toDate' | 'onFromDateChange' | 'onToDateChange' | 'dateError'>) {
+  return (
+    <>
       <div className="grid gap-3 max-md:grid-cols-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
         <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
           <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
@@ -532,6 +530,21 @@ function SearchAndDateFilters({
         {(fromDate || toDate) && <button type="button" onClick={() => { onFromDateChange(''); onToDateChange('') }} className="col-span-2 text-right text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground underline hover:text-foreground">Clear</button>}
       </div>
       {dateError && <p className="text-xs text-destructive" role="alert">{dateError}</p>}
+    </>
+  )
+}
+
+function SearchAndDateFilters(props: SearchAndDateFiltersProps) {
+  return (
+    <div className="flex flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
+      <SearchFilter query={props.query} onQueryChange={props.onQueryChange} />
+      <DateFilters
+        fromDate={props.fromDate}
+        toDate={props.toDate}
+        onFromDateChange={props.onFromDateChange}
+        onToDateChange={props.onToDateChange}
+        dateError={props.dateError}
+      />
     </div>
   )
 }
