@@ -34,7 +34,7 @@ export function AdminPendingActions({
   const isEmpty = items.length === 0 && subRoleSetups.length === 0
   return (
     <section className="flex h-[24rem] flex-col rounded-xl border border-border bg-card p-5 text-card-foreground">
-      <h2 className="shrink-0 font-serif text-2xl font-medium leading-tight text-sidebar-primary text-balance sm:text-3xl">
+      <h2 className="shrink-0 font-serif text-2xl font-medium leading-tight text-card-foreground text-balance sm:text-3xl">
         Pending Actions
       </h2>
 
@@ -47,7 +47,7 @@ export function AdminPendingActions({
           {subRoleSetups.map((setup) => (
             <li
               key={setup.id}
-              className="flex flex-col gap-2 border-t border-sidebar-border/50 py-2.5 first:border-t-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 border-t border-border py-2.5 first:border-t-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex min-w-0 items-start gap-2">
                 <ShieldQuestion
@@ -56,14 +56,14 @@ export function AdminPendingActions({
                 />
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <p className="text-xs font-semibold text-sidebar-primary">
+                    <p className="text-xs font-semibold text-card-foreground">
                       Sub-role &quot;{setup.name}&quot; needs permission configuration
                     </p>
-                    <span className="inline-flex items-center rounded-full border border-sidebar-border bg-sidebar-accent/40 px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.09em] text-sidebar-foreground/75">
+                    <span className="inline-flex items-center rounded-full border border-border bg-muted px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
                       {setup.parentName}
                     </span>
                   </div>
-                  <p className="mt-0.5 truncate text-[0.65rem] text-sidebar-foreground/65">
+                  <p className="mt-0.5 truncate text-[0.65rem] text-muted-foreground">
                     No permission levels have been saved yet
                   </p>
                 </div>
@@ -72,7 +72,7 @@ export function AdminPendingActions({
               <button
                 type="button"
                 onClick={() => onConfigureSubRole?.(setup)}
-                className="inline-flex w-full items-center justify-center rounded-md border border-sidebar-border px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-sidebar-primary transition-colors hover:bg-sidebar-accent sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-md border border-border px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-card-foreground transition-colors hover:bg-muted sm:w-auto"
               >
                 Configure
               </button>
@@ -87,7 +87,7 @@ export function AdminPendingActions({
             return (
               <li
                 key={item.id}
-                className="flex flex-col gap-2 border-t border-sidebar-border/50 py-2.5 first:border-t-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-2 border-t border-border py-2.5 first:border-t-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex min-w-0 items-start gap-2">
                   <Icon
@@ -99,28 +99,28 @@ export function AdminPendingActions({
                   />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <p className="text-xs font-semibold text-sidebar-primary">{title}</p>
+                      <p className="text-xs font-semibold text-card-foreground">{title}</p>
                       {item.accountType && (
-                        <span className="inline-flex items-center rounded-full border border-sidebar-border bg-sidebar-accent/40 px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.09em] text-sidebar-foreground/75">
+                        <span className="inline-flex items-center rounded-full border border-border bg-muted px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
                           {item.accountType}
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 truncate text-[0.65rem] text-sidebar-foreground/65">
+                    <p className="mt-0.5 truncate text-[0.65rem] text-muted-foreground">
                       {item.user}
                     </p>
                   </div>
                 </div>
 
                 {completed ? (
-                  <span className="inline-flex items-center gap-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-sidebar-foreground/40 sm:justify-end">
+                  <span className="inline-flex items-center gap-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground sm:justify-end">
                     <span aria-hidden="true">✓</span> Completed
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => onResolve(item)}
-                    className="inline-flex w-full items-center justify-center rounded-md border border-sidebar-border px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-sidebar-primary transition-colors hover:bg-sidebar-accent sm:w-auto"
+                    className="inline-flex w-full items-center justify-center rounded-md border border-border px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-card-foreground transition-colors hover:bg-muted sm:w-auto"
                   >
                     {actionLabel}
                   </button>
