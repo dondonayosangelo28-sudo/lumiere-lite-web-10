@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type Dispatch,
   type ReactNode,
@@ -14,6 +15,7 @@ import {
 } from 'react'
 import { STAFF_ROLES } from '@/lib/types'
 import { SECURITY_EVENTS } from '@/lib/security-events'
+import { DEMO_MODE } from '@/lib/demo-mode'
 import type {
   AccountStatus,
   ActivityLog,
@@ -1437,13 +1439,16 @@ const PortalContext = createContext<PortalContextValue | null>(null)
 export function PortalProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Staff[]>(seedStaff)
   const [events, setEvents] = useState<PortalEvent[]>(seedEvents)
+  const eventsHydrated = useRef(false)
 
   // Hydrate events list from backend REST API (GET /api/events)
   useEffect(() => {
     let active = true
     import('@/lib/eventsApi').then(({ fetchEventsApi }) => {
       fetchEventsApi().then((remoteEvents) => {
-        if (!active || !remoteEvents.length) return
+        if (!active) return
+        eventsHydrated.current = true
+        if (!remoteEvents.length) return
         // GET /api/events has no `client` field, so the mapper fills a
         // placeholder for every row. Preserve whatever client name is
         // already known locally (e.g. entered by a user) instead of
@@ -1461,6 +1466,11 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       active = false
     }
   }, [])
+
+  useEffect(() => {
+    if (!DEMO_MODE || !eventsHydrated.current || typeof window === 'undefined') return
+    window.localStorage.setItem('lumiere.demo.events', JSON.stringify(events))
+  }, [events])
 
   // Hydrate the staff directory from the database (portal_accounts is the source of truth).
   useEffect(() => {

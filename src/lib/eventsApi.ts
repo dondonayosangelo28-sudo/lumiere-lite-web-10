@@ -1,5 +1,19 @@
 import { API_BASE_URL, getAuthToken } from './apiConfig'
 import type { NewEventDraft, PortalEvent } from './types'
+import { DEMO_MODE } from './demo-mode'
+
+const DEMO_EVENTS_KEY = 'lumiere.demo.events'
+
+function readDemoEvents(): PortalEvent[] {
+  try {
+    const raw = localStorage.getItem(DEMO_EVENTS_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
 
 export interface EventResponseDto {
   id: string
@@ -82,6 +96,8 @@ export function mapEventResponseToPortalEvent(dto: EventResponseDto, index = 0):
  * Handles both plain Array and PaginatedList ({ items: [...] }) responses.
  */
 export async function fetchEventsApi(): Promise<PortalEvent[]> {
+  if (DEMO_MODE) return readDemoEvents()
+
   try {
     const res = await fetch(`${API_BASE_URL}/api/events?page=1&pageSize=100`, {
       headers: getAuthHeaders(),
@@ -108,6 +124,8 @@ export async function fetchEventsApi(): Promise<PortalEvent[]> {
  * Fetches a single event by ID from GET /api/events/{id}.
  */
 export async function fetchEventByIdApi(eventId: string): Promise<PortalEvent | null> {
+  if (DEMO_MODE) return readDemoEvents().find((event) => event.id === eventId) ?? null
+
   try {
     const res = await fetch(`${API_BASE_URL}/api/events/${encodeURIComponent(eventId)}`, {
       headers: getAuthHeaders(),
@@ -127,6 +145,10 @@ export async function fetchEventByIdApi(eventId: string): Promise<PortalEvent | 
 export async function createEventApi(
   draft: NewEventDraft,
 ): Promise<{ success: boolean; eventId?: string; error?: string }> {
+  if (DEMO_MODE) {
+    return { success: true, eventId: `demo-event-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }
+  }
+
   try {
     const token = getAuthToken()
     const dateOfEventIso = draft.targetDate

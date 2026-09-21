@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth'
 import { usePortal } from '@/lib/store'
 import { useDarkMode } from '@/lib/theme'
 import { NotificationsBell, type NotificationEntry } from '@/components/NotificationsBell'
+import { DemoModeBadge } from '@/components/DemoModeBadge'
 
 // Constant top bar for the Executive console: live date/time, the shared
 // notification bell (size="md", matching the Admin top-bar scale), and a
@@ -94,6 +95,7 @@ export function ExecutiveTopBar({ onOpenMenu }: ExecutiveTopBarProps) {
       </div>
 
       <div className="flex items-center gap-2">
+        <DemoModeBadge />
         <NotificationsBell notifications={notifications} size="md" />
 
         <div className="relative" ref={menuRef}>
