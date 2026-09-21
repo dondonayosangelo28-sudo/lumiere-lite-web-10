@@ -91,6 +91,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const { adminRole } = useAuth()
   const [draft, setDraft] = useState<NewEventDraft>(emptyDraft)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0, width: 0 })
   const [confirmOpen, setConfirmOpen] = useState(false)
   // Custom venues added on the fly via the "+ Add New Venue" option.
   const [customVenues, setCustomVenues] = useState<string[]>([])
@@ -102,6 +103,33 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const [assetQuantity, setAssetQuantity] = useState('1')
 
   const readOnly = mode === 'view'
+
+  useEffect(() => {
+    if (!open || !showCalendar) return
+
+    const updateCalendarPosition = () => {
+      const input = document.getElementById('ev-date')
+      if (!input) return
+      const rect = input.getBoundingClientRect()
+      const width = Math.min(352, window.innerWidth - 32)
+      const left = Math.min(rect.left, window.innerWidth - width - 16)
+      const estimatedHeight = 390
+      const opensAbove = rect.bottom + 8 + estimatedHeight > window.innerHeight && rect.top > estimatedHeight + 8
+      setCalendarPosition({
+        top: opensAbove ? rect.top - estimatedHeight - 8 : rect.bottom + 8,
+        left: Math.max(16, left),
+        width,
+      })
+    }
+
+    updateCalendarPosition()
+    window.addEventListener('resize', updateCalendarPosition)
+    window.addEventListener('scroll', updateCalendarPosition, true)
+    return () => {
+      window.removeEventListener('resize', updateCalendarPosition)
+      window.removeEventListener('scroll', updateCalendarPosition, true)
+    }
+  }, [open, showCalendar])
 
   useEffect(() => {
     if (!open) return
@@ -386,22 +414,43 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               )}
             </div>
 
-            <div>
+            <div className="relative">
               <label className={labelClass} htmlFor="ev-date">
-                  Event Date <span className="text-destructive">*</span>
-
+                Event Date <span className="text-destructive">*</span>
               </label>
               <button
                 id="ev-date"
                 type="button"
                 onClick={() => setShowCalendar((v) => !v)}
                 className={`${inputClass} flex items-center justify-between text-left`}
+                aria-expanded={showCalendar}
+                aria-controls={showCalendar ? 'event-date-calendar' : undefined}
               >
                 <span className={draft.targetDate ? 'text-foreground' : 'text-muted-foreground/60'}>
                   {draft.targetDate || 'Select a date'}
                 </span>
                 <CalendarDays className="size-4 text-muted-foreground" />
               </button>
+              {showCalendar && (
+                <div
+                  id="event-date-calendar"
+                  className="fixed z-[60]"
+                  style={{
+                    top: calendarPosition.top,
+                    left: calendarPosition.left,
+                    width: calendarPosition.width,
+                  }}
+                >
+                  <EventCalendar
+                    value={draft.targetDate}
+                    events={events}
+                    onSelect={(date) => {
+                      set('targetDate', date)
+                      setShowCalendar(false)
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -501,16 +550,6 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             </div>
 
-            {showCalendar && (
-              <EventCalendar
-                value={draft.targetDate}
-                events={events}
-                onSelect={(date) => {
-                  set('targetDate', date)
-                  setShowCalendar(false)
-                }}
-              />
-            )}
           </div>
 
           {/* Styling */}
