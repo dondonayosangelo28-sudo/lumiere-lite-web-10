@@ -10,6 +10,8 @@ export interface EventResponseDto {
   eventVenue?: string
   venue?: string
   ingressDate?: string
+  ingressTime?: string
+  fullStop?: string
   returnDate?: string
   geoClass?: string
   status?: string
@@ -71,6 +73,8 @@ export function mapEventResponseToPortalEvent(dto: EventResponseDto, index = 0):
     targetDate: eventDate,
     installationStart: dto.ingressDate ? dto.ingressDate.split('T')[0] : eventDate,
     installationEnd: dto.returnDate ? dto.returnDate.split('T')[0] : eventDate,
+    ingressTime: dto.ingressTime,
+    fullStop: dto.fullStop,
     budget: 0,
     status: (dto.status || 'In Production') as any,
     moodPlan: '',
@@ -141,10 +145,7 @@ export async function createEventApi(
       ? (draft.returnDate.includes('T') ? draft.returnDate : `${draft.returnDate}T00:00:00Z`)
       : dateOfEventIso
 
-    const formatTime = (t?: string, fallback = '08:00:00') => {
-      if (!t) return fallback
-      return t.length === 5 ? `${t}:00` : t
-    }
+    const formatTime = (t?: string) => t ? (t.length === 5 ? `${t}:00` : t) : ''
 
     const payload: CreateEventApiRequest = {
       eventName: draft.title,
@@ -152,8 +153,8 @@ export async function createEventApi(
       geoClass: (draft.geoClass === 'National' ? 'National' : 'Local') as 'Local' | 'National',
       dateOfEvent: dateOfEventIso,
       ingressDate: ingressDateIso,
-      ingressTime: formatTime(draft.ingressTime, '08:00:00'),
-      fullStop: formatTime(draft.fullStop, '23:00:00'),
+      ingressTime: formatTime(draft.ingressTime),
+      fullStop: formatTime(draft.fullStop),
       returnDate: returnDateIso,
       eventPegs: draft.eventPegs || undefined,
       colorPalette: draft.colorPalette || undefined,

@@ -159,6 +159,8 @@ export interface PortalEvent {
   targetDate: string
   installationStart: string
   installationEnd: string
+  ingressTime?: string
+  fullStop?: string
   budget: number
   status: EventStatus
   // 0–100. Provided by the backend when available; otherwise derived from status.

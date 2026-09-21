@@ -56,8 +56,8 @@ const emptyDraft: NewEventDraft = {
   moodPlan: '',
   geoClass: 'Local',
   ingressDate: '',
-  ingressTime: '08:00',
-  fullStop: '23:00',
+  ingressTime: '',
+  fullStop: '',
   returnDate: '',
   eventPegs: '',
   colorPalette: '',
@@ -169,8 +169,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         moodPlan: event.moodPlan ?? '',
         geoClass: 'Local',
         ingressDate: event.installationStart || event.targetDate,
-        ingressTime: '08:00',
-        fullStop: '23:00',
+        ingressTime: normalizeTimeFormat(event.ingressTime ?? ''),
+        fullStop: normalizeTimeFormat(event.fullStop ?? ''),
         returnDate: event.installationEnd || event.targetDate,
       })
     } else {
@@ -390,7 +390,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                     set('venue', e.target.value)
                   }}
                 >
-                  <option value="">Select an established estate...</option>
+                  <option value="" disabled hidden>Select an established estate…</option>
                   {venues.map((v) => (
                     <option key={v} value={v}>
                       {v}
@@ -512,7 +512,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                   id="ev-ingress-time"
                   type="time"
                   className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[14px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
-                  value={draft.ingressTime || '08:00'}
+                  value={draft.ingressTime || ''}
                   onChange={(e) => set('ingressTime', e.target.value)}
                 />
               </div>
@@ -524,7 +524,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                   id="ev-fullstop"
                   type="time"
                   className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[14px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
-                  value={draft.fullStop || '23:00'}
+                  value={draft.fullStop || ''}
                   onChange={(e) => set('fullStop', e.target.value)}
                 />
               </div>
