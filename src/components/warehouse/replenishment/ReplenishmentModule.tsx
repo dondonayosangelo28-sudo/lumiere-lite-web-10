@@ -236,7 +236,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search items or events…"
-                className="h-10 w-44 rounded-md border border-input bg-background pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                className="h-10 w-44 md:w-72 rounded-md border border-input bg-background pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
               />
             </div>
             <button
