@@ -476,27 +476,27 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </select>
             </div>
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid-cols-1 max-md:gap-4">
-              <div className="min-w-0">
-                <label className={labelClass} htmlFor="ev-ingress-date">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-3">
+              <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
+                <label className={`${labelClass} max-md:min-h-[2.25rem]`} htmlFor="ev-ingress-date">
                   Ingress Date <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-ingress-date"
                   type="date"
-                  className={inputClass}
+                  className={`${inputClass} max-md:min-w-0 max-md:w-full max-md:max-w-full max-md:px-2.5 max-md:text-xs max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.ingressDate || (draft.targetDate ? draft.targetDate : '')}
                   onChange={(e) => set('ingressDate', e.target.value)}
                 />
               </div>
-              <div className="min-w-0">
-                <label className={labelClass} htmlFor="ev-return-date">
+              <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
+                <label className={`${labelClass} max-md:min-h-[2.25rem]`} htmlFor="ev-return-date">
                   Egress / Return Date <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-return-date"
                   type="date"
-                  className={inputClass}
+                  className={`${inputClass} max-md:min-w-0 max-md:w-full max-md:max-w-full max-md:px-2.5 max-md:text-xs max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.returnDate || (draft.targetDate ? draft.targetDate : '')}
                   onChange={(e) => set('returnDate', e.target.value)}
                 />
