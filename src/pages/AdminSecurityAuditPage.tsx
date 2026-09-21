@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
-import { ChevronDown, Download, Search } from 'lucide-react'
+import { CalendarDays, ChevronDown, Download, Search } from 'lucide-react'
 import { AdminShell } from '@/components/admin/AdminShell'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { ErrorFallback } from '@/components/ErrorFallback'
@@ -520,18 +520,43 @@ function SearchAndDateFilters({
           className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:h-9 max-md:py-0 max-md:px-3 max-md:text-[13px] max-md:pl-9 max-md:truncate max-md:placeholder:whitespace-nowrap max-md:placeholder:text-ellipsis"
         />
       </div>
-      <div className="grid gap-3 max-md:grid max-md:grid-cols-1 max-md:gap-2 max-md:w-full max-md:min-w-0 max-md:pb-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
+      <div className="grid gap-3 max-md:grid max-md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] max-md:gap-2 max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:pb-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
         <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
-          <span className="text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">From:</span>
-          <input type="date" value={fromDate} onChange={(event) => onFromDateChange(event.target.value)} aria-label="From date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:block max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:h-9 max-md:px-3 max-md:text-[13px] max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-date-and-time-value]:min-h-[1.25em] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
+          <span className="whitespace-nowrap text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">From:</span>
+          <DateFilterField value={fromDate} onChange={onFromDateChange} ariaLabel="From date" />
         </div>
         <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
-          <span className="text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">To:</span>
-          <input type="date" value={toDate} onChange={(event) => onToDateChange(event.target.value)} aria-label="To date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:block max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:h-9 max-md:px-3 max-md:text-[13px] max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-date-and-time-value]:min-h-[1.25em] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
+          <span className="whitespace-nowrap text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">To:</span>
+          <DateFilterField value={toDate} onChange={onToDateChange} ariaLabel="To date" />
         </div>
         {(fromDate || toDate) && <button type="button" onClick={() => { onFromDateChange(''); onToDateChange('') }} className="col-span-2 text-right text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground underline hover:text-foreground">Clear</button>}
       </div>
       {dateError && <p className="text-xs text-destructive" role="alert">{dateError}</p>}
+    </div>
+  )
+}
+
+function formatAuditDate(value: string) {
+  if (!value) return 'mm/dd/yyyy'
+  const [year, month, day] = value.split('-')
+  const monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(month) - 1]
+  return monthName ? `${monthName} ${Number(day)}, ${year}` : 'mm/dd/yyyy'
+}
+
+function DateFilterField({ value, onChange, ariaLabel }: { value: string; onChange: (value: string) => void; ariaLabel: string }) {
+  return (
+    <div className="max-md:relative max-md:max-w-full max-md:min-w-0 max-md:h-9 max-md:w-full max-md:overflow-hidden max-md:rounded-md max-md:border max-md:border-input max-md:bg-background">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden items-center justify-between px-2.5 text-[13px] text-foreground md:hidden max-md:flex">
+        <span className={cn(!value && 'text-muted-foreground')}>{formatAuditDate(value)}</span>
+        <CalendarDays className="h-3.5 w-3.5 shrink-0 text-foreground" />
+      </div>
+      <input
+        type="date"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        aria-label={ariaLabel}
+        className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:absolute max-md:inset-0 max-md:h-full max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:border-0 max-md:bg-transparent max-md:px-2.5 max-md:py-0 max-md:text-[13px] max-md:opacity-0 lg:w-[9.5rem] lg:shrink-0"
+      />
     </div>
   )
 }
