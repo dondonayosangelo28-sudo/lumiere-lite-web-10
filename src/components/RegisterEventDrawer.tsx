@@ -257,10 +257,10 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         role="dialog"
         aria-modal="true"
         aria-label={mode === 'create' ? 'Register new event' : 'Event details'}
-        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:max-h-[calc(100dvh-2rem)] max-md:shadow-lg"
+        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:mb-[env(safe-area-inset-bottom)] max-md:max-h-[calc(100dvh-1.5rem)] max-md:shadow-lg"
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-border px-6 py-5 md:shrink-0">
+        <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-5 md:shrink-0">
           <div>
             <p className="text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               {mode === 'create'
@@ -318,7 +318,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         /* Body */
         <fieldset
           disabled={readOnly}
-          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90 max-md:max-h-[calc(100dvh-13rem)] md:flex-1 md:pb-6"
+          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90 max-md:flex-1 max-md:max-h-none max-md:pb-6 md:flex-1 md:pb-6"
         >
           {/* Core */}
           <div className="space-y-4">
@@ -433,27 +433,27 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             )}
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3 max-md:w-full max-md:min-w-0">
-              <div className="min-w-0 max-md:w-full max-md:max-w-full">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] max-md:items-end max-md:gap-3 max-md:w-full max-md:min-w-0 max-md:overflow-hidden">
+              <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-start">
                   Event Start Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-start"
                   type="time"
-                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
+                  className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[14px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.installationStart}
                   onChange={(e) => set('installationStart', e.target.value)}
                 />
               </div>
-              <div className="min-w-0 max-md:w-full max-md:max-w-full">
+              <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-end">
                   Event End Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-end"
                   type="time"
-                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
+                  className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[14px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.installationEnd}
                   onChange={(e) => set('installationEnd', e.target.value)}
                 />
@@ -478,52 +478,52 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
 
             <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-3 max-md:w-full max-md:min-w-0">
               <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={`${labelClass} max-md:min-h-[2.25rem] max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-ingress-date">
+                <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-ingress-date">
                   Ingress <span className="whitespace-nowrap">Date <span className="text-destructive">*</span></span>
                 </label>
                 <input
                   id="ev-ingress-date"
                   type="date"
-                  className={`${inputClass} max-md:min-w-0 max-md:w-full max-md:max-w-full max-md:px-2.5 max-md:text-xs max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
+                  className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[12px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.ingressDate || (draft.targetDate ? draft.targetDate : '')}
                   onChange={(e) => set('ingressDate', e.target.value)}
                 />
               </div>
               <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={`${labelClass} max-md:min-h-[2.25rem] max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-return-date">
+                <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-return-date">
                   Egress / Return <span className="whitespace-nowrap">Date <span className="text-destructive">*</span></span>
                 </label>
                 <input
                   id="ev-return-date"
                   type="date"
-                  className={`${inputClass} max-md:min-w-0 max-md:w-full max-md:max-w-full max-md:px-2.5 max-md:text-xs max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
+                  className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[12px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.returnDate || (draft.targetDate ? draft.targetDate : '')}
                   onChange={(e) => set('returnDate', e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3 max-md:w-full max-md:min-w-0">
-              <div className="min-w-0 max-md:w-full max-md:max-w-full">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] max-md:items-end max-md:gap-3 max-md:w-full max-md:min-w-0 max-md:overflow-hidden">
+              <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-ingress-time">
                   Ingress Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-ingress-time"
                   type="time"
-                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
+                  className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[14px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.ingressTime || '08:00'}
                   onChange={(e) => set('ingressTime', e.target.value)}
                 />
               </div>
-              <div className="min-w-0 max-md:w-full max-md:max-w-full">
+              <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-fullstop">
                   Full Stop Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-fullstop"
                   type="time"
-                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
+                  className={`${inputClass} max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:appearance-none max-md:[-webkit-appearance:none] max-md:px-3 max-md:text-[14px] max-md:[&::-webkit-date-and-time-value]:min-w-0 max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.fullStop || '23:00'}
                   onChange={(e) => set('fullStop', e.target.value)}
                 />
@@ -591,7 +591,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         )}
 
         {/* Footer */}
-        <div className="space-y-3 border-t border-border bg-card px-6 py-4 max-md:pb-[calc(1rem+env(safe-area-inset-bottom))] md:shrink-0 md:pt-4 md:pb-5 md:z-10">
+        <div className="shrink-0 space-y-3 border-t border-border bg-card px-6 py-4 max-md:px-4 max-md:pt-3 max-md:pb-[max(1rem,env(safe-area-inset-bottom))] md:shrink-0 md:pt-4 md:pb-5 md:z-10">
           {submitError && (
             <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
               {submitError}
