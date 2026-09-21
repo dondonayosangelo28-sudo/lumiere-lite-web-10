@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { cn } from '@/lib/utils'
 import { fetchAssetsApi } from '@/lib/assetKioskApi'
 import type { AssetResponse, AssetFilterParams } from '@/lib/assetKioskApi'
-import { createDeficitItemApi } from '@/lib/deficitApi'
+import { createDeficitItemApi, DeficitApiError } from '@/lib/deficitApi'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
 import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
@@ -130,11 +130,32 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
     setSubmitting(true)
     setError('')
     try {
-      const result = await createDeficitItemApi({ eventId, assetId: asset.id, quantityNeeded: qty })
-      if (!result) throw new Error('POST /api/deficit-queue failed')
+      const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+      if (!uuidPattern.test(eventId)) {
+        throw new Error('The selected event is not linked to a backend event record. Refresh events and try again.')
+      }
+      if (!uuidPattern.test(asset.id)) {
+        throw new Error('The selected asset is sample data and cannot create a backend deficit request.')
+      }
+      if (!Number.isInteger(qty) || qty < 1) {
+        throw new Error('Enter a whole-number quantity greater than zero.')
+      }
+      await createDeficitItemApi({
+        eventId,
+        assetId: asset.id,
+        assetDescription: asset.name,
+        quantityNeeded: qty,
+        category: asset.subTypeName,
+        currentStock: asset.quantity,
+        triggerSource: 'Executive Asset Allocation',
+      })
       setStep('done')
-    } catch {
-      setError('Failed to create deficit request. Check your connection and try again.')
+    } catch (error) {
+      if (error instanceof DeficitApiError) {
+        setError(`Could not create deficit request (HTTP ${error.status}). Verify the selected event, asset, and authorization.`)
+      } else {
+        setError(error instanceof Error ? error.message : 'Could not create deficit request.')
+      }
     } finally {
       setSubmitting(false)
     }
