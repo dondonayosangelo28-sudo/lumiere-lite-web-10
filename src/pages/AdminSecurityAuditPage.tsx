@@ -194,13 +194,6 @@ const roleStyles: Record<AccountType, string> = {
 
 const SECURITY_AUDIT_LOG = SECURITY_EVENTS
 
-function isValidFilterDate(value: string): boolean {
-  if (!value) return true
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
-  const date = new Date(`${value}T00:00:00`)
-  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
-}
-
 /* ----------------------------- Page ----------------------------- */
 
 export function AdminSecurityAuditPage() {
@@ -210,7 +203,6 @@ export function AdminSecurityAuditPage() {
   const [account, setAccount] = useState<AccountFilter>('All')
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
-  const [dateError, setDateError] = useState<'from' | 'to' | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
 
   const rows = useMemo(() => {
@@ -236,7 +228,7 @@ export function AdminSecurityAuditPage() {
   const downloadPdf = () => {
     let exportRows = rows
     if (fromDate) {
-      const fromTime = new Date(fromDate).getTime()
+      const fromTime = new Date(`${fromDate}T00:00:00`).getTime()
       exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() >= fromTime)
     }
     if (toDate) {
@@ -318,40 +310,27 @@ export function AdminSecurityAuditPage() {
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="flex flex-nowrap items-center gap-2">
+            <div className="flex h-9 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
               <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
               <input
                 type="date"
                 value={fromDate}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setFromDate(value)
-                  setDateError(isValidFilterDate(value) ? null : 'from')
-                }}
-                aria-label="From date, format YYYY-MM-DD"
-                aria-invalid={dateError === 'from'}
-                title="Type a date as YYYY-MM-DD or select one from the calendar"
-                className={`rounded-md border bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary ${dateError === 'from' ? 'border-destructive' : 'border-input'}`}
+                onChange={(e) => setFromDate(e.target.value)}
+                aria-label="From date"
+                className="h-9 w-[9.5rem] shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary"
               />
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex h-9 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
               <span className="text-[0.6rem] font-bold uppercase tracking-wider">To:</span>
               <input
                 type="date"
                 value={toDate}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setToDate(value)
-                  setDateError(isValidFilterDate(value) ? null : 'to')
-                }}
-                aria-label="To date, format YYYY-MM-DD"
-                aria-invalid={dateError === 'to'}
-                title="Type a date as YYYY-MM-DD or select one from the calendar"
-                className={`rounded-md border bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary ${dateError === 'to' ? 'border-destructive' : 'border-input'}`}
+                onChange={(e) => setToDate(e.target.value)}
+                aria-label="To date"
+                className="h-9 w-[9.5rem] shrink-0 rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary"
               />
             </div>
-            {dateError && <span className="basis-full text-[0.65rem] font-medium text-destructive">Use YYYY-MM-DD for dates.</span>}
             {(fromDate || toDate) && (
               <button
                 type="button"
