@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { cn } from '@/lib/utils'
 import { fetchAssetsApi } from '@/lib/assetKioskApi'
 import type { AssetResponse, AssetFilterParams } from '@/lib/assetKioskApi'
-import { createDeficitItemApi, DeficitApiError } from '@/lib/deficitApi'
+import { createDeficitItemApi } from '@/lib/deficitApi'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
 import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
@@ -94,11 +94,10 @@ type ProcureStep = 'quantity' | 'method' | 'confirming' | 'done'
 interface ProcureModalProps {
   asset: AssetResponse | null
   events: PortalEvent[]
-  isSampleAsset: boolean
   onClose: () => void
 }
 
-function ProcureModal({ asset, events, isSampleAsset, onClose }: ProcureModalProps) {
+function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
   const [step, setStep] = useState<ProcureStep>('quantity')
   const [qty, setQty] = useState(1)
   const [method, setMethod] = useState<'procure' | 'crossdock' | null>(null)
@@ -123,37 +122,23 @@ function ProcureModal({ asset, events, isSampleAsset, onClose }: ProcureModalPro
   const [submitting, setSubmitting] = useState(false)
 
   const handleConfirm = useCallback(async () => {
-  if (!asset || method !== 'procure') return
-  if (isSampleAsset) {
-  setError('Live asset data is required before creating a deficit request.')
-  return
-  }
-  const quantityNeeded = Number(qty)
-  if (!eventId) {
-  setError('Select the event this deficit is for.')
-  return
-  }
-  if (!asset.id || !Number.isInteger(quantityNeeded) || quantityNeeded <= 0) {
-  setError('Enter a valid quantity for the selected asset.')
-  return
-  }
-  setSubmitting(true)
-  setError('')
-  try {
-  const payload = { eventId, assetId: asset.id, quantityNeeded }
-  console.log('[v0] Confirm Procure payload:', payload)
-  await createDeficitItemApi(payload)
-  setStep('done')
-  } catch (error) {
-  const detail = error instanceof DeficitApiError
-    ? `${error.message}${error.responseBody ? ` — ${error.responseBody.slice(0, 240)}` : ''}`
-    : error instanceof Error ? error.message : String(error)
-  console.warn('[v0] Confirm Procure failed:', detail)
-  setError('Failed to create deficit request. Check your connection and try again.')
-  } finally {
+    if (!asset || method !== 'procure') return
+    if (!eventId) {
+      setError('Select the event this deficit is for.')
+      return
+    }
+    setSubmitting(true)
+    setError('')
+    try {
+      const result = await createDeficitItemApi({ eventId, assetId: asset.id, quantityNeeded: qty })
+      if (!result) throw new Error('POST /api/deficit-queue failed')
+      setStep('done')
+    } catch {
+      setError('Failed to create deficit request. Check your connection and try again.')
+    } finally {
       setSubmitting(false)
     }
-  }, [asset, eventId, isSampleAsset, method, qty])
+  }, [asset, method, qty, eventId])
 
   if (!asset) return null
 
@@ -702,11 +687,10 @@ export function AssetAllocationKioskPage() {
 
       {/* Procurement / crossdock step modal */}
       {selectedAsset && (
-  <ProcureModal
-  asset={selectedAsset}
-  events={events}
-  isSampleAsset={isSampleData}
-  onClose={() => setSelectedAsset(null)}
+        <ProcureModal
+          asset={selectedAsset}
+          events={events}
+          onClose={() => setSelectedAsset(null)}
         />
       )}
     </>
