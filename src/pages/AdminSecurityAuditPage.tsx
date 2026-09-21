@@ -224,9 +224,14 @@ export function AdminSecurityAuditPage() {
         entry.employeeId.toLowerCase().includes(q) ||
         entry.logId.toLowerCase().includes(q) ||
         entry.role.toLowerCase().includes(q)
-      return matchesStatus && matchesAccount && matchesQuery
+      const entryDate = new Date(entry.date)
+      const entryTime = entryDate.getTime()
+      const fromTime = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY
+      const toTime = toDate ? new Date(`${toDate}T00:00:00`).getTime() + 86400000 : Number.POSITIVE_INFINITY
+      const matchesDate = !Number.isNaN(entryTime) && entryTime >= fromTime && entryTime < toTime
+      return matchesStatus && matchesAccount && matchesQuery && matchesDate
     })
-  }, [query, status, account])
+  }, [query, status, account, fromDate, toDate])
 
   const downloadPdf = () => {
     let exportRows = rows
@@ -235,8 +240,8 @@ export function AdminSecurityAuditPage() {
       exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() >= fromTime)
     }
     if (toDate) {
-      const toTime = new Date(toDate).getTime() + 86400000
-      exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() <= toTime)
+      const toTime = new Date(`${toDate}T00:00:00`).getTime() + 86400000
+      exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() < toTime)
     }
     const range = fromDate || toDate ? `${fromDate || 'Beginning'} – ${toDate || 'Present'}` : 'All available records'
     downloadPdfReport({

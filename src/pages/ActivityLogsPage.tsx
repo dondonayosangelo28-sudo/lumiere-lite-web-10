@@ -49,9 +49,13 @@ export function ActivityLogsPage() {
         l.account.toLowerCase().includes(q) ||
         l.initiatorRole.toLowerCase().includes(q)
       const matchesStatus = statusFilter === 'All' || l.status === statusFilter
-      return matchesQuery && matchesStatus
+      const entryTime = new Date(l.date).getTime()
+      const fromTime = fromDate ? new Date(`${fromDate}T00:00:00`).getTime() : Number.NEGATIVE_INFINITY
+      const toTime = toDate ? new Date(`${toDate}T00:00:00`).getTime() + 86400000 : Number.POSITIVE_INFINITY
+      const matchesDate = !Number.isNaN(entryTime) && entryTime >= fromTime && entryTime < toTime
+      return matchesQuery && matchesStatus && matchesDate
     })
-  }, [logs, query, statusFilter, isSystemAudit])
+  }, [logs, query, statusFilter, isSystemAudit, fromDate, toDate])
 
   const downloadPdf = () => {
     let exportRows = filtered
@@ -60,8 +64,8 @@ export function ActivityLogsPage() {
       exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() >= fromTime)
     }
     if (toDate) {
-      const toTime = new Date(toDate).getTime() + 86400000
-      exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() <= toTime)
+      const toTime = new Date(`${toDate}T00:00:00`).getTime() + 86400000
+      exportRows = exportRows.filter((r) => new Date(r.date || r.timestamp).getTime() < toTime)
     }
     const range = fromDate || toDate ? `${fromDate || 'Beginning'} – ${toDate || 'Present'}` : 'All available records'
     downloadPdfReport({
