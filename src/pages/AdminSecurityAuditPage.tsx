@@ -297,7 +297,7 @@ export function AdminSecurityAuditPage() {
   }, [])
 
   return (
-    <AdminShell activeId="security-audit" onSelect={railSelect} stickyHeader={stickyHeader}>
+    <AdminShell activeId="security-audit" onSelect={railSelect} stickyHeader={stickyHeader} mobileStickyHeader={false}>
       {isError ? (
         <ErrorFallback
           title="Security Audit Trail Unavailable"
