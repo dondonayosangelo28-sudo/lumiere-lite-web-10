@@ -6,7 +6,6 @@ import { useDarkMode } from '@/lib/theme'
 import { NotificationsBell, type NotificationEntry } from '@/components/NotificationsBell'
 import { SECURITY_EVENTS, type SecurityEvent } from '@/lib/security-events'
 import { MaskedPinInput } from '@/components/admin/MaskedPinInput'
-import { DemoModeBadge } from '@/components/DemoModeBadge'
 
 const ADMIN_NOTIFICATIONS: NotificationEntry[] = [
   { id: 'admin-1', icon: ShieldAlert, color: 'text-destructive', text: 'A privileged account was locked after repeated sign-in failures.', time: '12 minutes ago', unread: true, destination: { route: 'workforce', intent: { kind: 'unlock-user' } } },
@@ -73,7 +72,6 @@ export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <DemoModeBadge />
         <NotificationsBell notifications={ADMIN_NOTIFICATIONS} size="md" />
 
         <div className="relative" ref={menuRef}>

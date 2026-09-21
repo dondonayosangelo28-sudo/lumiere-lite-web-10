@@ -5,7 +5,6 @@ import { useAuth } from '@/lib/auth'
 import { useDarkMode } from '@/lib/theme'
 import { NotificationsBell, type NotificationEntry } from '@/components/NotificationsBell'
 import { WarehouseMobileMenu } from '@/components/warehouse/WarehouseMobileMenu'
-import { DemoModeBadge } from '@/components/DemoModeBadge'
 import { getCatalogAssets, getLowStockAssets } from '@/lib/warehouse-catalog'
 import { getDispatchActivity } from '@/lib/warehouse-dispatch'
 import { useEffect, useRef, useState } from 'react'
@@ -76,7 +75,6 @@ export function WarehouseTopBar() {
         </p>
       </div>
       <div className="flex items-center gap-2">
-        <DemoModeBadge />
         <NotificationsBell notifications={notifications} size="md" />
         <div className="relative" ref={menuRef}>
           <button type="button" onClick={() => setMenuOpen((open) => !open)} aria-haspopup="menu" aria-expanded={menuOpen} aria-label="Account menu" className="flex size-10 items-center justify-center rounded-full border border-border bg-primary/15 text-primary transition-colors hover:bg-primary/25">

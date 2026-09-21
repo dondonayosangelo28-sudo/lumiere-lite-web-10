@@ -103,6 +103,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const [assetQuantity, setAssetQuantity] = useState('1')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [validationAttempted, setValidationAttempted] = useState(false)
 
   const readOnly = mode === 'view'
 
@@ -121,6 +122,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
     if (!open) return
     setActiveTab('details')
     setEditingAsset(null)
+    setValidationAttempted(false)
     if (event) {
       const catalog = getCatalogAssets().filter((asset) => (asset.currentStock ?? 0) > 0)
       const offset = event.id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % Math.max(catalog.length, 1)
@@ -191,6 +193,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
 
   const close = () => {
     setDraft(emptyDraft)
+    setValidationAttempted(false)
     setShowCalendar(false)
     setConfirmOpen(false)
     setAddingVenue(false)
@@ -211,6 +214,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   )
 
   const submit = async () => {
+    setValidationAttempted(true)
     if (!requiredFieldsComplete || isSubmitting) return
     setSubmitError('')
     setIsSubmitting(true)
@@ -594,7 +598,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               {submitError}
             </p>
           )}
-          {!readOnly && !requiredFieldsComplete && (
+          {!readOnly && validationAttempted && !requiredFieldsComplete && (
             <p role="status" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
               Required information missing: event title, client, venue, dates, and installation times must be completed.
             </p>
@@ -623,8 +627,11 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
           ) : (
             <button
               type="button"
-              onClick={() => setConfirmOpen(true)}
-              disabled={!requiredFieldsComplete || isSubmitting}
+              onClick={() => {
+                setValidationAttempted(true)
+                if (requiredFieldsComplete && !isSubmitting) setConfirmOpen(true)
+              }}
+              disabled={isSubmitting}
               className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting ? <Loader2 className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}

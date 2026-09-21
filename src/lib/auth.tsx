@@ -249,41 +249,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ): Promise<{ ok: boolean; reason?: 'wrong-portal' | 'invalid' }> => {
       const normalizedEmail = email.trim().toLowerCase()
 
-      if (!DEMO_MODE) {
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: normalizedEmail, password }),
-          })
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: normalizedEmail, password }),
+        })
 
-          if (res.ok) {
-            const data = (await res.json()) as { token: string; fullName: string; email: string; userId: string; role: string }
-            // Verification PINs are no longer required for any account.
-            const account = mapBackendUserToPortalAccount(data)
+        if (res.ok) {
+          const data = (await res.json()) as { token: string; fullName: string; email: string; userId: string; role: string }
+                  // Verification PINs are no longer required for any account.
+          const account = mapBackendUserToPortalAccount(data)
 
-            if (portal && account.portal !== portal) {
-              return { ok: false, reason: 'wrong-portal' }
-            }
-
-            setCurrentUser(account)
-            const storage = remember ? localStorage : sessionStorage
-            const otherStorage = remember ? sessionStorage : localStorage
-
-            otherStorage.removeItem('_lumiere_auth_user')
-            otherStorage.removeItem('_lumiere_auth_portal')
-            otherStorage.removeItem('_lumiere_auth_token')
-
-            storage.setItem('_lumiere_auth_user', JSON.stringify(account))
-            storage.setItem('_lumiere_auth_portal', account.portal)
-            if (data.token) {
-              storage.setItem('_lumiere_auth_token', data.token)
-            }
-            return { ok: true }
+          if (portal && account.portal !== portal) {
+            return { ok: false, reason: 'wrong-portal' }
           }
-        } catch (err) {
-          console.warn('[Auth] API endpoint unavailable, attempting demo fallback:', err?.message ?? String(err))
+
+          setCurrentUser(account)
+          const storage = remember ? localStorage : sessionStorage
+          const otherStorage = remember ? sessionStorage : localStorage
+
+          otherStorage.removeItem('_lumiere_auth_user')
+          otherStorage.removeItem('_lumiere_auth_portal')
+          otherStorage.removeItem('_lumiere_auth_token')
+
+          storage.setItem('_lumiere_auth_user', JSON.stringify(account))
+          storage.setItem('_lumiere_auth_portal', account.portal)
+          if (data.token) {
+            storage.setItem('_lumiere_auth_token', data.token)
+          }
+          return { ok: true }
         }
+      } catch (err) {
+        console.warn('[Auth] API endpoint unavailable, attempting demo fallback:', err?.message ?? String(err))
       }
 
       // Demo/Standalone fallback mode for standalone/static deployments (e.g., v0 preview)
