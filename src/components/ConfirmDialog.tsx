@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { AlertTriangle, ShieldCheck, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -26,6 +26,15 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  useEffect(() => {
+    if (!open || !window.matchMedia('(max-width: 767px)').matches) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open])
+
   if (!open) return null
 
   const destructive = tone === 'destructive'
@@ -33,18 +42,18 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:backdrop-blur-none"
       role="dialog"
       aria-modal="true"
       aria-label={title}
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-xl bg-card shadow-2xl"
+        className="w-full max-w-md overflow-hidden rounded-xl bg-card shadow-2xl max-md:max-h-full max-md:flex max-md:flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-border px-6 py-4">
+        <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-4 max-md:shrink-0">
           <div className="flex items-start gap-3">
             <span
               className={cn(
@@ -75,13 +84,13 @@ export function ConfirmDialog({
 
         {/* Body */}
         {description && (
-          <div className="px-6 py-5 text-sm leading-relaxed text-muted-foreground">
+          <div className="min-h-0 overflow-y-auto px-6 py-5 text-sm leading-relaxed text-muted-foreground max-md:min-h-0 max-md:overflow-y-auto">
             {description}
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-border px-6 py-4 max-md:shrink-0">
           <button
             type="button"
             onClick={onCancel}

@@ -119,6 +119,15 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   }, [open])
 
   useEffect(() => {
+    if (!open || !window.matchMedia('(max-width: 767px)').matches) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open])
+
+  useEffect(() => {
     if (!open) return
     setActiveTab('details')
     setEditingAsset(null)
@@ -248,16 +257,16 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex h-full items-start justify-center overflow-y-auto p-4 sm:items-center max-md:h-[100dvh]">
+    <div className="fixed inset-0 z-50 flex h-full items-start justify-center overflow-y-auto p-4 sm:items-center max-md:h-[100dvh] max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Overlay */}
-      <div className="fixed inset-0 bg-neutral-700/60 backdrop-blur-sm max-md:bg-black/40 max-md:backdrop-blur-none" onClick={close} />
+      <div className="fixed inset-0 h-full bg-neutral-700/60 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none" onClick={close} />
 
       {/* Centered modal */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label={mode === 'create' ? 'Register new event' : 'Event details'}
-        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:mb-[env(safe-area-inset-bottom)] max-md:max-h-[calc(100dvh-1.5rem)] max-md:shadow-lg"
+        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-0 max-md:max-h-full max-md:shadow-lg"
       >
         {/* Header */}
         <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-5 md:shrink-0">
@@ -318,7 +327,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         /* Body */
         <fieldset
           disabled={readOnly}
-          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90 max-md:flex-1 max-md:max-h-none max-md:pb-6 md:flex-1 md:pb-6"
+          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto overscroll-contain px-6 py-6 disabled:opacity-90 max-md:flex-1 max-md:max-h-none max-md:pb-6 max-md:scroll-pb-24 md:flex-1 md:pb-6"
         >
           {/* Core */}
           <div className="space-y-4">
@@ -591,7 +600,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         )}
 
         {/* Footer */}
-        <div className="shrink-0 space-y-3 border-t border-border bg-card px-6 py-4 max-md:px-4 max-md:pt-3 max-md:pb-[max(1rem,env(safe-area-inset-bottom))] md:shrink-0 md:pt-4 md:pb-5 md:z-10">
+        <div className="shrink-0 space-y-3 border-t border-border bg-card px-6 py-4 max-md:px-4 max-md:pt-3 max-md:pb-4 md:shrink-0 md:pt-4 md:pb-5 md:z-10">
           {submitError && (
             <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
               {submitError}

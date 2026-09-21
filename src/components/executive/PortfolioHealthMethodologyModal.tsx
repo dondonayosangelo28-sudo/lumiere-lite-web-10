@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Activity, X } from 'lucide-react'
 
 interface Props {
@@ -12,22 +13,31 @@ const METRIC_BREAKDOWN: { metric: string; score: string; note: string }[] = [
 ]
 
 export function PortfolioHealthMethodologyModal({ open, onClose }: Props) {
+  useEffect(() => {
+    if (!open || !window.matchMedia('(max-width: 767px)').matches) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open])
+
   if (!open) return null
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:backdrop-blur-none"
       role="dialog"
       aria-modal="true"
       aria-label="Portfolio Health Methodology"
       onClick={onClose}
     >
       <div
-        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl"
+        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:max-h-full"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-border px-6 py-4">
+        <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-4 max-md:shrink-0">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Activity className="size-4.5" aria-hidden="true" />
@@ -52,7 +62,7 @@ export function PortfolioHealthMethodologyModal({ open, onClose }: Props) {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 text-sm leading-relaxed text-muted-foreground">
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5 text-sm leading-relaxed text-muted-foreground">
           <p>
             The figure shown on the dashboard is a{' '}
             <span className="font-semibold text-foreground">blended, 30-day operational readiness index</span>{' '}
@@ -112,7 +122,7 @@ export function PortfolioHealthMethodologyModal({ open, onClose }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end border-t border-border px-6 py-3.5">
+        <div className="flex shrink-0 justify-end border-t border-border px-6 py-3.5 max-md:shrink-0">
           <button
             type="button"
             onClick={onClose}
