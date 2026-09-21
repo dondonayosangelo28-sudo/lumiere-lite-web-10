@@ -43,7 +43,7 @@ export function WarehouseDashboardPage() {
 
   return (
     <WarehouseNavContext.Provider value={{ activeModuleId, selectModule }}>
-      <div className="fixed inset-0 flex overflow-hidden bg-background text-foreground">
+      <div className="fixed inset-0 flex overflow-hidden bg-background text-foreground max-md:static max-md:inset-auto max-md:h-auto max-md:min-h-[100dvh] max-md:overflow-visible">
         <WarehouseRail
           activeModuleId={activeModuleId}
           onSelectModule={selectModule}

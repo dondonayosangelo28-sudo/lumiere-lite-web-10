@@ -19,9 +19,9 @@ export function WarehouseDrilldown({ entry, onExit }: WarehouseDrilldownProps) {
   const { activeModuleId, selectModule } = useWarehouseNav()
 
   return (
-    <div className="fixed inset-0 z-40 flex bg-background">
+    <div className="fixed inset-0 z-40 flex bg-background max-md:static max-md:inset-auto max-md:h-auto max-md:min-h-[100dvh] max-md:overflow-visible">
       <WarehouseRail activeModuleId={activeModuleId} onSelectModule={selectModule} onExit={onExit} />
-      <main className="min-w-0 flex-1 overflow-y-auto">
+      <main className="min-w-0 flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+6rem)] max-md:h-auto max-md:overflow-visible">
         <WarehouseHeader topBarOnly mobileLeading={<WarehouseMobileMenu />} searchQuery="" onSearchChange={() => {}} />
         <CompanionPanel moduleId={activeModuleId} onClose={onExit} />
       </main>

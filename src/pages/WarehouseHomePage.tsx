@@ -68,11 +68,11 @@ export function WarehouseHomePage() {
 
   return (
     <WarehouseNavContext.Provider value={{ activeModuleId, selectModule }}>
-      <div className="flex min-h-screen bg-background text-foreground">
+      <div className="flex min-h-screen bg-background text-foreground max-md:static max-md:inset-auto max-md:h-auto max-md:min-h-[100dvh] max-md:overflow-visible">
       <WarehouseRail activeModuleId="dashboard" onSelectModule={openModule} onExit={() => setDrilldown(null)} />
       <main className="min-w-0 flex-1">
         <WarehouseHeader topBarOnly mobileLeading={<WarehouseMobileMenu />} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-6 px-5 py-5 sm:gap-7 sm:px-10 sm:py-7">
+        <div className="mx-auto flex w-full max-w-[96rem] flex-col gap-6 px-5 py-5 pb-[calc(env(safe-area-inset-bottom)+6rem)] sm:gap-7 sm:px-10 sm:py-7">
           <WarehouseHeader desktopOnly mobileLeading={<WarehouseMobileMenu />} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
           <WarehouseKpiRow events={events} onOpenModule={openModule} />
           <WarehouseCalendarEventsView events={events} onSelectEvent={(evt) => setSummaryEvent(evt)} />

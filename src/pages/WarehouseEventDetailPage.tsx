@@ -84,9 +84,9 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background max-md:static max-md:inset-auto max-md:h-auto max-md:min-h-[100dvh] max-md:overflow-visible">
       <WarehouseHeader topBarOnly mobileLeading={<WarehouseMobileMenu />} searchQuery="" onSearchChange={() => {}} />
-      <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10 sm:px-8 sm:py-14">
+      <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10 pb-[calc(env(safe-area-inset-bottom)+6rem)] sm:px-8 sm:py-14">
         <EventDetailHeader
           event={event}
           overallStatus={snapshot.overallStatus}

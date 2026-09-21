@@ -4,9 +4,10 @@ import { ConsoleSidebar } from '@/components/ConsoleSidebar'
 
 interface Props {
   children: ReactNode
+  mobileDocumentFlow?: boolean
 }
 
-export function ConsoleLayout({ children }: Props) {
+export function ConsoleLayout({ children, mobileDocumentFlow = false }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
 
@@ -31,7 +32,7 @@ export function ConsoleLayout({ children }: Props) {
       />
 
       <div
-        className="flex min-w-0 flex-1 flex-col overflow-hidden transition-[margin] duration-300 ease-in-out ml-0 lg:ml-16"
+        className={`flex min-w-0 flex-1 flex-col overflow-hidden transition-[margin] duration-300 ease-in-out ml-0 lg:ml-16 ${mobileDocumentFlow ? 'max-md:overflow-visible max-md:static max-md:h-auto max-md:min-h-[100dvh]' : ''}`}
       >
         {/* Mobile top bar */}
         <header className="flex shrink-0 items-center justify-between border-b border-border bg-sidebar px-4 py-3 lg:hidden">
@@ -57,7 +58,7 @@ export function ConsoleLayout({ children }: Props) {
           <span className="size-9" aria-hidden="true" />
         </header>
 
-        <main className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-24 pt-6 sm:px-6 sm:pb-24 sm:pt-8 lg:px-12 lg:py-10">
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden px-4 pb-24 pt-6 sm:px-6 sm:pb-24 sm:pt-8 lg:px-12 lg:py-10 ${mobileDocumentFlow ? 'max-md:overflow-visible max-md:h-auto max-md:pb-[calc(env(safe-area-inset-bottom)+6rem)]' : ''}`}>
           <div className="flex justify-end">
             <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">
               {dateLabel} <span className="mx-1 text-border">|</span> {timeLabel}

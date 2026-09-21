@@ -14,7 +14,7 @@ interface WarehouseHeaderProps {
 export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = false, topBarOnly = false, mobileLeading, desktopOnly = false }: WarehouseHeaderProps) {
   if (topBarOnly) {
     return (
-      <div className="md:hidden flex items-center justify-between border-b border-border px-4 py-3">
+      <div className="md:hidden sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)]">
         <div className="flex items-center gap-3">
           {mobileLeading}
           <span className="text-xs text-muted-foreground">Warehouse Operations</span>

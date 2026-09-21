@@ -136,7 +136,7 @@ export function WarehouseLogsPage() {
   }
 
   return (
-    <ConsoleLayout>
+    <ConsoleLayout mobileDocumentFlow>
       <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
