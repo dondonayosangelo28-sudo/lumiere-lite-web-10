@@ -263,7 +263,7 @@ export function AdminSecurityAuditPage() {
         A read-only, cross-account trail of security and access events — logins, lockouts,
         permission requests, and password resets.
       </p>
-      <div className="relative z-10 mt-[13px] border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 max-md:p-2.5 max-md:py-1.5 md:hidden">
+      <div className="relative z-10 mt-[13px] border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 max-md:p-2.5 max-md:py-0 md:hidden">
         <SearchAndDateFilters
           query={query}
           onQueryChange={setQuery}
