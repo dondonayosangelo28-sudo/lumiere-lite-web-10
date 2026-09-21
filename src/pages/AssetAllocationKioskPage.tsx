@@ -106,6 +106,8 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
   const [eventQuery, setEventQuery] = useState('')
   const [error, setError] = useState('')
 
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  const isBackendRecordId = (value: string) => uuidPattern.test(value)
   const selectedEvent = events.find((event) => event.id === eventId)
   const eventResults = useMemo(() => {
     const normalizedQuery = eventQuery.trim().toLowerCase()
@@ -130,12 +132,12 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
     setSubmitting(true)
     setError('')
     try {
-      const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-      if (!uuidPattern.test(eventId)) {
-        throw new Error('The selected event is not linked to a backend event record. Refresh events and try again.')
+      // Validate immediately before submission so fallback records never reach the real API.
+      if (!isBackendRecordId(eventId)) {
+        throw new Error('This event is demo/fallback data and cannot be used for a real procurement request. Please select an event from the backend.')
       }
-      if (!uuidPattern.test(asset.id)) {
-        throw new Error('The selected asset is sample data and cannot create a backend deficit request.')
+      if (!isBackendRecordId(asset.id)) {
+        throw new Error('This asset is demo/fallback data and cannot be used for a real procurement request. Please select a real backend asset.')
       }
       if (!Number.isInteger(qty) || qty < 1) {
         throw new Error('Enter a whole-number quantity greater than zero.')
@@ -152,9 +154,20 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
       setStep('done')
     } catch (error) {
       if (error instanceof DeficitApiError) {
-        setError(`Could not create deficit request (HTTP ${error.status}). Verify the selected event, asset, and authorization.`)
+        if (import.meta.env.DEV) console.warn('[v0] Deficit request failed:', { status: error.status, detail: error.detail })
+        const statusMessages: Record<number, string> = {
+          400: 'Unable to create the deficit request. Please check the selected information.',
+          401: 'Your session is no longer authorized. Please sign in again.',
+          403: 'You are not authorized to create this deficit request.',
+          404: 'The selected backend record could not be found.',
+          409: 'The request conflicts with the current asset/event state.',
+        }
+        setError(statusMessages[error.status] ?? (error.status >= 500
+          ? 'The server could not complete the deficit request. Please try again.'
+          : 'Unable to create the deficit request. Please check the selected information.'))
       } else {
-        setError(error instanceof Error ? error.message : 'Could not create deficit request.')
+        if (import.meta.env.DEV) console.warn('[v0] Deficit request could not be submitted:', error)
+        setError(error instanceof Error ? error.message : 'Unable to reach the server. Please check your connection and try again.')
       }
     } finally {
       setSubmitting(false)
@@ -201,6 +214,9 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
                 <p className="truncate text-sm font-semibold text-card-foreground">{asset.name}</p>
                 <p className="text-[0.65rem] text-muted-foreground">Category: {asset.subTypeName || 'Unclassified'}</p>
                 <p className="mt-1 text-[0.65rem] text-muted-foreground">Available Stock: <span className="font-semibold text-foreground">{asset.quantity}</span></p>
+                {!isBackendRecordId(asset.id) && (
+                  <p className="mt-1 text-[0.6rem] font-medium text-amber-700 dark:text-amber-400">Demo / fallback asset — unavailable for real procurement</p>
+                )}
               </div>
             </div>
           )}
@@ -308,20 +324,29 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
                               />
                             </div>
                             <div className="max-h-64 overflow-y-auto p-1.5" role="listbox">
-                              {eventResults.length > 0 ? eventResults.map((event) => (
+                              {eventResults.length > 0 ? eventResults.map((event) => {
+                                const isEligible = isBackendRecordId(event.id)
+                                return (
                                 <button
                                   key={event.id}
                                   type="button"
                                   role="option"
                                   aria-selected={event.id === eventId}
-                                  onClick={() => { setEventId(event.id); setEventPickerOpen(false); setEventQuery('') }}
-                                  className={cn('w-full rounded-lg px-3 py-2.5 text-left transition hover:bg-muted', event.id === eventId && 'bg-primary/10')}
+                                  aria-disabled={!isEligible}
+                                  disabled={!isEligible}
+                                  onClick={() => { if (!isEligible) return; setEventId(event.id); setEventPickerOpen(false); setEventQuery('') }}
+                                  className={cn('w-full rounded-lg px-3 py-2.5 text-left transition', isEligible ? 'hover:bg-muted' : 'cursor-not-allowed opacity-60', event.id === eventId && 'bg-primary/10')}
                                 >
-                                  <p className="truncate text-xs font-semibold text-card-foreground">{event.title}</p>
+                                  <div className="flex items-center justify-between gap-2">
+                                    <p className="truncate text-xs font-semibold text-card-foreground">{event.title}</p>
+                                    {!isEligible && <span className="shrink-0 text-[0.55rem] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-400">Demo / Fallback</span>}
+                                  </div>
                                   <p className="mt-1 truncate font-mono text-[0.62rem] text-muted-foreground">{event.refId} · {formatEventDate(event.targetDate)}</p>
                                   <p className="mt-0.5 flex items-center gap-1 truncate text-[0.62rem] text-muted-foreground"><Building2 className="size-3 shrink-0" />{event.client}<span className="text-border">•</span><MapPin className="size-3 shrink-0" />{event.venue}</p>
+                                  {!isEligible && <p className="mt-1 text-[0.58rem] font-medium text-amber-700 dark:text-amber-400">Unavailable for real procurement</p>}
                                 </button>
-                              )) : (
+                                )
+                              }) : (
                                 <p className="px-3 py-6 text-center text-xs text-muted-foreground">No matching events</p>
                               )}
                             </div>
@@ -369,7 +394,7 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
                 </button>
                 <button
                   type="button"
-                  disabled={!method || method !== 'procure' || !eventId || submitting}
+                  disabled={!method || method !== 'procure' || !eventId || !isBackendRecordId(eventId) || !asset || !isBackendRecordId(asset.id) || submitting}
                   onClick={handleConfirm}
                   className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-bold uppercase tracking-wider text-primary-foreground transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
