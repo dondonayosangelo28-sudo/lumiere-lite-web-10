@@ -256,7 +256,7 @@ export function AdminSecurityAuditPage() {
       <p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         Admin Console / Audit
       </p>
-      <h1 className="mt-2 font-serif text-3xl font-medium text-foreground sm:text-4xl">
+      <h1 className="mt-2 font-serif text-3xl font-semibold text-foreground sm:text-4xl">
         Security Audit Logs
       </h1>
       <p className="mt-1.5 text-sm text-muted-foreground text-pretty">
