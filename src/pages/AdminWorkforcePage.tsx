@@ -165,7 +165,7 @@ export function AdminWorkforcePage() {
         <LoadingSkeleton variant="table" />
       ) : (
         <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 max-md:sticky max-md:top-0 max-md:z-20 max-md:bg-card lg:flex-row lg:items-center lg:justify-between">
           <div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name, ID, or email" className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary" /></div>
           <div className="flex flex-wrap items-center gap-2">
             <select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2.5 text-xs text-foreground"><option>All Roles</option>{roles.map((r) => <option key={r}>{r}</option>)}</select>
