@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Grid2X2, List, Plus, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { WarehouseModuleHeader } from '@/components/warehouse/WarehouseModuleHeader'
@@ -58,26 +58,6 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedAsset, setSelectedAsset] = useState<CatalogAsset | null>(null)
   const [addOpen, setAddOpen] = useState(false)
-  const [stuck, setStuck] = useState(false)
-  const sentinelRef = useRef<HTMLDivElement>(null)
-  const categoryStripRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!window.matchMedia('(max-width: 767px)').matches || !sentinelRef.current) return
-    const observer = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting), {
-      root: document.querySelector('[data-asset-catalog-scroll]'),
-      threshold: 0,
-    })
-    observer.observe(sentinelRef.current)
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    if (!stuck || !categoryStripRef.current) return
-    const active = categoryStripRef.current.querySelector<HTMLElement>('[aria-pressed="true"]')
-    active?.scrollIntoView({ inline: 'nearest', block: 'nearest' })
-  }, [stuck, categoryFilter])
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return assets.filter((asset) => {
@@ -177,7 +157,6 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   return (
     <div data-asset-catalog-scroll className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
-      <div ref={sentinelRef} aria-hidden="true" className="h-px w-full max-md:block md:hidden" />
       {/* Header controls & filters */}
       <WarehouseModuleHeader
         title="Asset Catalog"
@@ -185,7 +164,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
         mobileControlsSticky
       >
           {/* Compact two-row filter group */}
-          <div ref={categoryStripRef} className={cn('flex min-w-0 flex-col gap-1.5 transition-[max-height,opacity] duration-200 max-md:overflow-hidden', stuck ? 'max-md:max-h-10 max-md:opacity-100' : 'max-md:max-h-40')}>
+          <div className="flex min-w-0 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-1.5 max-md:flex-nowrap max-md:overflow-x-auto max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden">
               {CATEGORY_FILTERS.map((c) => (
                 <button
@@ -194,8 +173,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                   onClick={() => setCategoryFilter(c)}
                   aria-pressed={categoryFilter === c}
                   className={cn(
-                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition max-md:shrink-0 max-md:whitespace-nowrap',
-                    stuck && 'max-md:px-3 max-md:py-1.5 max-md:text-[12px]',
+                    'rounded-full px-2.5 py-1 text-[0.56rem] font-semibold uppercase tracking-[0.08em] transition',
                     categoryFilter === c
                       ? 'bg-foreground text-background'
                       : 'border border-border bg-background text-muted-foreground hover:bg-muted',
@@ -205,7 +183,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                 </button>
               ))}
             </div>
-            <div className={cn('flex flex-wrap items-center gap-1.5 transition-[opacity] duration-200', stuck && 'max-md:hidden')}>
+            <div className="flex flex-wrap items-center gap-1.5">
               {STATUS_FILTERS.map((s) => (
                 <button
                   key={s}

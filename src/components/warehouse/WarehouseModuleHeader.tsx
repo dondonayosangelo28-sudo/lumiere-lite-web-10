@@ -18,7 +18,7 @@ export function WarehouseModuleHeader({ title, subtitle, mobileControlsSticky = 
         </div>
       </div>
 
-      <div className={`flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between${mobileControlsSticky ? ' max-md:sticky max-md:top-0 max-md:z-20 max-md:-mx-6 max-md:bg-background max-md:px-6 max-md:pb-2' : ''}`}>{children}</div>
+      <div className={`flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between${mobileControlsSticky ? ' max-md:sticky max-md:top-16 max-md:z-20 max-md:-mx-6 max-md:bg-background max-md:px-6 max-md:pb-2' : ''}`}>{children}</div>
     </div>
   )
 }
