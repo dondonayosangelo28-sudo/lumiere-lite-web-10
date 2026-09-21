@@ -39,8 +39,6 @@ const STATUS_FILTERS: Array<AssetStatus | 'All'> = [
   'Available',
   'Low Stock',
   'Critical Deficit',
-  'Deployed',
-  'Lost In Action',
 ]
 
 function hashOf(value: string) {

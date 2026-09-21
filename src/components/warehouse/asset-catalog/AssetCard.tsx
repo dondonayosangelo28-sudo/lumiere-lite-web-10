@@ -94,9 +94,11 @@ export function AssetCard({ asset, onOpen }: AssetCardProps) {
           className="size-full object-cover transition duration-300 group-hover:scale-105"
         />
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
-          <Pill tone={statusTone} className="text-[0.6rem] px-2 py-0.5">
-            {asset.status}
-          </Pill>
+          {asset.status !== 'Deployed' && asset.status !== 'Lost In Action' && (
+            <Pill tone={statusTone} className="text-[0.6rem] px-2 py-0.5">
+              {asset.status}
+            </Pill>
+          )}
           {glance.kind === 'health' && glance.badgeLabel && (
             <Pill tone={glance.badgeTone ?? 'positive'} className="text-[0.6rem] px-2 py-0.5">
               {glance.badgeLabel}

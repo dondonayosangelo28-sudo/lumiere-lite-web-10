@@ -155,8 +155,8 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance, onEdit
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <Pill tone={tone}>{asset.status}</Pill>
-                <span className="rounded-full bg-muted px-2.5 py-1 text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+  {asset.status !== 'Deployed' && asset.status !== 'Lost In Action' && <Pill tone={tone}>{asset.status}</Pill>}
+  <span className="rounded-full bg-muted px-2.5 py-1 text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                   {asset.category}
                 </span>
                 {asset.subCategory && (
