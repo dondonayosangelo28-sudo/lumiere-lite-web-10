@@ -39,7 +39,7 @@ export function ConfirmArchiveBatchModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm">
       <div
         className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl animate-in fade-in-0 zoom-in-95"
         role="dialog"

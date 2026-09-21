@@ -943,7 +943,7 @@ function BackgroundTab({ onApply }: { onApply: (color: string | null, photoDataU
 
 /* ════════════════════����═════════════════════
    LEFT PANEL SHELL
-   ══════════════════��══���═════���══════════════ */
+   ══════════════════���══���═════���══════════════ */
 const PANEL_TABS: { id: PanelTab; icon: React.ElementType; label: string }[] = [
   { id: 'elements',   icon: ImageIcon,  label: 'Elements' },
   { id: 'text',       icon: Type,       label: 'Text' },
@@ -1594,7 +1594,7 @@ function PageBar({
           role="dialog"
           aria-modal="true"
           aria-label="All pages"
-          className="fixed inset-0 z-[95] flex items-center justify-center bg-black/50 p-8"
+          className="fixed inset-0 z-[95] flex items-center justify-center bg-background/70 p-8"
           onClick={() => setGridViewOpen(false)}
         >
           <div

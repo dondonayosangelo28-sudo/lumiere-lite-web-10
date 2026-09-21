@@ -6,7 +6,7 @@ export function LogoutModal() {
   if (!confirmLogout) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4 pointer-events-auto">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/90 backdrop-blur-sm p-4 pointer-events-auto">
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-card p-6 shadow-2xl">
         <div>
           <h2 className="text-lg font-bold text-foreground">Sign out?</h2>

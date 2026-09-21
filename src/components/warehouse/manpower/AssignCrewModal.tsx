@@ -222,7 +222,7 @@ export function AssignCrewModal({ events, crewRows, presetSquads, onClose }: Ass
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -473,7 +473,7 @@ export function AssignCrewModal({ events, crewRows, presetSquads, onClose }: Ass
       {/* ─── Emergency Override Dialog (Foundation A Infrastructure) ─── */}
       {overrideModal && (
         <div
-          className="fixed inset-0 z-60 flex items-center justify-center bg-foreground/70 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-60 flex items-center justify-center bg-background/80 p-4 backdrop-blur-md"
           role="dialog"
           aria-modal="true"
           onClick={() => setOverrideModal(null)}

@@ -30,7 +30,7 @@ export function ExecutiveMobileDrawer({ open, onClose, activeId, onSelect }: Exe
     <>
       <div
         aria-hidden="true"
-        className="fixed inset-0 z-40 bg-black/40 md:hidden"
+        className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm md:hidden"
         onClick={onClose}
       />
       <aside

@@ -279,7 +279,7 @@ export function EventCalendar({
 
       {enableYearView && yearPopupOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 p-0 sm:items-center sm:p-4"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-background/55 backdrop-blur-sm p-0 sm:items-center sm:p-4"
           role="presentation"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setYearPopupOpen(false)

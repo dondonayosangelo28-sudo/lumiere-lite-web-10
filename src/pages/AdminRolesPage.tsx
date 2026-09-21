@@ -416,7 +416,7 @@ export function AdminRolesPage() {
 
   /* ----------------------------- Ground Crew tree: delete node ----------------------------- */
 
-  // Deleting a container cascades to every descendant �� the PIN modal shows
+  // Deleting a container cascades to every descendant ��� the PIN modal shows
   // the count so this is never a silent bulk delete.
   const requestTreeDelete = (node: SubRoleNode) => {
     if (!hasConfirmationPin) {
@@ -939,7 +939,7 @@ The three active account roles used across the platform. Existing historical rec
 
       {pinSetupNotice && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/70 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Set your confirmation PIN"
@@ -1684,7 +1684,7 @@ function AckConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/70 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Confirm change"
@@ -1768,7 +1768,7 @@ function PinConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/70 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4"
       role="dialog"
       aria-modal="true"
       aria-label={isCreateAction ? 'Confirm new sub-role' : 'Confirm sub-role deletion'}

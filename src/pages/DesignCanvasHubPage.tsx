@@ -526,7 +526,7 @@ function ProjectDetailsModal({ card, onClose }: { card: ProjectCard; onClose: ()
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 backdrop-blur-sm p-4 animate-in fade-in">
       <div ref={ref} className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95">
         <div className="flex items-start justify-between gap-3 border-b border-border pb-4">
           <div>
@@ -621,7 +621,7 @@ function RenameProjectModal({
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 backdrop-blur-sm p-4 animate-in fade-in">
       <div ref={ref} className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-2xl animate-in zoom-in-95">
         <h3 className="font-serif text-base font-bold text-foreground">Rename {card.type}</h3>
         <p className="mt-1 text-xs text-muted-foreground">Enter a new name for this project.</p>

@@ -452,7 +452,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
       </div>
 
       {summaryFilter && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/40" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSummaryFilter(null) }}>
+        <div className="fixed inset-0 z-50 flex justify-end bg-background/65 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSummaryFilter(null) }}>
           <aside
             className="flex h-full w-full max-w-xl flex-col border-l border-border bg-card shadow-2xl"
             role="dialog"

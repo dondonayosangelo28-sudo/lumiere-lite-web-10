@@ -80,7 +80,7 @@ export function BulkGenerateFlow({ candidates, onClose, onConfirm }: BulkGenerat
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -284,7 +284,7 @@ export function BulkGenerateFlow({ candidates, onClose, onConfirm }: BulkGenerat
 
       {showAck && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/70 p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm"
           role="alertdialog"
           aria-modal="true"
           onClick={(event) => event.stopPropagation()}

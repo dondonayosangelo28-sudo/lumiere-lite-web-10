@@ -28,7 +28,7 @@ export function AdminMobileDrawer({ open, onClose, activeId, onSelect }: AdminMo
 
   return (
     <>
-      <div aria-hidden="true" className="fixed inset-0 z-40 bg-black/40 sm:hidden" onClick={onClose} />
+      <div aria-hidden="true" className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm sm:hidden" onClick={onClose} />
       <aside
         role="dialog"
         aria-modal="true"

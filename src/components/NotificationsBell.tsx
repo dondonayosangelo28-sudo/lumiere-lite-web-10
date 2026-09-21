@@ -131,7 +131,7 @@ export function NotificationsBell({ notifications, size = 'sm' }: NotificationsB
       )}
 
       {announcement && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-neutral-950/70 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setAnnouncement(null) }}>
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-background/75 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setAnnouncement(null) }}>
           <div className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="announcement-title">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">

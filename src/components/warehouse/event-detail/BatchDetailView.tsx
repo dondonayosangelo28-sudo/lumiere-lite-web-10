@@ -67,7 +67,7 @@ export function BatchDetailView({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-foreground/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex justify-end bg-background/65 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -132,7 +132,7 @@ export function BatchDetailView({
 
         {/* Confirmation Modal for Batch Deletion */}
         {confirmDeleteModal && onDelete && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-60 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm">
             <div className="w-full max-w-sm rounded-xl bg-card p-6 shadow-2xl space-y-4 border border-border">
               <div className="flex items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-destructive/15 text-destructive">
@@ -471,7 +471,7 @@ export function BatchDetailView({
 
       {stallModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           onClick={() => setStallModalOpen(false)}

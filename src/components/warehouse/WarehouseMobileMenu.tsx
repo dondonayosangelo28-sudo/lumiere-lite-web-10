@@ -51,7 +51,7 @@ export function WarehouseMobileMenu() {
 
       {open && (
         <>
-          <button type="button" aria-label="Close warehouse navigation" onClick={() => setOpen(false)} className="fixed inset-0 z-50 bg-black/45" />
+          <button type="button" aria-label="Close warehouse navigation" onClick={() => setOpen(false)} className="fixed inset-0 z-50 bg-background/60 backdrop-blur-sm" />
           <aside
             id="warehouse-mobile-navigation"
             role="dialog"

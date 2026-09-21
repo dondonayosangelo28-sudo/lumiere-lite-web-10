@@ -164,7 +164,7 @@ export function WelcomeModal() {
   const IconComponent = content.icon
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-2xl text-left glow-card">
         {/* Top bar with badge and close button */}
         <div className="flex items-center justify-between gap-3">

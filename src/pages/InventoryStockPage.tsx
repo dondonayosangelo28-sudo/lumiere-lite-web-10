@@ -527,7 +527,7 @@ export function InventoryStockPage() {
       <div className="mt-4">{headerBlock}</div>
       {bodyContent}
       {maintenanceConfirmAsset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl">
             <h3 className="font-serif text-xl font-medium text-foreground">Confirm Return to Stock</h3>
             <p className="mt-2 text-xs text-muted-foreground leading-relaxed">

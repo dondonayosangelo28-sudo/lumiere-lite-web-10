@@ -250,7 +250,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
       </div>
 
       {selectedEvent && viewMode === 'grouped' && (
-        <div className="fixed inset-0 z-40 flex justify-end bg-foreground/50 backdrop-blur-[2px]" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
+        <div className="fixed inset-0 z-40 flex justify-end bg-background/65 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
           <aside className="flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="dispatch-event-detail-title">
             <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
               <div><p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-primary">Event detail</p><h2 id="dispatch-event-detail-title" className="mt-1 font-serif text-2xl font-medium text-card-foreground">{selectedEvent.eventTitle}</h2><p className="mt-1 text-sm text-muted-foreground">{selectedEvent.venue}</p></div>

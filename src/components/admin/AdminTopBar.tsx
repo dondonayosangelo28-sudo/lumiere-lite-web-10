@@ -240,7 +240,7 @@ function ChangePinModal({ onClose }: { onClose: () => void }) {
   if (successMessage) {
     return (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/70 p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4"
         role="dialog"
         aria-modal="true"
         aria-label="PIN updated"
@@ -264,7 +264,7 @@ function ChangePinModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/70 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4"
       role="dialog"
       aria-modal="true"
       aria-label={hasConfirmationPin ? 'Change confirmation PIN' : 'Set confirmation PIN'}
