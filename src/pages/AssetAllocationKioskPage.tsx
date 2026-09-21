@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   Search, Sparkles, ChevronRight,
   AlertTriangle, ShoppingCart, ArrowRight, X,
-  Boxes, CheckCircle2, Loader2,
+  Boxes, CheckCircle2, Loader2, MapPin, Building2,
 } from 'lucide-react'
 import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
 import { EmptyState } from '@/components/EmptyState'
@@ -102,7 +102,23 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
   const [qty, setQty] = useState(1)
   const [method, setMethod] = useState<'procure' | 'crossdock' | null>(null)
   const [eventId, setEventId] = useState('')
+  const [eventPickerOpen, setEventPickerOpen] = useState(false)
+  const [eventQuery, setEventQuery] = useState('')
   const [error, setError] = useState('')
+
+  const selectedEvent = events.find((event) => event.id === eventId)
+  const eventResults = useMemo(() => {
+    const normalizedQuery = eventQuery.trim().toLowerCase()
+    const filtered = normalizedQuery
+      ? events.filter((event) => [event.title, event.refId, event.client, event.venue].some((field) => field.toLowerCase().includes(normalizedQuery)))
+      : events
+    return filtered.slice(0, 8)
+  }, [events, eventQuery])
+
+  const formatEventDate = (value: string) => {
+    const date = new Date(value)
+    return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+  }
   const [submitting, setSubmitting] = useState(false)
 
   const handleConfirm = useCallback(async () => {
@@ -149,12 +165,21 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
           {/* Asset identity row */}
           {step !== 'done' && (
             <div className="mb-5 flex items-center gap-3 rounded-xl border border-border bg-muted/30 p-3">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted">
+              <div className="relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
                 <Boxes className="size-6 text-muted-foreground" />
+                {asset.thumbnailUrl && (
+                  <img
+                    src={asset.thumbnailUrl}
+                    alt=""
+                    className="absolute inset-0 size-full object-cover"
+                    onError={(event) => { event.currentTarget.style.display = 'none' }}
+                  />
+                )}
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-card-foreground">{asset.name}</p>
-                <p className="text-[0.65rem] text-muted-foreground">{asset.subTypeName || 'Unclassified'}</p>
+                <p className="text-[0.65rem] text-muted-foreground">Category: {asset.subTypeName || 'Unclassified'}</p>
+                <p className="mt-1 text-[0.65rem] text-muted-foreground">Available Stock: <span className="font-semibold text-foreground">{asset.quantity}</span></p>
               </div>
             </div>
           )}
@@ -235,17 +260,56 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
                       <label className="block text-[0.6rem] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                         Event
                       </label>
-                      <select
-                        value={eventId}
-                        onChange={(e) => setEventId(e.target.value)}
-                        onClick={(e) => e.stopPropagation()}
-                        className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
-                      >
-                        <option value="">Select event...</option>
-                        {events.map((ev) => (
-                          <option key={ev.id} value={ev.id}>{ev.title}</option>
-                        ))}
-                      </select>
+                      <div className="relative" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          onClick={() => setEventPickerOpen((open) => !open)}
+                          className="flex w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-2 text-left text-xs text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30"
+                          aria-expanded={eventPickerOpen}
+                          aria-haspopup="listbox"
+                        >
+                          <span className={selectedEvent ? 'text-foreground' : 'text-muted-foreground'}>
+                            {selectedEvent?.title || 'Select event...'}
+                          </span>
+                          <ChevronRight className={cn('size-3.5 transition-transform', eventPickerOpen && 'rotate-90')} />
+                        </button>
+                        {eventPickerOpen && (
+                          <div className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-xl border border-border bg-card shadow-xl">
+                            <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+                              <Search className="size-3.5 shrink-0 text-muted-foreground" />
+                              <input
+                                autoFocus
+                                value={eventQuery}
+                                onChange={(e) => setEventQuery(e.target.value)}
+                                placeholder="Search event, client, venue, reference..."
+                                className="min-w-0 flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground"
+                                aria-label="Search events"
+                              />
+                            </div>
+                            <div className="max-h-64 overflow-y-auto p-1.5" role="listbox">
+                              {eventResults.length > 0 ? eventResults.map((event) => (
+                                <button
+                                  key={event.id}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={event.id === eventId}
+                                  onClick={() => { setEventId(event.id); setEventPickerOpen(false); setEventQuery('') }}
+                                  className={cn('w-full rounded-lg px-3 py-2.5 text-left transition hover:bg-muted', event.id === eventId && 'bg-primary/10')}
+                                >
+                                  <p className="truncate text-xs font-semibold text-card-foreground">{event.title}</p>
+                                  <p className="mt-1 truncate font-mono text-[0.62rem] text-muted-foreground">{event.refId} · {formatEventDate(event.targetDate)}</p>
+                                  <p className="mt-0.5 flex items-center gap-1 truncate text-[0.62rem] text-muted-foreground"><Building2 className="size-3 shrink-0" />{event.client}<span className="text-border">•</span><MapPin className="size-3 shrink-0" />{event.venue}</p>
+                                </button>
+                              )) : (
+                                <p className="px-3 py-6 text-center text-xs text-muted-foreground">No matching events</p>
+                              )}
+                            </div>
+                            {!eventQuery && events.length > eventResults.length && (
+                              <p className="border-t border-border px-3 py-2 text-[0.6rem] text-muted-foreground">Showing recent events. Search to find another event.</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </button>
