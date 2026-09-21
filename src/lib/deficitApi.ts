@@ -75,21 +75,43 @@ export async function fetchDeficitQueueApi(): Promise<DeficitQueueItemDto[]> {
 /**
  * POST /api/deficit-queue
  */
-export async function createDeficitItemApi(req: CreateDeficitItemRequestDto): Promise<DeficitQueueItemDto | null> {
+export class DeficitApiError extends Error {
+  status: number | null
+  responseBody: string
+
+  constructor(message: string, status: number | null = null, responseBody = '') {
+    super(message)
+    this.name = 'DeficitApiError'
+    this.status = status
+    this.responseBody = responseBody
+  }
+}
+
+export async function createDeficitItemApi(req: CreateDeficitItemRequestDto): Promise<DeficitQueueItemDto> {
+  let res: Response
   try {
-    const res = await fetch(`${API_BASE_URL}/api/deficit-queue`, {
+    res = await fetch(`${API_BASE_URL}/api/deficit-queue`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(req),
     })
-    if (!res.ok) {
-      console.warn(`[deficitApi] POST /api/deficit-queue returned HTTP ${res.status}`)
-      return null
-    }
-    return await res.json()
   } catch (err) {
-    console.warn('[deficitApi] POST /api/deficit-queue failed:', err?.message ?? String(err))
-    return null
+    throw new DeficitApiError(`POST /api/deficit-queue network failure: ${err instanceof Error ? err.message : String(err)}`)
+  }
+
+  if (!res.ok) {
+    const responseBody = await res.text()
+    throw new DeficitApiError(
+      `POST /api/deficit-queue returned HTTP ${res.status}`,
+      res.status,
+      responseBody,
+    )
+  }
+
+  try {
+    return await res.json() as DeficitQueueItemDto
+  } catch (err) {
+    throw new DeficitApiError(`POST /api/deficit-queue returned invalid JSON: ${err instanceof Error ? err.message : String(err)}`)
   }
 }
 
