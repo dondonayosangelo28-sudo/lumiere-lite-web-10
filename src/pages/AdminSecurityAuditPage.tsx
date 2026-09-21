@@ -297,7 +297,7 @@ export function AdminSecurityAuditPage() {
   }, [])
 
   return (
-    <AdminShell activeId="security-audit" onSelect={railSelect} stickyHeader={stickyHeader}>
+    <AdminShell activeId="security-audit" onSelect={railSelect} stickyHeader={stickyHeader} mobileHeaderBorder={false} mobileContentFit>
       {isError ? (
         <ErrorFallback
           title="Security Audit Trail Unavailable"
@@ -520,14 +520,14 @@ function SearchAndDateFilters({
           className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:h-9 max-md:py-0 max-md:px-3 max-md:text-[13px] max-md:pl-9 max-md:truncate max-md:placeholder:whitespace-nowrap max-md:placeholder:text-ellipsis"
         />
       </div>
-      <div className="grid gap-3 max-md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] max-md:gap-2 max-md:pb-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
+      <div className="grid gap-3 max-md:grid max-md:grid-cols-1 max-md:gap-2 max-md:w-full max-md:min-w-0 max-md:pb-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
         <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
           <span className="text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">From:</span>
-          <input type="date" value={fromDate} onChange={(event) => onFromDateChange(event.target.value)} aria-label="From date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:h-9 max-md:min-w-0 max-md:px-2.5 max-md:text-[13px] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
+          <input type="date" value={fromDate} onChange={(event) => onFromDateChange(event.target.value)} aria-label="From date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:block max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:h-9 max-md:px-3 max-md:text-[13px] max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-date-and-time-value]:min-h-[1.25em] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
         </div>
         <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
           <span className="text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">To:</span>
-          <input type="date" value={toDate} onChange={(event) => onToDateChange(event.target.value)} aria-label="To date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:h-9 max-md:min-w-0 max-md:px-2.5 max-md:text-[13px] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
+          <input type="date" value={toDate} onChange={(event) => onToDateChange(event.target.value)} aria-label="To date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:block max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:box-border max-md:h-9 max-md:px-3 max-md:text-[13px] max-md:[&::-webkit-date-and-time-value]:text-left max-md:[&::-webkit-date-and-time-value]:min-h-[1.25em] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
         </div>
         {(fromDate || toDate) && <button type="button" onClick={() => { onFromDateChange(''); onToDateChange('') }} className="col-span-2 text-right text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground underline hover:text-foreground">Clear</button>}
       </div>
