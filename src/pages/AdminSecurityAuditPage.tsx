@@ -263,7 +263,7 @@ export function AdminSecurityAuditPage() {
         A read-only, cross-account trail of security and access events — logins, lockouts,
         permission requests, and password resets.
       </p>
-      <div className="relative z-10 mt-4 border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 max-md:p-2.5 max-md:py-1.5 md:hidden">
+      <div className="relative z-10 mt-[13px] border-b border-border bg-background px-4 py-2.5 max-md:-mx-3 max-md:p-2.5 max-md:py-1.5 md:hidden">
         <SearchAndDateFilters
           query={query}
           onQueryChange={setQuery}
@@ -510,7 +510,7 @@ function SearchAndDateFilters({
   dateError,
 }: SearchAndDateFiltersProps) {
   return (
-    <div className="flex flex-col gap-3 max-md:pt-2 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
+    <div className="flex flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
       <div className="relative min-w-0 flex-1 lg:w-80">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground max-md:h-3.5 max-md:w-3.5" />
         <input
@@ -520,7 +520,7 @@ function SearchAndDateFilters({
           className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:h-9 max-md:py-0 max-md:px-3 max-md:text-[13px] max-md:pl-9 max-md:truncate max-md:placeholder:whitespace-nowrap max-md:placeholder:text-ellipsis"
         />
       </div>
-      <div className="grid gap-3 max-md:mt-1.5 max-md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] max-md:gap-2 max-md:pb-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
+      <div className="grid gap-3 max-md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] max-md:gap-2 max-md:pb-2 lg:flex lg:flex-nowrap lg:items-center lg:gap-2">
         <div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground lg:h-9 lg:flex-row lg:items-center lg:gap-1.5">
           <span className="text-[0.6rem] font-bold uppercase tracking-wider max-md:mb-0.5 max-md:text-[9px] max-md:tracking-[0.08em]">From:</span>
           <input type="date" value={fromDate} onChange={(event) => onFromDateChange(event.target.value)} aria-label="From date" className="h-9 w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary max-md:h-9 max-md:min-w-0 max-md:px-2.5 max-md:text-[13px] max-md:[&::-webkit-calendar-picker-indicator]:scale-90 lg:w-[9.5rem] lg:shrink-0" />
