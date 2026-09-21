@@ -20,7 +20,7 @@ export function AdminPendingActions({
 }: AdminPendingActionsProps) {
   const isEmpty = items.length === 0
   return (
-    <section className="flex h-[24rem] flex-col rounded-xl border border-border bg-card p-5 text-card-foreground">
+    <section className="flex max-h-[24rem] self-start flex-col rounded-xl border border-border bg-card p-5 text-card-foreground">
       <h2 className="shrink-0 font-serif text-2xl font-medium leading-tight text-card-foreground text-balance sm:text-3xl">
         Pending Actions
       </h2>
