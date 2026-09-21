@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import { X, FileText, Building2, Palette, CalendarDays, Plus, Pencil, ImageIcon } from 'lucide-react'
+import { X, FileText, Building2, Palette, CalendarDays, Plus, Pencil, ImageIcon, FileDown } from 'lucide-react'
 import { usePortal } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { EventCalendar } from '@/components/EventCalendar'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { NewEventDraft, PortalEvent } from '@/lib/types'
 import { getCatalogAssets, type CatalogAsset } from '@/lib/warehouse-catalog'
+import { exportEventAssetLogisticsReport } from '@/lib/event-asset-report-pdf'
 
 type DrawerMode = 'create' | 'view' | 'edit'
 
@@ -89,7 +90,7 @@ function SectionHeading({
 
 export function RegisterEventDrawer({ open, onClose, event = null, initialDate = '', mode = 'create' }: Props) {
   const { addEvent, updateEvent, events, settleEvent } = usePortal()
-  const { adminRole } = useAuth()
+  const { adminRole, isExecutive } = useAuth()
   const [draft, setDraft] = useState<NewEventDraft>(emptyDraft)
   const [showCalendar, setShowCalendar] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -104,6 +105,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [validationAttempted, setValidationAttempted] = useState(false)
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false)
+  const [reportError, setReportError] = useState('')
 
   const readOnly = mode === 'view'
 
@@ -200,8 +203,23 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
     setDraft((prev) => ({ ...prev, [key]: value }))
   }
 
+  const downloadReport = async () => {
+    if (!event || !isExecutive || isGeneratingReport) return
+    setReportError('')
+    setIsGeneratingReport(true)
+    try {
+      await exportEventAssetLogisticsReport(event, isExecutive)
+    } catch (error) {
+      console.warn('[v0] Event report generation failed:', error)
+      setReportError(error instanceof Error ? error.message : 'Unable to generate the report.')
+    } finally {
+      setIsGeneratingReport(false)
+    }
+  }
+
   const close = () => {
     setDraft(emptyDraft)
+    setReportError('')
     setValidationAttempted(false)
     setShowCalendar(false)
     setConfirmOpen(false)
@@ -601,9 +619,9 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
 
         {/* Footer */}
         <div className="shrink-0 space-y-3 border-t border-border bg-card px-6 py-4 max-md:px-4 max-md:pt-3 max-md:pb-4 md:shrink-0 md:pt-4 md:pb-5 md:z-10">
-          {submitError && (
+          {(submitError || reportError) && (
             <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-              {submitError}
+              {submitError || reportError}
             </p>
           )}
           {!readOnly && validationAttempted && !requiredFieldsComplete && (
@@ -625,13 +643,25 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
           )}
 
           {readOnly ? (
-            <button
-              type="button"
-              onClick={close}
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-card-foreground transition hover:bg-muted"
-            >
-              Close
-            </button>
+            isExecutive ? (
+              <button
+                type="button"
+                onClick={downloadReport}
+                disabled={isGeneratingReport}
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isGeneratingReport ? <Loader2 className="size-3.5 animate-spin" /> : <FileDown className="size-3.5" />}
+                {isGeneratingReport ? 'Generating…' : 'Download PDF'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={close}
+                className="flex w-full items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-card-foreground transition hover:bg-muted"
+              >
+                Close
+              </button>
+            )
           ) : (
             <button
               type="button"
