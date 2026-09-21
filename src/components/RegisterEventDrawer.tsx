@@ -248,16 +248,16 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center">
+    <div className="fixed inset-0 z-50 flex h-full items-start justify-center overflow-y-auto p-4 sm:items-center max-md:h-[100dvh]">
       {/* Overlay */}
-      <div className="fixed inset-0 bg-neutral-700/60 backdrop-blur-sm" onClick={close} />
+      <div className="fixed inset-0 bg-neutral-700/60 backdrop-blur-sm max-md:bg-black/40 max-md:backdrop-blur-none" onClick={close} />
 
       {/* Centered modal */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label={mode === 'create' ? 'Register new event' : 'Event details'}
-        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:max-h-[calc(100dvh-2rem)]"
+        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:max-h-[calc(100dvh-2rem)] max-md:shadow-lg"
       >
         {/* Header */}
         <div className="flex items-start justify-between border-b border-border px-6 py-5 md:shrink-0">
@@ -433,9 +433,9 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             )}
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3 max-md:w-full max-md:min-w-0">
               <div className="min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={labelClass} htmlFor="ev-start">
+                <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-start">
                   Event Start Time <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -447,7 +447,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                 />
               </div>
               <div className="min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={labelClass} htmlFor="ev-end">
+                <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-end">
                   Event End Time <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -476,10 +476,10 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </select>
             </div>
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-3">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-3 max-md:w-full max-md:min-w-0">
               <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={`${labelClass} max-md:min-h-[2.25rem]`} htmlFor="ev-ingress-date">
-                  Ingress Date <span className="text-destructive">*</span>
+                <label className={`${labelClass} max-md:min-h-[2.25rem] max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-ingress-date">
+                  Ingress <span className="whitespace-nowrap">Date <span className="text-destructive">*</span></span>
                 </label>
                 <input
                   id="ev-ingress-date"
@@ -490,8 +490,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                 />
               </div>
               <div className="min-w-0 max-md:min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={`${labelClass} max-md:min-h-[2.25rem]`} htmlFor="ev-return-date">
-                  Egress / Return Date <span className="text-destructive">*</span>
+                <label className={`${labelClass} max-md:min-h-[2.25rem] max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-return-date">
+                  Egress / Return <span className="whitespace-nowrap">Date <span className="text-destructive">*</span></span>
                 </label>
                 <input
                   id="ev-return-date"
@@ -503,9 +503,9 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             </div>
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3 max-md:w-full max-md:min-w-0">
               <div className="min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={labelClass} htmlFor="ev-ingress-time">
+                <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-ingress-time">
                   Ingress Time <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -517,7 +517,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                 />
               </div>
               <div className="min-w-0 max-md:w-full max-md:max-w-full">
-                <label className={labelClass} htmlFor="ev-fullstop">
+                <label className={`${labelClass} max-md:whitespace-nowrap max-md:text-[10px] max-md:tracking-[0.08em]`} htmlFor="ev-fullstop">
                   Full Stop Time <span className="text-destructive">*</span>
                 </label>
                 <input
