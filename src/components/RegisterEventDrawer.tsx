@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Loader2 } from 'lucide-react'
 import { X, FileText, Building2, Palette, CalendarDays, Plus, Pencil, ImageIcon } from 'lucide-react'
 import { usePortal } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
@@ -100,6 +101,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const [eventAssets, setEventAssets] = useState<Array<{ asset: CatalogAsset; quantity: number }>>([])
   const [editingAsset, setEditingAsset] = useState<{ asset: CatalogAsset; quantity: number } | null>(null)
   const [assetQuantity, setAssetQuantity] = useState('1')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   const readOnly = mode === 'view'
 
@@ -207,14 +210,23 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
       draft.installationEnd,
   )
 
-  const submit = () => {
-    if (!requiredFieldsComplete) return
-    if (mode === 'edit' && event) {
-      updateEvent(event.id, draft, adminRole || 'Executive')
-    } else {
-      addEvent(draft, adminRole || 'Executive')
+  const submit = async () => {
+    if (!requiredFieldsComplete || isSubmitting) return
+    setSubmitError('')
+    setIsSubmitting(true)
+    try {
+      if (mode === 'edit' && event) {
+        updateEvent(event.id, draft, adminRole || 'Executive')
+      } else {
+        await addEvent(draft, adminRole || 'Executive')
+      }
+      close()
+    } catch (error) {
+      console.warn('[v0] Event registration failed:', error)
+      setSubmitError(error instanceof Error ? error.message : 'Unable to register the event. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
-    close()
   }
 
   const commitNewVenue = () => {
@@ -577,6 +589,11 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
 
         {/* Footer */}
         <div className="space-y-3 border-t border-border px-6 py-4">
+          {submitError && (
+            <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+              {submitError}
+            </p>
+          )}
           {event?.status === 'Completed' && (
             <button
               type="button"
@@ -602,11 +619,11 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
             <button
               type="button"
               onClick={() => setConfirmOpen(true)}
-              disabled={!requiredFieldsComplete}
+              disabled={!requiredFieldsComplete || isSubmitting}
               className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <Plus className="size-3.5" />
-              {mode === 'edit' ? 'Save Changes' : 'Initialize Event Registry'}
+              {isSubmitting ? <Loader2 className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
+              {isSubmitting ? 'Registering Event…' : mode === 'edit' ? 'Save Changes' : 'Initialize Event Registry'}
             </button>
           )}
         </div>
@@ -619,9 +636,9 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         tone="default"
         confirmLabel={mode === 'edit' ? 'Save Changes' : 'Initialize Registry'}
         onCancel={() => setConfirmOpen(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
           setConfirmOpen(false)
-          submit()
+          await submit()
         }}
         description={
           <div className="space-y-4">

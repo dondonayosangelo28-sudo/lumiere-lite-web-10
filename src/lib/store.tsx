@@ -1411,7 +1411,7 @@ interface PortalContextValue {
   toggleSuspend: (id: string, reason?: string) => Promise<void>
   updateStaff: (staff: Staff) => void
   forceLogout: (id: string, reason?: string) => void
-  addEvent: (draft: NewEventDraft, initiatorRole?: string) => void
+  addEvent: (draft: NewEventDraft, initiatorRole?: string) => Promise<void>
   updateEvent: (id: string, draft: Partial<PortalEvent>, initiatorRole?: string) => void
   resolveUserAction: (id: string) => void
   routeReorder: (draft: ReorderDraft) => void
@@ -1898,49 +1898,37 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   )
 
   const addEvent = useCallback(
-    (draft: NewEventDraft, initiatorRole = 'Executive') => {
-      const tempId = `e-${Date.now()}`
-      setEvents((prev) => {
-        const refId = `PRT-2026-${pad(145 + prev.length)}`
-        pushLog({
-          account: initiatorRole === 'Executive' ? 'EXEC-ROOT' : 'SYS-ROOT',
-          initiatorRole,
-          action: 'Event Registry Initialized',
-          detail: `New portfolio "${draft.title}" registered${
-            draft.client ? ` for ${draft.client}` : ''
-          }. Ref ${refId}.`,
-          ip: randomIp(),
-          status: 'Success',
-        })
-        return [
-          ...prev,
-          {
-            id: tempId,
-            refId,
-            title: draft.title,
-            client: draft.client,
-            tier: 'Tier-3 Standard',
-            venue: draft.venue,
-            targetDate: draft.targetDate,
-            installationStart: draft.installationStart,
-            installationEnd: draft.installationEnd,
-            budget: 0,
-            status: 'Initialized',
-            moodPlan: draft.moodPlan,
-          },
-        ]
-      })
+  async (draft: NewEventDraft, initiatorRole = 'Executive') => {
+  const result = await createEventApi(draft)
+  if (!result.success || !result.eventId) {
+  throw new Error(result.error || 'Unable to register the event.')
+  }
 
-      // Asynchronously post to backend API endpoint with mapped DTO schema
-      createEventApi(draft)
-        .then((res) => {
-          if (res.success && res.eventId) {
-            setEvents((prev) => prev.map((e) => (e.id === tempId ? { ...e, id: res.eventId! } : e)))
-          }
-        })
-        .catch((err) => console.warn('[store] createEventApi skipped/failed:', err?.message ?? String(err)))
-    },
-    [pushLog],
+  const createdEvent: PortalEvent = {
+  id: result.eventId,
+  refId: `PRT-2026-${result.eventId.slice(0, 4).toUpperCase()}`,
+  title: draft.title,
+  client: draft.client,
+  tier: 'Tier-3 Standard',
+  venue: draft.venue,
+  targetDate: draft.targetDate,
+  installationStart: draft.installationStart,
+  installationEnd: draft.installationEnd,
+  budget: 0,
+  status: 'Initialized',
+  moodPlan: draft.moodPlan,
+  }
+  setEvents((prev) => [...prev, createdEvent])
+  pushLog({
+  account: initiatorRole === 'Executive' ? 'EXEC-ROOT' : 'SYS-ROOT',
+  initiatorRole,
+  action: 'Event Registry Initialized',
+  detail: `New portfolio "${draft.title}" registered${draft.client ? ` for ${draft.client}` : ''}. Ref ${createdEvent.refId}.`,
+  ip: randomIp(),
+  status: 'Success',
+  })
+  },
+  [pushLog],
   )
 
   const updateEvent = useCallback(
