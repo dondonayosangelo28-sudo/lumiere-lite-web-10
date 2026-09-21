@@ -55,7 +55,10 @@ function EventDashboardContent() {
 
   // Search & Filter state
   const [query, setQuery] = useState('')
-  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const now = new Date()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  })
 
   // Calendar View month/year state (synced between calendar & event list)
   const [currentView, setCurrentView] = useState<{ year: number; month: number }>(() => {
@@ -185,7 +188,7 @@ function EventDashboardContent() {
   const handleResetToToday = () => {
     const now = new Date()
     setCurrentView({ year: now.getFullYear(), month: now.getMonth() })
-    setSelectedDate('')
+    setSelectedDate(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`)
   }
 
   const stickyHeader = (
