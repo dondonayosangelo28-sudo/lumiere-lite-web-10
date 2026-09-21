@@ -522,15 +522,15 @@ function EventDashboardContent() {
                       </div>
                     )
                       })}
-                      <button
-                        type="button"
-                        onClick={() => openCreate(group.date === 'unscheduled' ? '' : group.date)}
-                        className="w-full rounded-lg border border-dashed border-primary/40 bg-primary/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-                      >
-                        Register Event
-                      </button>
                     </div>
                   ))}
+                  <button
+                    type="button"
+                    onClick={() => openCreate()}
+                    className="w-full rounded-lg border border-dashed border-primary/40 bg-primary/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+                  >
+                    Register Event
+                  </button>
                 </div>
               )}
             </div>
