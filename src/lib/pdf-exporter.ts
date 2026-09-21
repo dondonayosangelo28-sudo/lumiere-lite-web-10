@@ -611,10 +611,67 @@ export function exportSystemAnalyticsAuditPdf(data: SystemAnalyticsAuditPdfData)
   const heading = (title: string, description?: string) => { ensure(description ? 58 : 42); y += 14; doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(...ink); doc.text(title, margin, y, { charSpace: 0.5 }); doc.setDrawColor(...bronze); doc.setLineWidth(0.75); doc.line(margin, y + 4, margin + width, y + 4); y += 10; if (description) { doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); doc.setTextColor(...muted); doc.text(description, margin, y + 8, { maxWidth: width }); y += 21 } else y += 10 }
   const statusColor = (value: string) => value === 'APPROVED' || value === 'COMPLETED' ? green : value === 'PENDING' ? amber : red
   const drawTable = (columns: Array<{ label: string; width: number; align?: 'left' | 'center' }>, rows: readonly (readonly (string | number)[])[], boldFirst = false) => {
-    const headerH = 27; const padding = 6; const fontSize = 8.5; const lineH = 10
-    const drawHeader = () => { doc.setFillColor(...bronze); doc.rect(margin, y, width, headerH, 'F'); let x = margin; doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(255, 255, 255); columns.forEach((col) => { const tx = col.align === 'center' ? x + col.width / 2 : x + padding; doc.text(col.label, tx, y + 17, { align: col.align || 'left', charSpace: 0.2, maxWidth: col.width - padding * 2 }); x += col.width }); doc.setDrawColor(...border); doc.rect(margin, y, width, headerH); y += headerH }
-    ensure(headerH + 24); drawHeader()
-    rows.forEach((row, rowIndex) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(fontSize); const cells = row.map((value, i) => doc.splitTextToSize(String(value), columns[i].width - padding * 2)); const rowH = Math.max(22, Math.max(...cells.map((c) => c.length)) * lineH + padding * 2); if (y + rowH > pageHeight - 57.5) { newPage(); drawHeader() } let x = margin; cells.forEach((cell, i) => { const col = columns[i]; const value = String(row[i]); const color = i === columns.length - 1 ? statusColor(value) : ink; doc.setFont('helvetica', i === columns.length - 1 || (boldFirst && i === 0) ? 'bold' : 'normal'); doc.setTextColor(...color); const tx = col.align === 'center' ? x + col.width / 2 : x + padding; doc.text(cell, tx, y + 14, { align: col.align || 'left', maxWidth: col.width - padding * 2, lineHeightFactor: 1.15 }); x += col.width }); doc.setDrawColor(...border); doc.setLineWidth(0.5); x = margin; doc.rect(margin, y, width, rowH); columns.slice(0, -1).forEach((col) => { x += col.width; doc.line(x, y, x, y + rowH) }); y += rowH }); y += 6
+    const headerH = 22; const padding = 5; const headerCharSpace = 0.2
+    const minimumBodyFontSize = 6.5; const minimumHeaderFontSize = 6
+    const fontSteps = [8, 7.5, 7, 6.5]
+    const headerFontSteps = [6.5, 6.25, 6]
+    const measure = (value: string, font: number, style: 'normal' | 'bold') => {
+      doc.setFont('helvetica', style); doc.setFontSize(font)
+      return doc.getTextWidth(value) + (style === 'bold' ? Math.max(0, value.length - 1) * headerCharSpace : 0)
+    }
+    const truncate = (value: string, maxWidth: number, font: number, style: 'normal' | 'bold') => {
+      if (measure(value, font, style) <= maxWidth) return value
+      let result = value
+      while (result.length > 0 && measure(`${result}…`, font, style) > maxWidth) result = result.slice(0, -1)
+      return `${result}…`
+    }
+    let bodyFontSize = fontSteps[0]; let headerFontSize = headerFontSteps[0]
+    let contentWidths: number[] = []
+    const computeWidths = () => {
+      contentWidths = columns.map((column, index) => {
+        const headerWidth = measure(column.label, headerFontSize, 'bold')
+        const bodyWidth = Math.max(0, ...rows.map((row) => measure(String(row[index] ?? ''), bodyFontSize, 'normal')))
+        return Math.max(headerWidth, bodyWidth) + padding * 2
+      })
+      const total = contentWidths.reduce((sum, value) => sum + value, 0)
+      if (total <= width) {
+        const extra = (width - total) / columns.length
+        contentWidths = contentWidths.map((value) => value + extra)
+        return true
+      }
+      return false
+    }
+    while (!computeWidths() && bodyFontSize > minimumBodyFontSize) {
+      bodyFontSize = fontSteps[Math.min(fontSteps.length - 1, fontSteps.indexOf(bodyFontSize) + 1)]
+      headerFontSize = headerFontSteps[Math.min(headerFontSteps.length - 1, headerFontSteps.indexOf(headerFontSize) + 1)]
+    }
+    const needsTruncation = contentWidths.reduce((sum, value) => sum + value, 0) > width
+    if (needsTruncation) {
+      contentWidths = columns.map(() => width / columns.length)
+    }
+    columns = columns.map((column, index) => ({ ...column, width: contentWidths[index] }))
+    const drawHeader = () => {
+      doc.setFillColor(...bronze); doc.rect(margin, y, width, headerH, 'F'); let x = margin
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(headerFontSize); doc.setTextColor(255, 255, 255)
+      columns.forEach((col) => { const label = needsTruncation ? truncate(col.label, col.width - padding * 2, headerFontSize, 'bold') : col.label; const tx = col.align === 'center' ? x + col.width / 2 : x + padding; doc.text(label, tx, y + 14, { align: col.align || 'left', charSpace: headerCharSpace }); x += col.width })
+      doc.setDrawColor(...border); doc.rect(margin, y, width, headerH); y += headerH
+    }
+    ensure(headerH + 22); drawHeader()
+    rows.forEach((row, rowIndex) => {
+      if (y + 22 > pageHeight - 57.5) { newPage(); drawHeader() }
+      let x = margin
+      if (rowIndex % 2 === 1) { doc.setFillColor(...panel); doc.rect(margin, y, width, 22, 'F') }
+      row.forEach((rawValue, i) => {
+        const col = columns[i]; const value = String(rawValue); const color = i === columns.length - 1 ? statusColor(value) : ink
+        const style = i === columns.length - 1 || (boldFirst && i === 0) ? 'bold' : 'normal'
+        const renderedValue = needsTruncation ? truncate(value, col.width - padding * 2, bodyFontSize, style) : value
+        doc.setFont('helvetica', style); doc.setFontSize(bodyFontSize); doc.setTextColor(...color)
+        const tx = col.align === 'center' ? x + col.width / 2 : x + padding
+        doc.text(renderedValue, tx, y + 14, { align: col.align || 'left' }); x += col.width
+      })
+      doc.setDrawColor(...border); doc.setLineWidth(0.5); x = margin; doc.rect(margin, y, width, 22); columns.slice(0, -1).forEach((col) => { x += col.width; doc.line(x, y, x, y + 22) }); y += 22
+    })
+    y += 6
   }
   header(); doc.setFont('times', 'bold'); doc.setFontSize(26); doc.setTextColor(...bronze); doc.text('LUMIÈRE', pageWidth / 2, y + 26, { align: 'center', charSpace: 2 }); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(...ink); doc.text('SYSTEM ANALYTICS & AUDIT REPORT', pageWidth / 2, y + 47, { align: 'center', charSpace: 1.4 }); doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(...muted); doc.text('Official Platform Utilization, Inventory Distribution, and Asset Compliance Records', pageWidth / 2, y + 67, { align: 'center' }); y += 92
   doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(margin, y, width, 50, 'FD'); const cellW = width / 3; [['DOCUMENT REFERENCE', reference], ['AUDIT DATE', new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })], ['CLASSIFICATION', 'Verified Official Audit']].forEach(([label, value], i) => { const x = margin + i * cellW; if (i) doc.line(x, y, x, y + 50); doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...muted); doc.text(label, x + 8, y + 17, { charSpace: 0.4 }); doc.setFontSize(11); doc.setTextColor(...(i === 2 ? green : ink)); doc.text(value, x + 8, y + 35, { maxWidth: cellW - 16 }) }); y += 58
