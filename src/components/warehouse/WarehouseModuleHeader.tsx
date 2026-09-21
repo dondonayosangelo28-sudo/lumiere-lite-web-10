@@ -3,10 +3,11 @@ import type { ReactNode } from 'react'
 type WarehouseModuleHeaderProps = {
   title: string
   subtitle: string
+  mobileControlsSticky?: boolean
   children: ReactNode
 }
 
-export function WarehouseModuleHeader({ title, subtitle, children }: WarehouseModuleHeaderProps) {
+export function WarehouseModuleHeader({ title, subtitle, mobileControlsSticky = false, children }: WarehouseModuleHeaderProps) {
   return (
     <div className="flex flex-col gap-4 border-b border-border px-6 pb-3.5 pt-7 sm:px-10">
       <div className="flex items-start justify-between gap-4">
@@ -17,7 +18,7 @@ export function WarehouseModuleHeader({ title, subtitle, children }: WarehouseMo
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">{children}</div>
+      <div className={`flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between${mobileControlsSticky ? ' max-md:sticky max-md:top-0 max-md:z-20 max-md:-mx-6 max-md:bg-background max-md:px-6 max-md:pb-2' : ''}`}>{children}</div>
     </div>
   )
 }
