@@ -84,13 +84,13 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="flex h-full max-h-[42rem] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-card shadow-2xl"
+        className="flex h-full max-h-[42rem] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:max-h-full max-md:shadow-lg"
         onClick={(event) => event.stopPropagation()}
       >
         {/* Modal Header */}
@@ -135,7 +135,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
         </div>
 
         {/* Scrollable Tab Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 max-md:min-h-0 max-md:pb-6">
           {/* ────────────────── 1. PREVIEW TAB (100% Identical Structure for all 5 tiers) ────────────────── */}
           {tab === 'preview' && (
             <div className="flex flex-col gap-5">

@@ -127,7 +127,7 @@ export function IncidentReportingModule({ onClose }: IncidentReportingModuleProp
               <ReviewQueue incidents={visibleIncidents} actor={actor} onReload={reload} />
             </div>
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
               role="dialog"
               aria-modal="true"
             >
@@ -550,7 +550,7 @@ function IncidentDetailModal({
   const closed = incident.status === 'Resolved' || incident.status === 'Dismissed'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-border bg-card shadow-2xl">
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
           <div>
@@ -658,7 +658,7 @@ function ResolveModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="w-full max-w-md rounded-xl border border-border bg-card shadow-2xl">
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="font-serif text-lg font-medium text-card-foreground">

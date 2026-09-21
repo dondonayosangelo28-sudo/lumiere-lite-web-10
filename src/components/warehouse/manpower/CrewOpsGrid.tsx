@@ -213,7 +213,7 @@ export function CrewOpsGrid({ staff }: CrewOpsGridProps) {
       {/* ─── Save Changes Confirmation Modal ─── */}
       {saveModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
           role="dialog"
           aria-modal="true"
           onClick={() => setSaveModalOpen(false)}
@@ -294,7 +294,7 @@ export function CrewOpsGrid({ staff }: CrewOpsGridProps) {
       {/* ─── Discard Safety Prompt Modal ─── */}
       {discardModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
           role="dialog"
           aria-modal="true"
           onClick={() => setDiscardModalOpen(false)}

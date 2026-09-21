@@ -80,7 +80,7 @@ export function BulkGenerateFlow({ candidates, onClose, onConfirm }: BulkGenerat
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
