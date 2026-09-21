@@ -58,6 +58,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedAsset, setSelectedAsset] = useState<CatalogAsset | null>(null)
   const [addOpen, setAddOpen] = useState(false)
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return assets.filter((asset) => {
@@ -155,17 +156,16 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   }
 
   return (
-    <div data-asset-catalog-scroll className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <WarehouseTopBar />
       {/* Header controls & filters */}
       <WarehouseModuleHeader
         title="Asset Catalog"
         subtitle="Category-specific asset views, stock levels, and condition tracking."
-        mobileControlsSticky
       >
           {/* Compact two-row filter group */}
           <div className="flex min-w-0 flex-col gap-1.5">
-            <div className="flex flex-wrap items-center gap-1.5 max-md:flex-nowrap max-md:overflow-x-auto max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden">
+            <div className="flex flex-wrap items-center gap-1.5">
               {CATEGORY_FILTERS.map((c) => (
                 <button
                   key={c}
