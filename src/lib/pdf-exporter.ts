@@ -3,6 +3,7 @@ import type { EventDispatchSummary } from '@/lib/warehouse-dispatch'
 import type { DispatchBatch } from '@/lib/event-detail'
 import type { DeficitLine } from '@/lib/warehouse-replenishment'
 import type { ProcurementItem } from '@/lib/types'
+import { auditSampleData } from '@/lib/audit-report-sample-data'
 
 // ─── Authoritative Brand Theme Tokens (from src/index.css) ───
 const BRAND = {
@@ -597,46 +598,34 @@ export interface SystemAnalyticsAuditPdfData {
 
 export function exportSystemAnalyticsAuditPdf(data: SystemAnalyticsAuditPdfData) {
   const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' })
-  const pageWidth = 612
-  const pageHeight = 792
-  const margin = 47.5
-  const width = 517
-  const ink: [number, number, number] = [43, 33, 26]
-  const muted: [number, number, number] = [110, 97, 83]
-  const bronze: [number, number, number] = [139, 111, 71]
-  const panel: [number, number, number] = [247, 240, 230]
-  const border: [number, number, number] = [217, 203, 174]
-  let y = 57.5
+  const pageWidth = 612; const pageHeight = 792; const margin = 47.5; const width = 517
+  const ink: [number, number, number] = [43, 33, 26]; const muted: [number, number, number] = [110, 97, 83]
+  const bronze: [number, number, number] = [139, 111, 71]; const panel: [number, number, number] = [247, 240, 230]
+  const border: [number, number, number] = [217, 203, 174]; const green: [number, number, number] = [63, 107, 68]
+  const amber: [number, number, number] = [154, 107, 18]; const red: [number, number, number] = [154, 51, 36]
   const reference = `LUM-AUD-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
-  const header = () => { doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...muted); doc.text('LUMIÈRE — SYSTEM ANALYTICS & AUDIT REPORT', margin, 29) }
-  const ensure = (height: number) => { if (y + height > pageHeight - 57.5) { doc.addPage(); y = 57.5; header() } }
-  header()
-  doc.setFont('times', 'bold'); doc.setFontSize(13); doc.setTextColor(...bronze); doc.text('LUMIÈRE', margin, y + 15)
-  doc.setFontSize(21); doc.setTextColor(...ink); doc.text('SYSTEM ANALYTICS & AUDIT REPORT', margin, y + 43)
-  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(...muted); doc.text('Official Platform Utilization, Inventory Distribution, and Asset Compliance Records', margin, y + 61)
-  y += 84
-  doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(margin, y, width, 48, 'FD')
-  const meta = [['DOCUMENT REFERENCE', reference], ['AUDIT DATE', new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })], ['CLASSIFICATION', 'Verified Official Audit']]
-  meta.forEach((field, index) => { const x = margin + index * (width / 3) + 9; doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(field[0], x, y + 16); doc.setFontSize(8); doc.setTextColor(...ink); doc.text(field[1], x, y + 31, { maxWidth: width / 3 - 18 }) })
-  y += 70
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...bronze); doc.text('EXECUTIVE PERFORMANCE SCORECARD', margin, y); y += 11
-  doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text('Verified platform metrics derived from the current portal records.', margin, y); y += 18
-  const roleCounts = data.staff.reduce<Record<string, number>>((counts, member) => { const role = member.recordKind === 'employee-record' ? member.employmentType || 'Employee' : member.role; counts[role] = (counts[role] || 0) + 1; return counts }, {})
-  const activeEvents = data.events.filter((event) => !['Completed', 'Cancelled', 'Settled'].includes(event.status)).length
-  const cards = [{ label: 'TOTAL REGISTERED USERS', value: String(data.staff.length), sub: Object.entries(roleCounts).map(([role, count]) => `${count} ${role}`).join(' / ') || 'No role breakdown' }, { label: 'ACTIVE EVENTS', value: `${activeEvents} / ${data.events.length}`, sub: `${data.events.filter((event) => event.status === 'Completed').length} completed · ${activeEvents} ongoing` }]
-  const cardW = width / cards.length
-  cards.forEach((card, index) => { const x = margin + index * cardW; doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(x, y, cardW - (index === cards.length - 1 ? 0 : 6), 62, 'FD'); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(card.label, x + 10, y + 15); doc.setFont('times', 'bold'); doc.setFontSize(19); doc.setTextColor(...bronze); doc.text(card.value, x + 10, y + 38); doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...ink); doc.text(card.sub, x + 10, y + 52, { maxWidth: cardW - 20 }) })
-  y += 82
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...muted); doc.text('No additional records available for this report.', margin, y)
-  y += 34
-  ensure(150); doc.setDrawColor(...border); doc.line(margin, y, margin + width, y); y += 16
-  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(...ink)
-  const certification = 'I hereby certify that the numerical metrics, asset records, inventory distributions, and maintenance logs presented in this audit report have been extracted directly from the verified database records of the Lumière platform.'
-  const lines = doc.splitTextToSize(certification, width - 10); doc.text(lines, margin, y, { maxWidth: width - 10, lineHeightFactor: 1.2 }); y += lines.length * 10 + 24
-  const signatures = [['SYSTEM ADMINISTRATOR / AUDITOR', 'Lumière Asset & Event Management Platform', 'Generated & Verified'], ['OPERATIONS MANAGER / WAREHOUSE LEAD', 'Lumière Facilities & Logistics', 'Verified & Received']]
-  signatures.forEach((signature, index) => { const x = margin + index * (width / 2); doc.setDrawColor(...border); doc.line(x, y, x + width / 2 - 18, y); doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...ink); doc.text(signature[0], x, y + 14); doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.text(signature[1], x, y + 27); doc.setTextColor(...bronze); doc.text(signature[2], x, y + 40) })
-  const pages = doc.getNumberOfPages()
-  for (let page = 1; page <= pages; page += 1) { doc.setPage(page); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...muted); doc.setDrawColor(...border); doc.setLineWidth(0.5); doc.line(margin, pageHeight - 42, pageWidth - margin, pageHeight - 42); doc.text(`LUMIÈRE  ·  System Analytics & Audit Report  ·  Doc Ref: ${reference}`, margin, pageHeight - 27); doc.text(`PAGE ${page} / ${pages}`, pageWidth - margin, pageHeight - 27, { align: 'right' }) }
+  let y = 57.5
+  const header = () => { doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...muted); doc.text('LUMIÈRE — SYSTEM ANALYTICS & AUDIT REPORT', pageWidth - margin, 29, { align: 'right', charSpace: 0.3 }); doc.setDrawColor(...border); doc.setLineWidth(0.5); doc.line(margin, 35, pageWidth - margin, 35) }
+  const newPage = () => { doc.addPage(); y = 57.5; header() }
+  const ensure = (height: number) => { if (y + height > pageHeight - 57.5) newPage() }
+  const heading = (title: string, description?: string) => { ensure(description ? 58 : 42); y += 14; doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(...ink); doc.text(title, margin, y, { charSpace: 0.5 }); doc.setDrawColor(...bronze); doc.setLineWidth(0.75); doc.line(margin, y + 4, margin + width, y + 4); y += 10; if (description) { doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); doc.setTextColor(...muted); doc.text(description, margin, y + 8, { maxWidth: width }); y += 21 } else y += 10 }
+  const statusColor = (value: string) => value === 'APPROVED' || value === 'COMPLETED' ? green : value === 'PENDING' ? amber : red
+  const drawTable = (columns: Array<{ label: string; width: number; align?: 'left' | 'center' }>, rows: readonly (readonly (string | number)[])[], boldFirst = false) => {
+    const headerH = 27; const padding = 6; const fontSize = 8.5; const lineH = 10
+    const drawHeader = () => { doc.setFillColor(...bronze); doc.rect(margin, y, width, headerH, 'F'); let x = margin; doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(255, 255, 255); columns.forEach((col) => { const tx = col.align === 'center' ? x + col.width / 2 : x + padding; doc.text(col.label, tx, y + 17, { align: col.align || 'left', charSpace: 0.2, maxWidth: col.width - padding * 2 }); x += col.width }); doc.setDrawColor(...border); doc.rect(margin, y, width, headerH); y += headerH }
+    ensure(headerH + 24); drawHeader()
+    rows.forEach((row, rowIndex) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(fontSize); const cells = row.map((value, i) => doc.splitTextToSize(String(value), columns[i].width - padding * 2)); const rowH = Math.max(22, Math.max(...cells.map((c) => c.length)) * lineH + padding * 2); if (y + rowH > pageHeight - 57.5) { newPage(); drawHeader() } let x = margin; cells.forEach((cell, i) => { const col = columns[i]; const value = String(row[i]); const color = i === columns.length - 1 ? statusColor(value) : ink; doc.setFont('helvetica', i === columns.length - 1 || (boldFirst && i === 0) ? 'bold' : 'normal'); doc.setTextColor(...color); const tx = col.align === 'center' ? x + col.width / 2 : x + padding; doc.text(cell, tx, y + 14, { align: col.align || 'left', maxWidth: col.width - padding * 2, lineHeightFactor: 1.15 }); x += col.width }); doc.setDrawColor(...border); doc.setLineWidth(0.5); x = margin; doc.rect(margin, y, width, rowH); columns.slice(0, -1).forEach((col) => { x += col.width; doc.line(x, y, x, y + rowH) }); y += rowH }); y += 6
+  }
+  header(); doc.setFont('times', 'bold'); doc.setFontSize(26); doc.setTextColor(...bronze); doc.text('LUMIÈRE', pageWidth / 2, y + 26, { align: 'center', charSpace: 2 }); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(...ink); doc.text('SYSTEM ANALYTICS & AUDIT REPORT', pageWidth / 2, y + 47, { align: 'center', charSpace: 1.4 }); doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(...muted); doc.text('Official Platform Utilization, Inventory Distribution, and Asset Compliance Records', pageWidth / 2, y + 67, { align: 'center' }); y += 92
+  doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(margin, y, width, 50, 'FD'); const cellW = width / 3; [['DOCUMENT REFERENCE', reference], ['AUDIT DATE', new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })], ['CLASSIFICATION', 'Verified Official Audit']].forEach(([label, value], i) => { const x = margin + i * cellW; if (i) doc.line(x, y, x, y + 50); doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...muted); doc.text(label, x + 8, y + 17, { charSpace: 0.4 }); doc.setFontSize(11); doc.setTextColor(...(i === 2 ? green : ink)); doc.text(value, x + 8, y + 35, { maxWidth: cellW - 16 }) }); y += 58
+  const admins = data.staff.filter((member) => (member.recordKind === 'employee-record' ? member.employmentType : member.role) === 'Admin').length; const staff = data.staff.length - admins
+  const completed = data.events.filter((event) => ['Completed', 'Settled'].includes(event.status)).length; const ongoing = data.events.filter((event) => event.status === 'In Production').length
+  heading('EXECUTIVE PERFORMANCE SCORECARD'); const cards = [['TOTAL REGISTERED USERS', String(data.staff.length), `${staff} Staff`, `${admins} Admin`], ['ACTIVE EVENTS', `${completed + ongoing} / ${data.events.length}`, `${completed} Completed`, `${ongoing} Ongoing`], ['ASSET UTILIZATION RATE', auditSampleData.utilization.value, auditSampleData.utilization.detail], ['MAINTENANCE COMPLIANCE', auditSampleData.maintenance.value, auditSampleData.maintenance.detail]] as const; const scoreW = width / 4; const scoreH = 77; ensure(scoreH); doc.setFillColor(...panel); doc.setDrawColor(...border); doc.rect(margin, y, width, scoreH, 'FD'); cards.forEach((card, i) => { const x = margin + i * scoreW; if (i) doc.line(x, y, x, y + scoreH); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(card[0], x + 8, y + 15, { maxWidth: scoreW - 16 }); doc.setFont('times', 'bold'); doc.setFontSize(16); doc.setTextColor(...bronze); doc.text(card[1], x + 8, y + 37); doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...ink); doc.text(card[2], x + 8, y + 52, { maxWidth: scoreW - 16 }); if (card[3]) doc.text(card[3], x + 8, y + 64, { maxWidth: scoreW - 16 }) }); y += scoreH + 4
+  heading('WAREHOUSE INVENTORY DISTRIBUTION', 'Asset capacity, current custody, and utilization by storage facility.'); drawTable([{ label: 'FACILITY', width: 145 }, { label: 'TOTAL ASSETS', width: 69, align: 'center' }, { label: 'AVAILABLE', width: 66, align: 'center' }, { label: 'IN USE', width: 54, align: 'center' }, { label: 'UNDER MAINTENANCE', width: 107, align: 'center' }, { label: 'UTILIZATION', width: 76, align: 'center' }], auditSampleData.facilities, true)
+  heading('EVENT BOOKING REQUESTS & APPROVAL PIPELINE', 'Case log of submitted event booking requests and review outcomes.'); drawTable([{ label: 'CASE', width: 52 }, { label: 'REQUESTOR', width: 77 }, { label: 'CONTACT EMAIL', width: 105 }, { label: 'EVENT REQUESTED', width: 86 }, { label: 'ASSIGNED VENUE', width: 78 }, { label: 'DATE APPLIED', width: 68 }, { label: 'REVIEW STATUS', width: 51, align: 'center' }], auditSampleData.bookings)
+  heading('ASSET MAINTENANCE & COMPLIANCE MILESTONES', 'Scheduled inspections, condition scoring, and compliance logs by asset.'); drawTable([{ label: 'LOG', width: 45 }, { label: 'ASSET', width: 84 }, { label: 'ASSIGNED CREW', width: 77 }, { label: 'MILESTONE', width: 88 }, { label: 'TARGET DUE', width: 64 }, { label: 'CONDITION SCORE', width: 86 }, { label: 'COMPLIANCE', width: 73, align: 'center' }], auditSampleData.maintenanceLogs)
+  ensure(128); y += 14; doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(...ink); const certification = '“I hereby certify that the numerical metrics, asset records, inventory distributions, and maintenance logs presented in this audit report have been extracted directly from the verified database records of the Lumière platform.”'; const certLines = doc.splitTextToSize(certification, width - 10); doc.text(certLines, pageWidth / 2, y, { align: 'center', maxWidth: width - 10, lineHeightFactor: 1.2 }); y += certLines.length * 12 + 28; const signatures = [['SYSTEM ADMINISTRATOR / AUDITOR', 'Lumière Asset & Event Management Platform', 'Generated & Verified'], ['OPERATIONS MANAGER / WAREHOUSE LEAD', 'Lumière Facilities & Logistics', 'Verified & Received']] as const; signatures.forEach((signature, i) => { const x = margin + i * (width / 2); doc.setDrawColor(...border); doc.line(x, y, x + width / 2 - 18, y); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(...ink); doc.text(signature[0], x, y + 14); doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text(signature[1], x, y + 27); doc.setFont('helvetica', 'normal'); doc.setTextColor(...ink); doc.text(signature[2], x, y + 40) })
+  const pages = doc.getNumberOfPages(); for (let page = 1; page <= pages; page += 1) { doc.setPage(page); doc.setDrawColor(...border); doc.setLineWidth(0.5); doc.line(margin, pageHeight - 42, pageWidth - margin, pageHeight - 42); doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(`LUMIÈRE   ·   System Analytics & Audit Report   ·   Doc Ref: ${reference}`, margin, pageHeight - 27); doc.setFontSize(6.5); doc.text('PAGE ', pageWidth - margin - 42, pageHeight - 27); doc.setFontSize(9); doc.setTextColor(...ink); doc.text(`${page} / ${pages}`, pageWidth - margin, pageHeight - 27, { align: 'right' }) }
   doc.save('lumiere-system-analytics-audit-report.pdf')
 }
 
