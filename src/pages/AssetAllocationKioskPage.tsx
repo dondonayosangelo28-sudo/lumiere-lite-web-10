@@ -99,7 +99,7 @@ interface ProcureModalProps {
 
 function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
   const [step, setStep] = useState<ProcureStep>('quantity')
-  const [qty, setQty] = useState(1)
+  const [qty, setQty] = useState('1')
   const [method, setMethod] = useState<'procure' | 'crossdock' | null>(null)
   const [eventId, setEventId] = useState('')
   const [eventPickerOpen, setEventPickerOpen] = useState(false)
@@ -122,9 +122,15 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
     return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
   }
   const [submitting, setSubmitting] = useState(false)
+  const quantity = qty.trim() === '' ? Number.NaN : Number(qty)
+  const quantityIsValid = Number.isInteger(quantity) && quantity > 0 && !!asset && quantity <= asset.quantity
 
   const handleConfirm = useCallback(async () => {
     if (!asset || method !== 'procure') return
+    if (!quantityIsValid) {
+      setError('Enter a valid quantity within Stock on Hand.')
+      return
+    }
     if (!eventId) {
       setError('Select the event this deficit is for.')
       return
@@ -139,14 +145,14 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
       if (!isBackendRecordId(asset.id)) {
         throw new Error('This asset is demo/fallback data and cannot be used for a real procurement request. Please select a real backend asset.')
       }
-      if (!Number.isInteger(qty) || qty < 1) {
-        throw new Error('Enter a whole-number quantity greater than zero.')
+      if (!quantityIsValid) {
+        throw new Error('Enter a valid quantity within Stock on Hand.')
       }
       await createDeficitItemApi({
         eventId,
         assetId: asset.id,
         assetDescription: asset.name,
-        quantityNeeded: qty,
+        quantityNeeded: quantity,
         category: asset.subTypeName,
         currentStock: asset.quantity,
         triggerSource: 'Executive Asset Allocation',
@@ -172,7 +178,7 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
     } finally {
       setSubmitting(false)
     }
-  }, [asset, method, qty, eventId])
+  }, [asset, method, qty, quantity, quantityIsValid, eventId])
 
   if (!asset) return null
 
@@ -230,32 +236,37 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
 <div className="mt-6 flex items-center gap-3 sm:mt-6">
                 <button
                   type="button"
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  onClick={() => setQty((q) => String(Math.max(1, (Number(q) || 1) - 1)))}
                   className="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-foreground transition hover:bg-muted text-base font-bold"
                 >−</button>
                 <input
                   type="number"
                   min={1}
                   value={qty}
-                  onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) => setQty(e.target.value.replace(/[^0-9]/g, ''))}
                   className="w-20 rounded-lg border border-input bg-background py-2 text-center text-sm font-bold text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
                 />
                 <button
                   type="button"
-                  onClick={() => setQty((q) => q + 1)}
+                  onClick={() => setQty((q) => String((Number(q) || 0) + 1))}
                   className="flex size-9 items-center justify-center rounded-lg border border-border bg-background text-foreground transition hover:bg-muted text-base font-bold"
                 >+</button>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Stock on hand: <span className="font-semibold text-foreground">{asset.quantity}</span>
-                {qty > asset.quantity && (
-                  <span className="ml-2 text-amber-600 font-semibold">⚠ Exceeds available stock</span>
+                Stock on Hand: <span className="font-semibold text-foreground">{asset.quantity}</span>
+                {asset.quantity === 0 && <span className="ml-2 font-semibold text-amber-600">No stock available for allocation.</span>}
+                {quantity > asset.quantity && asset.quantity > 0 && (
+                  <span className="ml-2 font-semibold text-amber-600">Quantity cannot exceed Stock on Hand.</span>
                 )}
               </p>
               <button
                 type="button"
-                onClick={() => setStep('method')}
-                className="mt-5 w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-bold text-primary-foreground transition hover:opacity-90"
+                disabled={!quantityIsValid}
+                onClick={() => {
+                  if (!quantityIsValid) return
+                  setStep('method')
+                }}
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-bold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next <ChevronRight className="size-4" />
               </button>
