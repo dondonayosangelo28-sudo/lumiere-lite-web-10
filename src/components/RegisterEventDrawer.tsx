@@ -433,27 +433,27 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             )}
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid-cols-1 max-md:gap-4">
-              <div className="min-w-0">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3">
+              <div className="min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={labelClass} htmlFor="ev-start">
                   Event Start Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-start"
                   type="time"
-                  className={inputClass}
+                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.installationStart}
                   onChange={(e) => set('installationStart', e.target.value)}
                 />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={labelClass} htmlFor="ev-end">
                   Event End Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-end"
                   type="time"
-                  className={inputClass}
+                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.installationEnd}
                   onChange={(e) => set('installationEnd', e.target.value)}
                 />
@@ -503,27 +503,27 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             </div>
 
-            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid-cols-1 max-md:gap-4">
-              <div className="min-w-0">
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid max-md:grid-cols-2 max-md:items-end max-md:gap-3">
+              <div className="min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={labelClass} htmlFor="ev-ingress-time">
                   Ingress Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-ingress-time"
                   type="time"
-                  className={inputClass}
+                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.ingressTime || '08:00'}
                   onChange={(e) => set('ingressTime', e.target.value)}
                 />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 max-md:w-full max-md:max-w-full">
                 <label className={labelClass} htmlFor="ev-fullstop">
                   Full Stop Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="ev-fullstop"
                   type="time"
-                  className={inputClass}
+                  className={`${inputClass} max-md:px-3 max-md:[&::-webkit-calendar-picker-indicator]:hidden`}
                   value={draft.fullStop || '23:00'}
                   onChange={(e) => set('fullStop', e.target.value)}
                 />
