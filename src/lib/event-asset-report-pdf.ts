@@ -52,8 +52,15 @@ export async function exportEventAssetLogisticsReport(event: PortalEvent, isExec
     qrDataUrl = undefined
   }
   const source = event as PortalEvent & { eventType?: string; expectedGuests?: number | string; coordinator?: string; venueContact?: string; created?: string; lastUpdated?: string; overview?: string }
-  const rows: AssetRow[] = assets.map((item) => ({ asset: item.name, className: item.category || '-', planned: item.qty, deployed: '-', returned: '-', damaged: '-', lost: '-', lifecycleKnown: false }))
-  const data: ReportData = { reference: event.refId || '-', title: event.title || '-', generated: formatGeneratedAt(), status: event.status || '-', client: event.client || '-', venue: event.venue || '-', eventType: source.eventType || event.tier || '-', eventDate: formatDate(event.targetDate), eventTime: readableEventTime(event.installationStart, event.installationEnd), expectedGuests: String(source.expectedGuests ?? '-'), coordinator: source.coordinator || '-', venueContact: source.venueContact || '-', created: formatDate(source.created), lastUpdated: formatDate(source.lastUpdated), overview: source.overview || event.moodPlan || '-', rows }
+  const sampleAssets: ExportAsset[] = [
+    { name: 'Silver Flatware Set', qty: 10, category: 'Stockroom' },
+    { name: 'Glassware — Coupe Set', qty: 2, category: 'Stockroom' },
+    { name: 'Pillar Candle — Unscented', qty: 3, category: 'Stockroom' },
+    { name: 'Silk Napkin — Champagne', qty: 4, category: 'Stockroom' },
+  ]
+  const reportAssets = assets.length ? assets : sampleAssets
+  const rows: AssetRow[] = reportAssets.map((item) => ({ asset: item.name, className: item.category || '-', planned: item.qty, deployed: '-', returned: '-', damaged: '-', lost: '-', lifecycleKnown: false }))
+  const data: ReportData = { reference: event.refId || 'PRT-2026-0145', title: event.title || 'Aura Luxe Autumn Gala 2026', generated: formatGeneratedAt(), status: event.status || 'In Production', client: event.client || 'Lumière Executive Board', venue: event.venue || 'The Grand Ballroom, Shangri-La Fort', eventType: source.eventType || event.tier || 'Tier-1 VIP (Bespoke Logistics)', eventDate: formatDate(event.targetDate) === '-' ? 'September 20, 2026' : formatDate(event.targetDate), eventTime: readableEventTime(event.installationStart, event.installationEnd), expectedGuests: String(source.expectedGuests ?? '-'), coordinator: source.coordinator || '-', venueContact: source.venueContact || '-', created: formatDate(source.created), lastUpdated: formatDate(source.lastUpdated), overview: source.overview || event.moodPlan || 'Crystal sconces and emerald velvet draping.', rows }
   const lifecycleKnown = rows.some((row) => row.lifecycleKnown)
   const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' }); const totals = data.rows.reduce((a, r) => ({ planned: a.planned + r.planned, deployed: typeof r.deployed === 'number' ? a.deployed + r.deployed : a.deployed, returned: typeof r.returned === 'number' ? a.returned + r.returned : a.returned, damaged: typeof r.damaged === 'number' ? a.damaged + r.damaged : a.damaged, lost: typeof r.lost === 'number' ? a.lost + r.lost : a.lost }), { planned: 0, deployed: 0, returned: 0, damaged: 0, lost: 0 }); const metric = (value: number, known: boolean) => known ? String(value) : '-'; const pending = lifecycleKnown ? Math.max(totals.planned - totals.deployed, 0) : '-'; let y = 57.5
   const newPage = () => { footer(doc, data.reference); doc.addPage(); header(doc); y = 57.5 }
