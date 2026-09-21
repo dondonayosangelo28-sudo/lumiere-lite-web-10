@@ -15,7 +15,7 @@ import { Pill } from '@/components/warehouse/shared/Pill'
 import type { Tone } from '@/components/warehouse/event-detail/status-tone'
 import { cn } from '@/lib/utils'
 
-type TabId = 'preview' | 'detailed' | 'history' | 'simulation'
+type TabId = 'overview' | 'details' | 'history' | 'simulation'
 
 const RECON_TONE: Record<ReconciliationTag, Tone> = {
   Matched: 'positive',
@@ -30,7 +30,7 @@ interface AssetDetailModalProps {
 }
 
 export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: AssetDetailModalProps) {
-  const [tab, setTab] = useState<TabId>('preview')
+  const [tab, setTab] = useState<TabId>('overview')
   const glance = getTierGlanceDisplay(asset)
   const tone = ASSET_STATUS_TONE[asset.status]
   const primaryVendor = getVendorById(asset.primaryVendorId)
@@ -51,8 +51,8 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
 
   const tabs: { id: TabId; label: string }[] = useMemo(() => {
     const list: { id: TabId; label: string }[] = [
-      { id: 'preview', label: 'Preview' },
-      { id: 'detailed', label: 'Detailed' },
+      { id: 'overview', label: 'Overview' },
+      { id: 'details', label: 'Details' },
       { id: 'history', label: 'History' },
     ]
     if (asset.category === 'Bespoke') {
@@ -90,7 +90,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
       onClick={onClose}
     >
       <div
-        className="flex h-full max-h-[42rem] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:max-h-full max-md:shadow-lg"
+        className="flex h-full max-h-[44rem] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-2xl max-md:max-h-full max-md:shadow-lg"
         onClick={(event) => event.stopPropagation()}
       >
         {/* Modal Header */}
@@ -136,8 +136,8 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
 
         {/* Scrollable Tab Content */}
         <div className="flex min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 max-md:min-h-0 max-md:pb-6">
-          {/* ────────────────── 1. PREVIEW TAB (100% Identical Structure for all 5 tiers) ────────────────── */}
-          {tab === 'preview' && (
+          {/* ────────────────── 1. OVERVIEW TAB (100% Identical Structure for all 5 tiers) ────────────────── */}
+          {tab === 'overview' && (
             <div className="flex flex-col gap-5">
               <div className="aspect-[1.9] w-full overflow-hidden rounded-lg bg-muted">
                 <img
@@ -160,7 +160,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
                 )}
               </div>
 
-              <div className="rounded-lg border border-border bg-background px-4 py-3.5">
+              <div className="rounded-lg border border-border/80 bg-background/70 px-4 py-4 shadow-sm">
                 <p className="text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">
                   {glance.kind === 'fraction' ? 'Stock Availability' : 'Current State Summary'}
                 </p>
@@ -212,13 +212,13 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
             </div>
           )}
 
-          {/* ────────────────── 2. DETAILED TAB (Tier-Aware Field Set) ────────────────── */}
-          {tab === 'detailed' && (
+          {/* ────────────────── 2. DETAILS TAB (Tier-Aware Field Set) ────────────────── */}
+          {tab === 'details' && (
             <div className="flex flex-col gap-6">
               {/* === Shared Base Section (Always Shown for All Tiers) === */}
               <div>
                 <p className="mb-2 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-primary flex items-center gap-1.5">
-                  <Layers className="size-3.5" /> Shared Base Metadata
+                  <Layers className="size-3.5" /> Shared Base Information
                 </p>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   <DetailField label="Asset ID" value={asset.assetId} isMono />
@@ -264,7 +264,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
               {/* Material & Color State */}
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <DetailField label="Material Composition" value={asset.material ?? 'Standard Composite'} />
-                <div className="rounded-lg border border-border bg-background px-3.5 py-2.5">
+                <div className="rounded-lg border border-border/70 bg-background/60 px-3.5 py-3">
                   <p className="text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                     Color &amp; Finish State
                   </p>
@@ -429,9 +429,15 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
               <p className="mb-3 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">
                 Lifecycle ledger — newest first
               </p>
-              <ol className="relative flex flex-col gap-5 border-l border-border pl-5">
-                {ledger.map((entry) => (
-                  <li key={entry.id} className="relative">
+              {ledger.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-border bg-muted/20 px-4 py-8 text-center">
+                  <p className="text-sm font-medium text-card-foreground">No activity recorded for this asset yet.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Lifecycle events will appear here when they are available.</p>
+                </div>
+              ) : (
+                <ol className="relative flex flex-col gap-5 border-l border-border pl-5">
+                  {ledger.map((entry) => (
+                    <li key={entry.id} className="relative">
                     <span className="absolute -left-[1.44rem] top-1 size-2.5 rounded-full border-2 border-card bg-primary" aria-hidden="true" />
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-semibold text-card-foreground">{entry.type}</span>
@@ -448,8 +454,9 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
                       {entry.linkedBatchRef && <span>Linked batch {entry.linkedBatchRef}</span>}
                     </div>
                   </li>
-                ))}
-              </ol>
+                  ))}
+                </ol>
+              )}
             </div>
           )}
 
@@ -615,7 +622,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance }: Asse
 
 function DetailField({ label, value, isMono = false }: { label: string; value: string; isMono?: boolean }) {
   return (
-    <div className="rounded-lg border border-border bg-background px-3.5 py-2.5">
+    <div className="rounded-lg border border-border/70 bg-background/60 px-3.5 py-3">
       <p className="text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
       <p className={cn('mt-0.5 text-xs text-card-foreground font-semibold', isMono && 'font-mono')}>{value}</p>
     </div>
