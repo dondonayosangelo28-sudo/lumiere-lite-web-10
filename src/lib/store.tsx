@@ -725,8 +725,8 @@ const seedLogs: ActivityLog[] = [
 ]
 
 const seedUserActions: UserAction[] = [
-  // One row per non-Admin account type, each pointing at a real roster member
-  // (see seedStaff above) and tagged with that member's account type.
+  // Each row points at a real active application account and roster member
+  // (see seedStaff above) using only Admin, Executive, or WOM account types.
   {
     id: 'ua-1',
     type: 'account-locked',
@@ -737,22 +737,22 @@ const seedUserActions: UserAction[] = [
   {
     id: 'ua-2',
     type: 'forgot-password',
-    user: 'juandelacruz@lumiere.com',
-    accountType: 'Event Planner',
+  user: 'juandelacruz@lumiere.com',
+  accountType: 'Executive',
     status: 'pending',
   },
   {
     id: 'ua-3',
     type: 'account-locked',
-    user: 'warehouse@lumiere.com',
-    accountType: 'Warehouse Manager',
+  user: 'warehouse@lumiere.com',
+  accountType: 'WOM',
     status: 'pending',
   },
   {
     id: 'ua-4',
     type: 'forgot-password',
-    user: 'wei.chen@lumiere.com',
-    accountType: 'Field & Production Crew',
+  user: 'wei.chen@lumiere.com',
+  accountType: 'WOM',
     status: 'pending',
   },
 ]
