@@ -21,6 +21,11 @@ export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalPr
   const activeVendor = useBackup && backupVendor ? backupVendor : primaryVendor
   const qtyNumber = Number(quantity) || 0
   const estimatedCost = qtyNumber * line.costPerUnit
+  const validationMessage = !activeVendor
+    ? 'A valid vendor is required.'
+    : !Number.isInteger(qtyNumber) || qtyNumber <= 0
+      ? 'Quantity must be a whole number greater than zero.'
+      : ''
 
   return (
     <div
@@ -116,7 +121,9 @@ export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalPr
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
+        <div className="flex flex-col gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+          {validationMessage && <p role="status" className="text-xs font-medium text-destructive">{validationMessage}</p>}
+          <div className="flex items-center justify-end gap-3 sm:ml-auto">
           <button
             type="button"
             onClick={onClose}
@@ -132,6 +139,7 @@ export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalPr
           >
             Generate PO
           </button>
+          </div>
         </div>
       </div>
     </div>

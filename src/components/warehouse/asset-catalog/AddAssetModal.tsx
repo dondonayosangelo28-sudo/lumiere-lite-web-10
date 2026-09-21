@@ -215,6 +215,7 @@ export function AddAssetModal({ onClose, onCreate }: AddAssetModalProps) {
   const [deviceSpecs, setDeviceSpecs] = useState('')
 
   const canSubmit = name.trim().length > 0
+  const missingRequired = name.trim().length === 0 ? 'asset name' : ''
 
   // Category switch handler — resets subCategory
   const handleCategoryChange = (newCat: AssetCategory) => {
@@ -1116,7 +1117,13 @@ export function AddAssetModal({ onClose, onCreate }: AddAssetModalProps) {
         </div>
 
         {/* Action Buttons Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4 shrink-0">
+        <div className="flex flex-col gap-3 border-t border-border px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
+          {!canSubmit && (
+            <p role="status" className="text-xs font-medium text-destructive">
+              Required information missing: {missingRequired}.
+            </p>
+          )}
+          <div className="flex items-center justify-end gap-3 sm:ml-auto">
           <button
             type="button"
             onClick={onClose}
@@ -1132,6 +1139,7 @@ export function AddAssetModal({ onClose, onCreate }: AddAssetModalProps) {
           >
             Add Item to Registry
           </button>
+          </div>
         </div>
       </div>
     </div>

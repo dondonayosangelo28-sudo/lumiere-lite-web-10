@@ -64,17 +64,26 @@ export function EmployeeModal({ open, onClose }: Props) {
   const isValidEmail = draft.email.trim().toLowerCase().endsWith('@lumiere.com')
   const isValidContact = draft.contact.length === 11
 
-  const canProceed =
+  const canProceed = Boolean(
     draft.employeeId &&
-    draft.surname &&
-    draft.firstName &&
-    draft.email &&
-    isValidEmail &&
-    draft.contact &&
-    isValidContact &&
-    draft.role
+      draft.surname.trim() &&
+      draft.firstName.trim() &&
+      draft.email.trim() &&
+      isValidEmail &&
+      draft.contact.trim() &&
+      isValidContact &&
+      draft.role,
+  )
+  const missingRequired = [
+    !draft.surname.trim() ? 'surname' : null,
+    !draft.firstName.trim() ? 'first name' : null,
+    !draft.email.trim() || !isValidEmail ? 'valid Lumière email' : null,
+    !draft.contact.trim() || !isValidContact ? '11-digit contact number' : null,
+    !draft.role ? 'role' : null,
+  ].filter(Boolean) as string[]
 
   const commit = async () => {
+    if (!canProceed) return
     await addStaff(draft)
     close()
   }
@@ -242,7 +251,12 @@ export function EmployeeModal({ open, onClose }: Props) {
               </p>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex flex-col items-end gap-2">
+              {!canProceed && (
+                <p role="status" className="w-full text-xs font-medium text-destructive">
+                  Required information missing: {missingRequired.join(', ')}.
+                </p>
+              )}
               <button
                 type="button"
                 disabled={!canProceed}

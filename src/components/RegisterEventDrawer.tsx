@@ -594,6 +594,11 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               {submitError}
             </p>
           )}
+          {!readOnly && !requiredFieldsComplete && (
+            <p role="status" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+              Required information missing: event title, client, venue, dates, and installation times must be completed.
+            </p>
+          )}
           {event?.status === 'Completed' && (
             <button
               type="button"
