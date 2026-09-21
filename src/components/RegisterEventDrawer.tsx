@@ -66,9 +66,9 @@ const emptyDraft: NewEventDraft = {
 }
 
 const labelClass =
-  'block text-[0.6rem] font-semibold uppercase tracking-[0.15em] text-muted-foreground'
+  'block max-w-full break-words text-[0.6rem] font-semibold uppercase tracking-[0.15em] text-muted-foreground'
 const inputClass =
-  'mt-2 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30'
+  'mt-2 w-full min-w-0 max-w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30 max-md:w-full max-md:min-w-0 max-md:max-w-full'
 
 function SectionHeading({
   icon: Icon,
@@ -257,7 +257,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         role="dialog"
         aria-modal="true"
         aria-label={mode === 'create' ? 'Register new event' : 'Event details'}
-        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl"
+        className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:max-h-[calc(100dvh-2rem)]"
       >
         {/* Header */}
         <div className="flex items-start justify-between border-b border-border px-6 py-5">
@@ -318,8 +318,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         /* Body */
         <fieldset
           disabled={readOnly}
-          className="space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90"
-          style={{ maxHeight: 'calc(90vh - 200px)' }}
+          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90 max-md:max-h-[calc(100dvh-13rem)]"
         >
           {/* Core */}
           <div className="space-y-4">
@@ -434,8 +433,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid-cols-1 max-md:gap-4">
+              <div className="min-w-0">
                 <label className={labelClass} htmlFor="ev-start">
                   Event Start Time <span className="text-destructive">*</span>
                 </label>
@@ -447,7 +446,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                   onChange={(e) => set('installationStart', e.target.value)}
                 />
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className={labelClass} htmlFor="ev-end">
                   Event End Time <span className="text-destructive">*</span>
                 </label>
@@ -477,8 +476,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid-cols-1 max-md:gap-4">
+              <div className="min-w-0">
                 <label className={labelClass} htmlFor="ev-ingress-date">
                   Ingress Date <span className="text-destructive">*</span>
                 </label>
@@ -490,7 +489,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                   onChange={(e) => set('ingressDate', e.target.value)}
                 />
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className={labelClass} htmlFor="ev-return-date">
                   Egress / Return Date <span className="text-destructive">*</span>
                 </label>
@@ -504,8 +503,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
+            <div className="grid min-w-0 grid-cols-2 gap-3 max-md:grid-cols-1 max-md:gap-4">
+              <div className="min-w-0">
                 <label className={labelClass} htmlFor="ev-ingress-time">
                   Ingress Time <span className="text-destructive">*</span>
                 </label>
@@ -517,7 +516,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                   onChange={(e) => set('ingressTime', e.target.value)}
                 />
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className={labelClass} htmlFor="ev-fullstop">
                   Full Stop Time <span className="text-destructive">*</span>
                 </label>
@@ -592,7 +591,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         )}
 
         {/* Footer */}
-        <div className="space-y-3 border-t border-border px-6 py-4">
+        <div className="space-y-3 border-t border-border px-6 py-4 max-md:pb-[calc(1rem+env(safe-area-inset-bottom))]">
           {submitError && (
             <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
               {submitError}
