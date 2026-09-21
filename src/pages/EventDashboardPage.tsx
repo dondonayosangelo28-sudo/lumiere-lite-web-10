@@ -469,7 +469,7 @@ function EventDashboardContent() {
                                   className={cn('size-1.5 rounded-full', statusInfo.dot)}
                                   aria-hidden="true"
                                 />
-                                {e.status}
+                                {e.status.toUpperCase()}
                               </span>
                             </div>
 
