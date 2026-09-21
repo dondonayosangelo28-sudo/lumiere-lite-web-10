@@ -208,7 +208,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
     setReportError('')
     setIsGeneratingReport(true)
     try {
-      await exportEventAssetLogisticsReport(event, isExecutive)
+      await exportEventAssetLogisticsReport(event, isExecutive, eventAssets.map(({ asset, quantity }) => ({ name: asset.name, qty: quantity, category: asset.category, status: asset.status, available: asset.currentStock })))
     } catch (error) {
       console.warn('[v0] Event report generation failed:', error)
       setReportError(error instanceof Error ? error.message : 'Unable to generate the report.')
