@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf'
 import type { PortalEvent } from '@/lib/types'
 
-const TYPE = { wordmark: 26, subtitle: 12, titleValue: 11, sectionHeading: 10, fieldLabel: 7, fieldValue: 11, overview: 10.5, summaryNumber: 15, summaryLabel: 7, tableHeader: 9, tableBody: 9.5, timelineTitle: 10, timelineDetail: 9, transportSubheader: 9, deficitLabel: 8, deficitValue: 10, qrTitle: 9, qrReference: 9, disclaimer: 8 } as const
+const TYPE = { wordmark: 28, subtitle: 12, titleValue: 11, sectionHeading: 10, fieldLabel: 7, fieldValue: 11, overview: 10.5, summaryNumber: 15, summaryLabel: 7, tableHeader: 9, tableBody: 9.5, timelineTitle: 10, timelineDetail: 9, transportSubheader: 9, deficitLabel: 8, deficitValue: 10, qrTitle: 9, qrReference: 9, disclaimer: 8 } as const
 const VALUE_FONT_FAMILY = 'helvetica'
 const SUMMARY_FONT_FAMILY = 'times'
 
@@ -45,7 +45,7 @@ export async function exportEventAssetLogisticsReport(event: PortalEvent, isExec
   if (!isExecutive) return
   const source = event as PortalEvent & { eventType?: string; expectedGuests?: number | string; coordinator?: string; venueContact?: string; created?: string; lastUpdated?: string; overview?: string }
   const rows: AssetRow[] = assets.map((item) => ({ asset: item.name, className: item.category || '-', planned: item.qty, deployed: '-', returned: '-', damaged: '-', lost: '-', lifecycleKnown: false }))
-  const data: ReportData = { reference: event.refId || '-', title: event.title || '-', generated: formatGeneratedAt(), status: event.status || '-', client: event.client || '-', venue: event.venue || '-', eventType: source.eventType || event.tier || '-', eventDate: formatDate(event.targetDate), eventTime: readableEventTime(event.installationStart, event.installationEnd), expectedGuests: String(source.expectedGuests ?? '-'), coordinator: source.coordinator || '-', venueContact: source.venueContact || '-', created: formatDate(source.created), lastUpdated: formatDate(source.lastUpdated), overview: source.overview || event.moodPlan || '-', rows }
+  const data: ReportData = { reference: event.refId || '-', title: event.title || '-', generated: formatGeneratedAt(), status: (event.status || '-').toUpperCase(), client: event.client || '-', venue: event.venue || '-', eventType: source.eventType || event.tier || '-', eventDate: formatDate(event.targetDate), eventTime: readableEventTime(event.installationStart, event.installationEnd), expectedGuests: String(source.expectedGuests ?? '-'), coordinator: source.coordinator || '-', venueContact: source.venueContact || '-', created: formatDate(source.created), lastUpdated: formatDate(source.lastUpdated), overview: source.overview || event.moodPlan || '-', rows }
   const lifecycleKnown = rows.some((row) => row.lifecycleKnown)
   const doc = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'portrait' }); const totals = data.rows.reduce((a, r) => ({ planned: a.planned + r.planned, deployed: typeof r.deployed === 'number' ? a.deployed + r.deployed : a.deployed, returned: typeof r.returned === 'number' ? a.returned + r.returned : a.returned, damaged: typeof r.damaged === 'number' ? a.damaged + r.damaged : a.damaged, lost: typeof r.lost === 'number' ? a.lost + r.lost : a.lost }), { planned: 0, deployed: 0, returned: 0, damaged: 0, lost: 0 }); const metric = (value: number, known: boolean) => known ? String(value) : '-'; const pending = lifecycleKnown ? Math.max(totals.planned - totals.deployed, 0) : '-'; let y = 57.5
   const newPage = () => { footer(doc, data.reference); doc.addPage(); y = 57.5 }
