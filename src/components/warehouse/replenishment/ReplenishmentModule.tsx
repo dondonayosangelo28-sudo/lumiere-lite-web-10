@@ -201,7 +201,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center lg:gap-2">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between lg:gap-2">
           <div className="flex shrink-0 rounded-lg border border-border bg-card p-1">
             <button
               type="button"
@@ -229,7 +229,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
             </button>
           </div>
 
-          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2">
+          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap">
             <div className="relative h-10">
               <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
