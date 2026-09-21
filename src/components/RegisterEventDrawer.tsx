@@ -403,19 +403,20 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
                 </span>
                 <CalendarDays className="size-4 text-muted-foreground" />
               </button>
-              {showCalendar && (
-                <div id="event-date-calendar">
-                  <EventCalendar
-                    value={draft.targetDate}
-                    events={events}
-                    onSelect={(date) => {
-                      set('targetDate', date)
-                      setShowCalendar(false)
-                    }}
-                  />
-                </div>
-              )}
             </div>
+
+            {showCalendar && (
+              <div id="event-date-calendar">
+                <EventCalendar
+                  value={draft.targetDate}
+                  events={events}
+                  onSelect={(date) => {
+                    set('targetDate', date)
+                    setShowCalendar(false)
+                  }}
+                />
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <div>
