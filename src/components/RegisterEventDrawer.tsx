@@ -220,7 +220,6 @@ await exportEventAssetLogisticsReport(event, isExecutive, eventAssets.map(({ ass
   const close = () => {
     setDraft(emptyDraft)
     setReportError('')
-    setPdfPreview(null)
     setValidationAttempted(false)
     setShowCalendar(false)
     setConfirmOpen(false)
