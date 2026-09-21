@@ -205,16 +205,38 @@ function EventDashboardContent() {
         </p>
       </div>
 
-      {/* Dashboard-level creation remains distinct from event registration. */}
-      <button
-        type="button"
-        onClick={() => openCreate()}
-        data-testid="executive-add-event-button"
-        className="flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-[0.98] cursor-pointer max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
-      >
-        <Plus className="size-4" />
-        <span>+ Create Event</span>
-      </button>
+      {/* Search and + Event Action Controls */}
+      <div className="flex items-center gap-2 max-sm:gap-1.5">
+        <div className="relative flex-1 sm:w-64">
+          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search events, venues, ref..."
+            className="w-full rounded-lg border border-input bg-card py-2 pl-9 pr-3 text-xs text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30 max-sm:py-1.5 max-sm:pl-8 max-sm:text-[0.72rem]"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-muted-foreground hover:text-foreground"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => openCreate()}
+          data-testid="executive-add-event-button"
+          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-[0.98] cursor-pointer max-sm:px-3 max-sm:py-1.5 max-sm:text-[0.7rem]"
+        >
+          <Plus className="size-4" />
+          <span>Event</span>
+        </button>
+      </div>
     </div>
   )
 
@@ -366,28 +388,6 @@ function EventDashboardContent() {
                     >
                       <FilterX className="size-3.5" />
                       <span>Show all for {MONTH_NAMES[currentView.month].slice(0, 3)}</span>
-                    </button>
-                  )}
-                </div>
-
-                <div className="relative w-full sm:order-3">
-                  <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search events, venues, references..."
-                    aria-label="Search events, venues, and references"
-                    className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-9 text-xs text-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-ring/30"
-                  />
-                  {query && (
-                    <button
-                      type="button"
-                      onClick={() => setQuery('')}
-                      aria-label="Clear event search"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[0.65rem] font-bold text-muted-foreground hover:text-foreground"
-                    >
-                      ✕
                     </button>
                   )}
                 </div>
