@@ -4,7 +4,7 @@ import { usePortal } from '@/lib/store'
 import { useNav } from '@/lib/nav'
 import { useClickFlash } from '@/lib/use-click-flash'
 import { AdminShell } from '@/components/admin/AdminShell'
-import { AdminPendingActions, type PendingSubRoleSetup } from '@/components/admin/AdminPendingActions'
+import { AdminPendingActions } from '@/components/admin/AdminPendingActions'
 import { AdminSecurityFeed } from '@/components/admin/AdminSecurityFeed'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { UserDistributionCard } from '@/components/admin/AdminAnalytics'
@@ -81,7 +81,7 @@ function AdminPlaceholder({ id }: { id: AdminDestinationId }) {
 
 export function AdminSystemDashboardPage() {
   const { navigate } = useNav()
-  const { staff, userActions, resolveUserAction, pendingSubRoleSetups } = usePortal()
+  const { staff, userActions, resolveUserAction } = usePortal()
   const [activeId, setActiveId] = useState<AdminDestinationId>('system-dashboard')
   // Pending-action confirmation state. The action is applied ONLY when the
   // admin confirms — nothing mutates on the initial button click.
@@ -126,14 +126,6 @@ export function AdminSystemDashboardPage() {
     // performed until the admin confirms — this gates the mutation properly.
     setTempPassword('lumierepassword123')
     setConfirmItem(item)
-  }
-
-  // pendingSubRoleSetups comes straight from usePortal() — store.tsx is the
-  // single source of truth for which sub-roles still need their permission
-  // table saved (see isPermissionsConfigured in lib/rbac.ts). Don't recompute
-  // it here; that would create a second, driftable copy of the same logic.
-  const handleConfigureSubRole = (setup: PendingSubRoleSetup) => {
-    navigate('rbac', { kind: 'configure-subrole', payload: { subRoleId: setup.subRoleId } })
   }
 
   const isLocked = confirmItem?.type === 'account-locked'
@@ -222,10 +214,9 @@ export function AdminSystemDashboardPage() {
 
           {/* Pending Actions */}
           <AdminPendingActions
-            items={pendingItems}
-            onResolve={handleResolve}
-            subRoleSetups={pendingSubRoleSetups}
-            onConfigureSubRole={handleConfigureSubRole}
+          items={pendingItems}
+          onResolve={handleResolve}
+
           />
         </div>
       ) : (
