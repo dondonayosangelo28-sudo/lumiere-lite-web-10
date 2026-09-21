@@ -262,15 +262,8 @@ function EventDashboardContent() {
                     <span className="text-xs font-bold uppercase tracking-[0.14em] text-card-foreground max-sm:text-[0.7rem]">
                       Booking Calendar
                     </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleResetToToday}
-                    className="rounded-md border border-border bg-background px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                  >
-                    Current Month
-                  </button>
-                </div>
+                      </div>
+                    </div>
 
                 <EventCalendar
                   value={selectedDate}
@@ -379,16 +372,25 @@ function EventDashboardContent() {
                   </p>
                 </div>
 
-                {selectedDate && (
+                <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                   <button
                     type="button"
-                    onClick={() => setSelectedDate('')}
-                    className="flex items-center gap-1.5 self-start rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground sm:self-auto"
+                    onClick={() => openCreate()}
+                    className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition hover:opacity-90 active:scale-[0.98]"
                   >
-                    <FilterX className="size-3.5" />
-                    <span>Show all for {MONTH_NAMES[currentView.month].slice(0, 3)}</span>
+                    Register Event
                   </button>
-                )}
+                  {selectedDate && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDate('')}
+                      className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                    >
+                      <FilterX className="size-3.5" />
+                      <span>Show all for {MONTH_NAMES[currentView.month].slice(0, 3)}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Event Cards List */}
@@ -522,13 +524,6 @@ function EventDashboardContent() {
                       </div>
                     )
                       })}
-                      <button
-                        type="button"
-                        onClick={() => openCreate(group.date === 'unscheduled' ? '' : group.date)}
-                        className="w-full rounded-lg border border-dashed border-primary/40 bg-primary/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-                      >
-                        Register Event
-                      </button>
                     </div>
                   ))}
                 </div>
