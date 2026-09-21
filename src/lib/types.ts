@@ -20,6 +20,7 @@ export type Route =
   | 'canvas-workspace'
   | 'assets'
   | 'warehouse-dashboard'
+  | 'event-report'
 
 /* ---------- Procurement / Replenishment ---------- */
 

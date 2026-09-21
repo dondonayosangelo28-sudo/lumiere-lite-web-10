@@ -26,6 +26,7 @@ import { EventDetailPage } from '@/pages/EventDetailPage'
 import { DesignCanvasHubPage } from '@/pages/DesignCanvasHubPage'
 import { CanvasWorkspacePage } from '@/pages/CanvasWorkspacePage'
 import { AssetAllocationKioskPage } from '@/pages/AssetAllocationKioskPage'
+import { EventAssetReportPage } from '@/pages/EventAssetReportPage'
 import { TempPasswordResetScreen } from '@/pages/TempPasswordResetScreen'
 import { PlannerProvider } from '@/lib/planner'
 import { WarehouseProvider } from '@/lib/warehouse'
@@ -82,6 +83,8 @@ function Router() {
       return <CanvasWorkspacePage />
     case 'assets':
       return <AssetAllocationKioskPage />
+    case 'event-report':
+      return <EventAssetReportPage />
     case 'warehouse-dashboard':
       return <WarehouseDashboardPage />
     case 'workforce':
@@ -121,7 +124,7 @@ function Gate() {
   const hasWorkforceHighlight =
     new URLSearchParams(window.location.search).has('highlight') || Boolean(window.history.state?.highlight)
   const urlParamRoute = (new URLSearchParams(window.location.search).get('route') || window.location.pathname.replace('/', '')) as Route | null
-  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'workforce', 'security-audit', 'overview', 'assets', 'warehouse-dashboard'])
+  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'workforce', 'security-audit', 'overview', 'assets', 'warehouse-dashboard', 'event-report'])
   const targetUrlRoute = urlParamRoute && validRoutes.has(urlParamRoute) ? urlParamRoute : null
 
   const initialRoute = targetUrlRoute || (isPlanner

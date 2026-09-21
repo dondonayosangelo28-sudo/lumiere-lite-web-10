@@ -92,6 +92,11 @@
   --sidebar-border: #2e2b26;
 }
 
+@media print {
+  .report-section { break-inside: avoid; }
+  @page { size: A4; margin: 0; }
+}
+
 @media (max-width: 639px) {
   .executive-mobile-sticky h1 {
     font-size: 1.5rem;
