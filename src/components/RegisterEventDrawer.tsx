@@ -260,7 +260,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         className="relative z-10 my-8 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-card shadow-2xl max-md:my-4 max-md:max-h-[calc(100dvh-2rem)]"
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-border px-6 py-5">
+        <div className="flex items-start justify-between border-b border-border px-6 py-5 md:shrink-0">
           <div>
             <p className="text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               {mode === 'create'
@@ -318,7 +318,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         /* Body */
         <fieldset
           disabled={readOnly}
-          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90 max-md:max-h-[calc(100dvh-13rem)]"
+          className="min-h-0 max-h-[calc(90vh-200px)] space-y-7 overflow-y-auto px-6 py-6 disabled:opacity-90 max-md:max-h-[calc(100dvh-13rem)] md:flex-1 md:pb-6"
         >
           {/* Core */}
           <div className="space-y-4">
@@ -551,7 +551,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
           </div>
         </fieldset>
         ) : (
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5 max-md:px-3 max-md:pt-3">
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5 max-md:px-3 max-md:pt-3 md:pb-6">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-card-foreground">Assigned event assets</p>
@@ -591,7 +591,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
         )}
 
         {/* Footer */}
-        <div className="space-y-3 border-t border-border px-6 py-4 max-md:pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div className="space-y-3 border-t border-border bg-card px-6 py-4 max-md:pb-[calc(1rem+env(safe-area-inset-bottom))] md:shrink-0 md:pt-4 md:pb-5 md:z-10">
           {submitError && (
             <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
               {submitError}
