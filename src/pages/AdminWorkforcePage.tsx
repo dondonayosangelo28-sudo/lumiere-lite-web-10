@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { Plus, Search, UserPlus, Users, ChevronDown, ArrowUpDown } from 'lucide-react'
 import { AdminShell } from '@/components/admin/AdminShell'
 import { EmployeeModal } from '@/components/EmployeeModal'
@@ -34,6 +34,41 @@ function parseDateAdded(value: string | undefined): number {
   return Number.isNaN(parsed) ? 0 : parsed
 }
 
+type WorkforceToolbarProps = {
+  query: string
+  onQueryChange: (value: string) => void
+  role: string
+  onRoleChange: (value: string) => void
+  roles: readonly string[]
+  addMenuOpen: boolean
+  onToggleAddMenu: () => void
+  addMenuRef: RefObject<HTMLDivElement | null>
+  desktopMenuRef?: RefObject<HTMLDivElement | null>
+  onSelectRegular: () => void
+  onSelectOnCall: () => void
+  mobile: boolean
+}
+
+function WorkforceToolbar({ query, onQueryChange, role, onRoleChange, roles, addMenuOpen, onToggleAddMenu, addMenuRef, onSelectRegular, onSelectOnCall, mobile }: WorkforceToolbarProps) {
+  return (
+    <div className={mobile ? 'flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:flex-row lg:items-center lg:justify-between' : 'flex flex-col gap-3 rounded-xl border border-border bg-card p-4 lg:flex-row lg:items-center lg:justify-between'}>
+      <div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(e) => onQueryChange(e.target.value)} placeholder="Search name, ID, or email" className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary max-md:text-base" /></div>
+      <div className="flex flex-wrap items-center gap-2">
+        <select value={role} onChange={(e) => onRoleChange(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2.5 text-xs text-foreground"><option>All Roles</option>{roles.map((r) => <option key={r}>{r}</option>)}</select>
+        <div className="relative" ref={mobile ? addMenuRef : desktopMenuRef}>
+          <button type="button" onClick={onToggleAddMenu} className="button-primary" aria-haspopup="menu" aria-expanded={addMenuOpen}><Plus className="size-3.5" /> Add New User <ChevronDown className="size-3.5" /></button>
+          {addMenuOpen && (
+            <div role="menu" className="absolute right-0 top-11 z-30 w-56 overflow-hidden rounded-lg border border-border bg-popover py-1 shadow-xl">
+              <button type="button" role="menuitem" onClick={onSelectRegular} className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-muted"><UserPlus className="mt-0.5 size-4 text-primary" /><span><span className="block text-xs font-semibold text-popover-foreground">REGULAR</span><span className="block text-[0.65rem] text-muted-foreground">Portal account with credentials</span></span></button>
+              <button type="button" role="menuitem" onClick={onSelectOnCall} className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-muted"><Users className="mt-0.5 size-4 text-primary" /><span><span className="block text-xs font-semibold text-popover-foreground">ON-CALL</span><span className="block text-[0.65rem] text-muted-foreground">Employee record only — no portal login</span></span></button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function AdminWorkforcePage() {
   const { navigate } = useNav()
   const { staff, userActions, addEmployeeRecord, toggleSuspend, forceLogout, updateStaff } = usePortal()
@@ -50,6 +85,7 @@ export function AdminWorkforcePage() {
   const [pendingAdminAction, setPendingAdminAction] = useState<{ kind: 'suspend' | 'logout'; staff: Staff } | null>(null)
   const [actionReason, setActionReason] = useState('')
   const addMenuRef = useRef<HTMLDivElement | null>(null)
+  const desktopAddMenuRef = useRef<HTMLDivElement | null>(null)
 
   // Deep-linkable highlight, scoped to this feature only: read directly off
   // the URL (not through useNav) so refresh/back/forward restore it without
@@ -94,7 +130,8 @@ export function AdminWorkforcePage() {
   useEffect(() => {
     if (!addMenuOpen) return
     const onDoc = (e: MouseEvent) => {
-      if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) setAddMenuOpen(false)
+      const target = e.target as Node
+      if (!addMenuRef.current?.contains(target) && !desktopAddMenuRef.current?.contains(target)) setAddMenuOpen(false)
     }
     document.addEventListener('mousedown', onDoc)
     return () => document.removeEventListener('mousedown', onDoc)
@@ -153,7 +190,12 @@ export function AdminWorkforcePage() {
 
   return (
     <AdminShell activeId="workforce" onSelect={destination} stickyHeader={
-      <div><p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Admin Console / Directory</p><h1 className="mt-2 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Workforce Management</h1><p className="mt-1.5 text-sm text-muted-foreground">Manage portal accounts and employee records across Lumière.</p></div>
+      <>
+        <div><p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Admin Console / Directory</p><h1 className="mt-2 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Workforce Management</h1><p className="mt-1.5 text-sm text-muted-foreground">Manage portal accounts and employee records across Lumière.</p></div>
+        <div className="mt-4 md:hidden">
+          <WorkforceToolbar query={query} onQueryChange={setQuery} role={role} onRoleChange={setRole} roles={roles} addMenuOpen={addMenuOpen} onToggleAddMenu={() => setAddMenuOpen((v) => !v)} addMenuRef={addMenuRef} onSelectRegular={() => { setAddMenuOpen(false); setCreateAccountOpen(true) }} onSelectOnCall={() => { setAddMenuOpen(false); setCreateRecordOpen(true) }} mobile />
+        </div>
+      </>
     }>
       {isError ? (
         <ErrorFallback
@@ -165,20 +207,8 @@ export function AdminWorkforcePage() {
         <LoadingSkeleton variant="table" />
       ) : (
         <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name, ID, or email" className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary" /></div>
-          <div className="flex flex-wrap items-center gap-2">
-            <select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2.5 text-xs text-foreground"><option>All Roles</option>{roles.map((r) => <option key={r}>{r}</option>)}</select>
-            <div className="relative" ref={addMenuRef}>
-              <button type="button" onClick={() => setAddMenuOpen((v) => !v)} className="button-primary" aria-haspopup="menu" aria-expanded={addMenuOpen}><Plus className="size-3.5" /> Add New User <ChevronDown className="size-3.5" /></button>
-              {addMenuOpen && (
-                <div role="menu" className="absolute right-0 top-11 z-30 w-56 overflow-hidden rounded-lg border border-border bg-popover py-1 shadow-xl">
-                  <button type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); setCreateAccountOpen(true) }} className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-muted"><UserPlus className="mt-0.5 size-4 text-primary" /><span><span className="block text-xs font-semibold text-popover-foreground">REGULAR</span><span className="block text-[0.65rem] text-muted-foreground">Portal account with credentials</span></span></button>
-                  <button type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); setCreateRecordOpen(true) }} className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-muted"><Users className="mt-0.5 size-4 text-primary" /><span><span className="block text-xs font-semibold text-popover-foreground">ON-CALL</span><span className="block text-[0.65rem] text-muted-foreground">Employee record only — no portal login</span></span></button>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="max-md:hidden">
+          <WorkforceToolbar query={query} onQueryChange={setQuery} role={role} onRoleChange={setRole} roles={roles} addMenuOpen={addMenuOpen} onToggleAddMenu={() => setAddMenuOpen((v) => !v)} addMenuRef={addMenuRef} desktopMenuRef={desktopAddMenuRef} onSelectRegular={() => { setAddMenuOpen(false); setCreateAccountOpen(true) }} onSelectOnCall={() => { setAddMenuOpen(false); setCreateRecordOpen(true) }} mobile={false} />
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
