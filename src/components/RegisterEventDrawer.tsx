@@ -7,7 +7,8 @@ import { EventCalendar } from '@/components/EventCalendar'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { NewEventDraft, PortalEvent } from '@/lib/types'
 import { getCatalogAssets, type CatalogAsset } from '@/lib/warehouse-catalog'
-import { exportEventAssetLogisticsReport } from '@/lib/event-asset-report-pdf'
+import { buildEventAssetLogisticsReport } from '@/lib/event-asset-report-pdf'
+import { PdfPreviewSheet } from '@/components/PdfPreviewSheet'
 
 type DrawerMode = 'create' | 'view' | 'edit'
 
@@ -107,6 +108,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const [validationAttempted, setValidationAttempted] = useState(false)
   const [isGeneratingReport, setIsGeneratingReport] = useState(false)
   const [reportError, setReportError] = useState('')
+  const [pdfPreview, setPdfPreview] = useState<{ blob: Blob; filename: string } | null>(null)
 
   const readOnly = mode === 'view'
 
@@ -208,7 +210,8 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
     setReportError('')
     setIsGeneratingReport(true)
     try {
-      await exportEventAssetLogisticsReport(event, isExecutive, eventAssets.map(({ asset, quantity }) => ({ name: asset.name, qty: quantity, category: asset.category, status: asset.status, available: asset.currentStock })))
+      const report = await buildEventAssetLogisticsReport(event, isExecutive, eventAssets.map(({ asset, quantity }) => ({ name: asset.name, qty: quantity, category: asset.category, status: asset.status, available: asset.currentStock })))
+      setPdfPreview(report)
     } catch (error) {
       console.warn('[v0] Event report generation failed:', error)
       setReportError(error instanceof Error ? error.message : 'Unable to generate the report.')
@@ -220,6 +223,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
   const close = () => {
     setDraft(emptyDraft)
     setReportError('')
+    setPdfPreview(null)
     setValidationAttempted(false)
     setShowCalendar(false)
     setConfirmOpen(false)
@@ -272,10 +276,12 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
     setAddingVenue(false)
   }
 
-  if (!open) return null
+  if (!open) return pdfPreview ? <PdfPreviewSheet blob={pdfPreview.blob} filename={pdfPreview.filename} onClose={() => setPdfPreview(null)} /> : null
 
   return (
-    <div className="fixed inset-0 z-50 flex h-full items-start justify-center overflow-y-auto p-4 sm:items-center max-md:h-[100dvh] max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <>
+      {pdfPreview && <PdfPreviewSheet blob={pdfPreview.blob} filename={pdfPreview.filename} onClose={() => setPdfPreview(null)} />}
+      <div className="fixed inset-0 z-50 flex h-full items-start justify-center overflow-y-auto p-4 sm:items-center max-md:h-[100dvh] max-md:p-3 max-md:pt-[max(0.75rem,env(safe-area-inset-top))] max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Overlay */}
       <div className="fixed inset-0 h-full bg-neutral-700/60 backdrop-blur-sm max-md:h-[100dvh] max-md:bg-black/40 max-md:backdrop-blur-none" onClick={close} />
 
@@ -704,6 +710,7 @@ export function RegisterEventDrawer({ open, onClose, event = null, initialDate =
           </div>
         }
       />
-    </div>
+      </div>
+    </>
   )
 }
