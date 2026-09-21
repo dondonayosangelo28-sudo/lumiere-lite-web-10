@@ -296,18 +296,19 @@ export function AdminSecurityAuditPage() {
       ) : (
         <>
           <div className="mb-5 flex flex-col gap-5">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative min-w-0 flex-1 lg:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search action, Employee ID, or Log ID"
-              className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary"
-            />
-          </div>
+        <div className="flex flex-col gap-3 lg:flex-row-reverse lg:items-start lg:justify-between">
+          <div className="flex flex-col gap-3 lg:flex-col-reverse lg:items-end">
+            <div className="relative min-w-0 flex-1 lg:w-80">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search action, Employee ID, or Log ID"
+                className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 text-sm text-foreground outline-none focus:border-primary"
+              />
+            </div>
 
-          <div className="flex flex-nowrap items-center gap-2">
+            <div className="flex flex-nowrap items-center gap-2">
             <div className="flex h-9 shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
               <span className="text-[0.6rem] font-bold uppercase tracking-wider">From:</span>
               <input
@@ -348,11 +349,11 @@ export function AdminSecurityAuditPage() {
               <Download className="size-3.5" aria-hidden="true" />
               Download PDF
             </button>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
             <span className="mr-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Status
             </span>
@@ -393,6 +394,7 @@ export function AdminSecurityAuditPage() {
 {getRoleLabel(a)}
   </button>
             ))}
+          </div>
           </div>
         </div>
       </div>
