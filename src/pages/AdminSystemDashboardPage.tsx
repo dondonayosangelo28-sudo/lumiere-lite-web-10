@@ -169,8 +169,7 @@ export function AdminSystemDashboardPage() {
         if (destination) {
           if (id === 'workforce') navigate('workforce')
           else if (id === 'security-audit') navigate('security-audit')
-          else if (id === 'rbac') navigate('rbac')
-                  else setActiveId(id)
+                          else setActiveId(id)
         }
       }}
       stickyHeader={stickyHeader}

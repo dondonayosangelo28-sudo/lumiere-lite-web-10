@@ -149,8 +149,7 @@ export function AdminWorkforcePage() {
     if (id === 'system-dashboard') navigate('overview')
     else if (id === 'workforce') navigate('workforce')
     else if (id === 'security-audit') navigate('security-audit')
-    else if (id === 'rbac') navigate('rbac')
-  }
+    }
 
   return (
     <AdminShell activeId="workforce" onSelect={destination} stickyHeader={

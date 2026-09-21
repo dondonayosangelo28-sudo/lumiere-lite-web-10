@@ -7,7 +7,6 @@ export type Route =
   | 'registry'
   | 'logs'
   | 'security-audit'
-  | 'rbac'
   | 'replenishment'
   // Warehouse supervisor console
   | 'inventory'

@@ -246,8 +246,7 @@ export function AdminSecurityAuditPage() {
     if (id === 'system-dashboard') navigate('overview')
     else if (id === 'workforce') navigate('workforce')
     else if (id === 'security-audit') setExpanded(null)
-    else if (id === 'rbac') navigate('rbac')
-  }
+    }
 
   const stickyHeader = (
     <div>

@@ -581,8 +581,7 @@ export function AdminRolesPage() {
     if (id === 'system-dashboard') navigate('overview')
     else if (id === 'workforce') navigate('workforce')
     else if (id === 'security-audit') navigate('security-audit')
-    else if (id === 'rbac') setExpanded(null)
-  }
+    }
 
   const stickyHeader = (
     <div>

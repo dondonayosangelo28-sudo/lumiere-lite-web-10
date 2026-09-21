@@ -12,7 +12,6 @@ import { OverviewPage } from '@/pages/OverviewPage'
 import { AdminSystemDashboardPage } from '@/pages/AdminSystemDashboardPage'
 import { AdminWorkforcePage } from '@/pages/AdminWorkforcePage'
 import { AdminSecurityAuditPage } from '@/pages/AdminSecurityAuditPage'
-import { AdminRolesPage } from '@/pages/AdminRolesPage'
 import { WarehouseDashboardPage } from '@/pages/WarehouseDashboardPage'
 import { EventDashboardPage } from '@/pages/EventDashboardPage'
 import { EventRegistryPage } from '@/pages/EventRegistryPage'
@@ -89,8 +88,7 @@ function Router() {
       return <AdminWorkforcePage />
     case 'security-audit':
       return <AdminSecurityAuditPage />
-    case 'rbac':
-      return <AdminRolesPage />
+
     case 'overview':
     default:
       // Role-aware home. Admins always land on the icon-rail System Dashboard —
@@ -123,7 +121,7 @@ function Gate() {
   const hasWorkforceHighlight =
     new URLSearchParams(window.location.search).has('highlight') || Boolean(window.history.state?.highlight)
   const urlParamRoute = (new URLSearchParams(window.location.search).get('route') || window.location.pathname.replace('/', '')) as Route | null
-  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'workforce', 'security-audit', 'rbac', 'overview', 'assets', 'warehouse-dashboard'])
+  const validRoutes = new Set(['dashboard', 'registry', 'replenishment', 'logs', 'inventory', 'warehouse-logs', 'crew', 'deployments', 'dispatch', 'event-detail', 'canvas', 'canvas-workspace', 'workforce', 'security-audit', 'overview', 'assets', 'warehouse-dashboard'])
   const targetUrlRoute = urlParamRoute && validRoutes.has(urlParamRoute) ? urlParamRoute : null
 
   const initialRoute = targetUrlRoute || (isPlanner
