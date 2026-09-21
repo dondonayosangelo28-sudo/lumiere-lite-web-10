@@ -1,6 +1,8 @@
 import {
   computeStockHealth,
   formatSmartDuration,
+  assetCatalogStatusLabel,
+  resolveAssetCatalogStatus,
   type AssetStatus,
   type CatalogAsset,
 } from '@/lib/warehouse-catalog'
@@ -77,7 +79,8 @@ interface AssetCardProps {
 
 export function AssetCard({ asset, onOpen }: AssetCardProps) {
   const glance = getTierGlanceDisplay(asset)
-  const statusTone = ASSET_STATUS_TONE[asset.status]
+  const catalogStatus = assetCatalogStatusLabel(resolveAssetCatalogStatus(asset))
+  const statusTone = ASSET_STATUS_TONE[catalogStatus]
 
   return (
     <button
@@ -94,16 +97,9 @@ export function AssetCard({ asset, onOpen }: AssetCardProps) {
           className="size-full object-cover transition duration-300 group-hover:scale-105"
         />
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
-          {asset.status !== 'Deployed' && asset.status !== 'Lost In Action' && (
-            <Pill tone={statusTone} className="text-[0.6rem] px-2 py-0.5">
-              {asset.status}
-            </Pill>
-          )}
-          {glance.kind === 'health' && glance.badgeLabel && (
-            <Pill tone={glance.badgeTone ?? 'positive'} className="text-[0.6rem] px-2 py-0.5">
-              {glance.badgeLabel}
-            </Pill>
-          )}
+          <Pill tone={statusTone} className="text-[0.6rem] px-2 py-0.5">
+            {catalogStatus}
+          </Pill>
         </div>
       </div>
 

@@ -99,6 +99,31 @@ export interface BespokeSubCategoryConfig {
   description?: string
 }
 
+export type AssetCatalogStatus = 'critical-deficit' | 'low-stock' | 'available'
+
+export function resolveAssetCatalogStatus(asset: CatalogAsset): AssetCatalogStatus {
+  if (asset.category === 'Event Asset') {
+    const stock = asset.currentStock ?? 0
+    const threshold = asset.threshold ?? 1
+    const ratio = threshold > 0 ? stock / threshold : 0
+    if (stock <= 0 || ratio < 0.2) return 'critical-deficit'
+    if (ratio < 0.5) return 'low-stock'
+    return 'available'
+  }
+
+  if (asset.category === 'Stockroom') {
+    const stock = asset.currentStock ?? 0
+    const criticalThreshold = asset.criticalThreshold ?? 30
+    return stock < criticalThreshold ? 'low-stock' : 'available'
+  }
+
+  return 'available'
+}
+
+export function assetCatalogStatusLabel(status: AssetCatalogStatus): 'Critical Deficit' | 'Low Stock' | 'Available' {
+  return status === 'critical-deficit' ? 'Critical Deficit' : status === 'low-stock' ? 'Low Stock' : 'Available'
+}
+
 export interface CatalogAsset {
   id: string
   assetId: string

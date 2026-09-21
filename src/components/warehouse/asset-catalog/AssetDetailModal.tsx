@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react'
 import { X, Layers, Tag as TagIcon, ShieldCheck, Clock, User, Plus, Check, Pencil, ClipboardCheck } from 'lucide-react'
 import {
-  computeStockHealth,
   formatSmartDuration,
   getAssetLedger,
   updateAssetSimulation,
+  assetCatalogStatusLabel,
+  resolveAssetCatalogStatus,
   type CatalogAsset,
   type ReconciliationTag,
   type BespokeSimulationAttempt,
@@ -34,7 +35,8 @@ interface AssetDetailModalProps {
 export function AssetDetailModal({ asset, onClose, onCompleteMaintenance, onEdit, onUpdateStock }: AssetDetailModalProps) {
   const [tab, setTab] = useState<TabId>('overview')
   const glance = getTierGlanceDisplay(asset)
-  const tone = ASSET_STATUS_TONE[asset.status]
+  const catalogStatus = assetCatalogStatusLabel(resolveAssetCatalogStatus(asset))
+  const tone = ASSET_STATUS_TONE[catalogStatus]
   const primaryVendor = getVendorById(asset.primaryVendorId)
   const backupVendor = getVendorById(asset.backupVendorId)
   const ledger = getAssetLedger(asset)
@@ -155,7 +157,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance, onEdit
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-  {asset.status !== 'Deployed' && asset.status !== 'Lost In Action' && <Pill tone={tone}>{asset.status}</Pill>}
+  <Pill tone={tone}>{catalogStatus}</Pill>
   <span className="rounded-full bg-muted px-2.5 py-1 text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                   {asset.category}
                 </span>
@@ -389,9 +391,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance, onEdit
                           {asset.currentStock ?? 0} / {asset.ceilingCap ?? 200} {asset.unit}
                         </span>
                         {(() => {
-                          const health = computeStockHealth(asset.currentStock, asset.criticalThreshold, asset.ceilingCap)
-                          const tone: Tone = health === 'Low Stock' ? 'caution' : health === 'Over Stock' ? 'progress' : 'positive'
-                          return <Pill tone={tone}>{health}</Pill>
+  return <span className="text-xs font-medium text-muted-foreground">{catalogStatus}</span>
                         })()}
                       </div>
                     </div>

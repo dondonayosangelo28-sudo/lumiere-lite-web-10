@@ -8,6 +8,8 @@ import {
   type AssetCategory,
   type AssetStatus,
   type CatalogAsset,
+  assetCatalogStatusLabel,
+  resolveAssetCatalogStatus,
 } from '@/lib/warehouse-catalog'
 import { AssetCard, ASSET_STATUS_TONE, getTierGlanceDisplay } from '@/components/warehouse/asset-catalog/AssetCard'
 import { AssetDetailModal } from '@/components/warehouse/asset-catalog/AssetDetailModal'
@@ -63,7 +65,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
     const q = query.trim().toLowerCase()
     return assets.filter((asset) => {
       const matchesCategory = categoryFilter === 'All' || asset.category === categoryFilter
-      const matchesStatus = statusFilter === 'All' || asset.status === statusFilter
+      const matchesStatus = statusFilter === 'All' || assetCatalogStatusLabel(resolveAssetCatalogStatus(asset)) === statusFilter
       const matchesQuery = !q || asset.name.toLowerCase().includes(q)
       return matchesCategory && matchesStatus && matchesQuery
     })
@@ -86,15 +88,6 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   const handleCreate = (draft: NewAssetDraft) => {
     const seed = hashOf(`${draft.name}-${Date.now()}`)
     const assetId = `LM-${draft.category.slice(0, 2).toUpperCase()}-${1000 + assets.length + (seed % 900)}`
-    const isFractional = draft.category === 'Event Asset' || draft.category === 'Stockroom'
-    const status: AssetStatus = isFractional
-      ? (draft.currentStock ?? 0) === 0
-        ? 'Critical Deficit'
-        : (draft.currentStock ?? 0) / Math.max(1, draft.threshold ?? 50) < 0.5
-          ? 'Low Stock'
-          : 'Available'
-      : 'Available'
-
     const newAsset: CatalogAsset = {
       id: `cat-new-${Date.now()}`,
       assetId,
@@ -103,7 +96,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
       category: draft.category,
       subCategory: draft.subCategory || 'General',
       description: draft.description || `Custom ${draft.category} entry added to warehouse registry.`,
-      status,
+      status: 'Available',
       image: draft.image || '/placeholder.svg',
       unit: draft.unit || 'pcs',
       dimensions: draft.dimensions || { height: '30 cm', width: '30 cm', depth: '30 cm', weight: '5 kg' },
@@ -292,7 +285,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
                 <div className="overflow-x-auto rounded-xl border border-border bg-card">
                   <table className="w-full min-w-[720px] text-left">
                     <thead><tr className="bg-muted/50">{['Item', 'Category', 'Status', 'Detail', ''].map((h) => <th key={h} className="px-4 py-3 text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">{h}</th>)}</tr></thead>
-                    <tbody>{tierItems.map((asset) => { const display = getTierGlanceDisplay(asset); return <tr key={asset.id} onClick={() => setSelectedAsset(asset)} className="cursor-pointer border-t border-border/60 align-middle transition-colors hover:bg-accent/50"><td className="px-4 py-3"><div className="flex items-center gap-3"><div className="size-11 shrink-0 overflow-hidden rounded-md bg-muted"><img src={asset.image || '/placeholder.svg'} alt={asset.name} crossOrigin="anonymous" className="size-full object-cover" /></div><p className="font-serif text-sm text-card-foreground">{asset.name}</p></div></td><td className="px-4 py-3 text-xs text-muted-foreground">{asset.category}</td><td className="px-4 py-3"><Pill tone={ASSET_STATUS_TONE[asset.status]}>{asset.status}</Pill></td><td className="px-4 py-3 text-xs text-muted-foreground">{display.text}</td><td className="px-4 py-3 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); setSelectedAsset(asset) }} className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary hover:underline">View item</button></td></tr> })}</tbody>
+                    <tbody>{tierItems.map((asset) => { const display = getTierGlanceDisplay(asset); return <tr key={asset.id} onClick={() => setSelectedAsset(asset)} className="cursor-pointer border-t border-border/60 align-middle transition-colors hover:bg-accent/50"><td className="px-4 py-3"><div className="flex items-center gap-3"><div className="size-11 shrink-0 overflow-hidden rounded-md bg-muted"><img src={asset.image || '/placeholder.svg'} alt={asset.name} crossOrigin="anonymous" className="size-full object-cover" /></div><p className="font-serif text-sm text-card-foreground">{asset.name}</p></div></td><td className="px-4 py-3 text-xs text-muted-foreground">{asset.category}</td><td className="px-4 py-3">{(() => { const label = assetCatalogStatusLabel(resolveAssetCatalogStatus(asset)); return <Pill tone={ASSET_STATUS_TONE[label]}>{label}</Pill> })()}</td><td className="px-4 py-3 text-xs text-muted-foreground">{display.text}</td><td className="px-4 py-3 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); setSelectedAsset(asset) }} className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary hover:underline">View item</button></td></tr> })}</tbody>
                   </table>
                 </div>
               </div>
