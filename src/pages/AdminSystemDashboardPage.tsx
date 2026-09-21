@@ -98,7 +98,7 @@ export function AdminSystemDashboardPage() {
   ).length
 
   const roleCounts = useMemo(() => {
-    const tally: Record<string, number> = { Admin: 0, Executive: 0, WOM: 0, 'On-call': 0, Seasonal: 0 }
+    const tally: Record<string, number> = { Admin: 0, Executive: 0, WOM: 0 }
     staff.forEach((s) => {
       const seg = s.recordKind === 'employee-record'
         ? s.employmentType
@@ -109,7 +109,7 @@ export function AdminSystemDashboardPage() {
   }, [staff])
 
   // Forgot-password + account-locked items aggregated from every account type
-  // (Admin, Executive, WOM, On-call, Seasonal). Pending first, then
+  // (Admin, Executive, WOM). Pending first, then
   // recently completed so the "✓ Completed" state is visible on the glance screen.
   const pendingItems: UserAction[] = useMemo(() => {
     const relevant = userActions.filter(

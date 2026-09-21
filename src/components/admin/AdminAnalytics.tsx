@@ -9,7 +9,6 @@ const ROLE_SEGMENTS = [
   { label: 'Executive', color: 'text-sky-500', dot: 'bg-sky-500' },
   { label: 'WOM', color: 'text-amber-500', dot: 'bg-amber-500' },
   { label: 'On-call', color: 'text-rose-500', dot: 'bg-rose-500' },
-  { label: 'Seasonal', color: 'text-indigo-500', dot: 'bg-indigo-500' },
 ]
 
 export function UserDistributionCard({

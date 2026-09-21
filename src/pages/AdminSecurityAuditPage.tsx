@@ -16,7 +16,7 @@ import { downloadPdfReport } from '@/lib/pdf-report'
 // resets. A cross-account view — every entry carries the account type so the
 // Admin can slice the trail by role alongside the status pills.
 type AuditStatus = 'Success' | 'Failed' | 'Blocked' | 'Warning'
-type AccountType = 'Admin' | 'Executive' | 'WOM' | 'On-call' | 'Seasonal'
+type AccountType = 'Admin' | 'Executive' | 'WOM'
 
 
 
@@ -28,8 +28,6 @@ const ACCOUNT_FILTERS = [
   'Admin',
   'Executive',
   'WOM',
-  'On-call',
-  'Seasonal',
 ] as const
 type AccountFilter = (typeof ACCOUNT_FILTERS)[number]
 
@@ -46,7 +44,6 @@ const roleStyles: Record<AccountType, string> = {
   Executive: 'bg-indigo-500/15 text-indigo-300',
   WOM: 'bg-amber-500/15 text-amber-300',
   'On-call': 'bg-sky-500/15 text-sky-300',
-  Seasonal: 'bg-rose-500/15 text-rose-300',
 }
 
 /* const LEGACY_SECURITY_AUDIT_LOG: SecurityAuditEntry[] = [

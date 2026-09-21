@@ -1,5 +1,5 @@
 export type SecurityEventStatus = 'Success' | 'Failed' | 'Blocked' | 'Warning'
-export type SecurityEventAccount = 'Admin' | 'Executive' | 'WOM' | 'On-call' | 'Seasonal'
+export type SecurityEventAccount = 'Admin' | 'Executive' | 'WOM'
 
 export interface SecurityEvent {
   id: string

@@ -455,7 +455,7 @@ const seedStaffRaw: Staff[] = [
   },
 ]
 
-// On-call / seasonal workers who periodically return but hold no portal login.
+// On-call workers who periodically return but hold no portal login.
 // Kept client-side (they never authenticate) and preserved across DB hydration.
 const seedEmployeeRecords: Staff[] = [
   {
@@ -487,7 +487,7 @@ const seedEmployeeRecords: Staff[] = [
     lastAccess: '—',
     recordKind: 'employee-record',
     accountStatus: 'Active',
-    employmentType: 'Seasonal',
+    employmentType: 'On-call',
     dateAdded: 'Mar 11, 2026',
   },
   {
@@ -503,7 +503,7 @@ const seedEmployeeRecords: Staff[] = [
     lastAccess: '—',
     recordKind: 'employee-record',
     accountStatus: 'Suspended',
-    employmentType: 'Seasonal',
+    employmentType: 'On-call',
     archived: true,
     dateAdded: 'May 29, 2026',
   },

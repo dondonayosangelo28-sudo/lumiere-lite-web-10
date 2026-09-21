@@ -81,14 +81,14 @@ export type SessionStatus =
   | 'Suspended'
 
 // A directory entry is either a full portal account (can authenticate) or an
-// employee record (on-call / seasonal worker with no standing login).
+// employee record (on-call worker with no standing login).
 export type RecordKind = 'full-account' | 'employee-record'
 
 // The lifecycle state surfaced in Workforce Management, distinct from the live
 // session state. Locked is derived from an open account-locked request.
 export type AccountStatus = 'Active' | 'Pending' | 'Locked' | 'Suspended'
 
-export type EmploymentType = 'On-call' | 'Seasonal'
+export type EmploymentType = 'On-call'
 
 export interface Staff {
   id: string
