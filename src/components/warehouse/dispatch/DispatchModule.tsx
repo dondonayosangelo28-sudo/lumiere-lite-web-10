@@ -29,7 +29,7 @@ import { Pill } from '@/components/warehouse/shared/Pill'
 import { cn } from '@/lib/utils'
 
 type ViewMode = 'grouped' | 'consolidated'
-type EventTab = 'overview' | 'items' | 'outbound' | 'returns'
+type EventTab = 'overview' | 'items'
 
 interface EventItemRow {
   id: string
@@ -329,9 +329,9 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             <div className="border-b border-border px-6 py-5"><EventOverview summary={selectedEvent} /></div>
             <div className="border-b border-border px-6 pt-4">
               <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Event dispatch views">
-                {(['overview', 'items', 'outbound', 'returns'] as EventTab[]).map((tab) => (
+                {(['overview', 'items'] as EventTab[]).map((tab) => (
                   <button key={tab} type="button" role="tab" aria-selected={eventTab === tab} onClick={() => setEventTab(tab)} className={cn('border-b-2 px-3 pb-3 text-[0.62rem] font-bold uppercase tracking-[0.1em] transition', eventTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
-                    {tab === 'outbound' ? 'Outbound' : tab === 'returns' ? 'Returns' : tab[0].toUpperCase() + tab.slice(1)}
+                    {tab[0].toUpperCase() + tab.slice(1)}
                   </button>
                 ))}
               </div>
@@ -339,10 +339,8 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             <div className="p-6">
               {eventTab === 'items' ? (
                 <EventItemsView summary={selectedEvent} items={eventItems} search={itemSearch} onSearch={setItemSearch} statusFilter={itemStatusFilter} onStatusFilter={setItemStatusFilter} batchFilter={itemBatchFilter} onBatchFilter={setItemBatchFilter} onSelectItem={setSelectedItem} />
-              ) : eventTab === 'returns' ? (
-                <EventReturnsView summary={selectedEvent} onNewBatch={() => setNewBatchModal({ eventId: selectedEvent.eventId, direction: 'return' })} />
               ) : (
-                <EventBatchLevel summary={selectedEvent} onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })} onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)} onExportManifest={() => exportEventManifest(selectedEvent)} onlyOutbound={eventTab === 'outbound'} />
+                <EventBatchLevel summary={selectedEvent} onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })} onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)} onExportManifest={() => exportEventManifest(selectedEvent)} />
               )}
             </div>
           </aside>
@@ -444,7 +442,7 @@ function EventCardGrid({
             )}
             {summary.hasPahabol && (
               <span
-                title="Pahabol items flagged"
+                title="Additional Delivery items flagged"
                 className="flex size-6 shrink-0 items-center justify-center rounded-full bg-destructive/15 text-destructive"
               >
                 <AlertTriangle className="size-3.5" />
@@ -655,6 +653,27 @@ function EventBatchLevel({
         </ul>
       )}
 
+      <section className="rounded-xl border border-border bg-background p-4" aria-labelledby="return-activity-title">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p id="return-activity-title" className="text-[0.62rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">Return activity</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {summary.batches.filter((batch) => batch.direction === 'return').length > 0
+                ? `${summary.batches.filter((batch) => batch.direction === 'return').length} return batch${summary.batches.filter((batch) => batch.direction === 'return').length === 1 ? '' : 'es'} in this event.`
+                : 'No active return activity.'}
+            </p>
+          </div>
+          {summary.batches.filter((batch) => batch.direction === 'return').length > 0 && (
+            <div className="text-right text-xs text-muted-foreground">
+              <span className="font-semibold text-card-foreground">
+                {summary.batches.filter((batch) => batch.direction === 'return').reduce((total, batch) => total + batch.reconciliation.length, 0)}
+              </span>{' '}
+              item lines pending inspection
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Collapsible Archived Batches Section */}
       {(() => {
         const archived = getArchivedBatches(summary.eventId)
@@ -778,7 +797,7 @@ function ConsolidatedBatchTable({
                 </td>
                 <td className="px-5 py-3.5">
                   {hasPahabol ? (
-                    <Pill tone="critical">Pahabol</Pill>
+                    <Pill tone="critical">Additional Delivery</Pill>
                   ) : hasShort ? (
                     <Pill tone="caution">Short</Pill>
                   ) : (

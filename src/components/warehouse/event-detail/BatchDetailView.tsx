@@ -386,7 +386,7 @@ export function BatchDetailView({
                               )}
                             >
                               <span className={cn('size-1.5 rounded-full', toneDot[tone])} aria-hidden="true" />
-                              {row.status}
+                              {row.status === 'Pahabol' ? 'Additional Delivery' : row.status}
                             </span>
                           </td>
                         </tr>
@@ -418,7 +418,7 @@ export function BatchDetailView({
             </div>
             {missingJustifications && (
               <p className="mt-2 text-[0.65rem] font-medium text-destructive">
-                All pahabol items require a justification before this batch can be marked {finalStage.toLowerCase()}.
+                All additional delivery items require a justification before this batch can be marked {finalStage.toLowerCase()}.
               </p>
             )}
           </div>
