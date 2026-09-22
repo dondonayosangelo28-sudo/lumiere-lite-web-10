@@ -943,7 +943,7 @@ function BackgroundTab({ onApply }: { onApply: (color: string | null, photoDataU
 
 /* ════════════════════����═════════════════════
    LEFT PANEL SHELL
-   ══════════════════���══���═════���══════════════ */
+   ══════════════════����══���═════���══════════════ */
 const PANEL_TABS: { id: PanelTab; icon: React.ElementType; label: string }[] = [
   { id: 'elements',   icon: ImageIcon,  label: 'Elements' },
   { id: 'text',       icon: Type,       label: 'Text' },
@@ -1989,7 +1989,12 @@ function AllocationModal({
   const deficit = Math.max(0, requestedBase - availableBase) / (UNIT_FACTORS[unit] ?? 1)
 
   function handleDeclareMax(checked: boolean) { setDeclareMax(checked); if (checked) setQty(asset.availableStock.toString()) }
-  function handleSave() { if (deficit > 0) { setDeficitOpen(true); return }; onSave(asset.id, requested, unit); onClose() }
+  function handleSave() {
+    if (requested <= 0) return
+    // Allocation records event demand; it must not consume warehouse stock.
+    onSave(asset.id, requested, unit)
+    onClose()
+  }
   function handleUnitChange(newUnit: string) {
     const currentQty = Math.max(0, Number(qty) || 0)
     const base = convertToBase(currentQty, unit)
@@ -2004,7 +2009,7 @@ function AllocationModal({
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div ref={ref} className="w-full max-w-sm rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
-          <span className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-foreground">Allocate Asset</span>
+          <span className="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-foreground">Record Event Requirement</span>
           <button type="button" onClick={onClose} className="flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition"><X className="size-3.5" /></button>
         </div>
         <div className="px-5 py-4 flex flex-col gap-4">
@@ -2045,12 +2050,12 @@ function AllocationModal({
             </div>
           )}
           <div className="flex items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5">
-            <span className="text-[0.62rem] text-muted-foreground">Available Stocks</span>
-            <span className="text-[0.68rem] font-bold text-foreground">{formatStock(asset.availableStock)} default {asset.unit}(s)</span>
+            <span className="text-[0.62rem] text-muted-foreground">Stock on Hand</span>
+            <span className="text-[0.68rem] font-bold text-foreground">{formatStock(asset.availableStock)} {asset.unit}</span>
           </div>
           <div className="flex gap-2 pt-1">
             <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-border py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted-foreground hover:bg-accent hover:text-foreground transition">Cancel</button>
-            <button type="button" onClick={handleSave} className="flex-1 rounded-xl bg-primary py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground hover:opacity-90 transition">Allocate</button>
+            <button type="button" onClick={handleSave} className="flex-1 rounded-xl bg-primary py-2 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground hover:opacity-90 transition">Record Requirement</button>
           </div>
         </div>
       </div>
@@ -2314,7 +2319,7 @@ function RightPanel({ expanded, onToggleExpand, droppedAssets: _droppedAssets, o
     onRemoveDropped(id)
   }
   function handleSaveAllocation(id: string, qty: number, unit: string) {
-    setAssets((current) => current.map((x) => x.id === id ? { ...x, quantity: qty, unit, allocated: true, availableStock: Math.max(0, x.availableStock - qty) } : x))
+    setAssets((current) => current.map((x) => x.id === id ? { ...x, quantity: qty, unit, allocated: true } : x))
   }
   function handleStrategy(path: StrategyPath, id: string, qty: number, unit: string) {
     if (qty <= 0) return
