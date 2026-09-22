@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
-import { WarehouseRail } from '@/components/warehouse/WarehouseRail'
+import { ConsoleLayout } from '@/components/ConsoleLayout'
 import { CompanionPanel } from '@/components/warehouse/CompanionPanel'
 import { WarehouseDashboardModule } from '@/components/warehouse/dashboard/WarehouseDashboardModule'
 import { WarehouseEventDetailPage } from '@/pages/WarehouseEventDetailPage'
@@ -11,7 +10,6 @@ import { WarehouseNavContext } from '@/lib/warehouse-nav'
 
 export function WarehouseDashboardPage() {
   const { events } = usePortal()
-  const { navigate } = useNav()
   const [activeModuleId, setActiveModuleId] = useState<WarehouseModuleId>('dashboard')
   const [detailEvent, setDetailEvent] = useState<PortalEvent | null>(null)
 
@@ -43,11 +41,7 @@ export function WarehouseDashboardPage() {
 
   return (
     <WarehouseNavContext.Provider value={{ activeModuleId, selectModule }}>
-      <div className="fixed inset-0 flex overflow-hidden bg-background text-foreground max-md:static max-md:inset-auto max-md:h-auto max-md:min-h-[100dvh] max-md:overflow-visible">
-        <WarehouseRail
-          activeModuleId={activeModuleId}
-          onSelectModule={selectModule}
-        />
+      <ConsoleLayout mobileDocumentFlow>
       {activeModuleId === 'dashboard' ? (
         <WarehouseDashboardModule
           onSelectModule={selectModule}
@@ -61,7 +55,7 @@ export function WarehouseDashboardPage() {
           onClose={() => setActiveModuleId('dashboard')}
         />
         )}
-      </div>
+      </ConsoleLayout>
     </WarehouseNavContext.Provider>
   )
 }
