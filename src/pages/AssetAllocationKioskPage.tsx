@@ -123,12 +123,12 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
   }
   const [submitting, setSubmitting] = useState(false)
   const quantity = qty.trim() === '' ? Number.NaN : Number(qty)
-  const quantityIsValid = Number.isInteger(quantity) && quantity > 0 && !!asset && quantity <= asset.quantity
+  const quantityIsValid = Number.isInteger(quantity) && quantity > 0 && !!asset
 
   const handleConfirm = useCallback(async () => {
     if (!asset || method !== 'procure') return
     if (!quantityIsValid) {
-      setError('Enter a valid quantity within Stock on Hand.')
+      setError('Enter a valid whole-number quantity greater than zero.')
       return
     }
     if (!eventId) {
@@ -146,7 +146,7 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
         throw new Error('This asset is demo/fallback data and cannot be used for a real procurement request. Please select a real backend asset.')
       }
       if (!quantityIsValid) {
-        throw new Error('Enter a valid quantity within Stock on Hand.')
+        throw new Error('Enter a valid whole-number quantity greater than zero.')
       }
       await createDeficitItemApi({
         eventId,
@@ -255,9 +255,6 @@ function ProcureModal({ asset, events, onClose }: ProcureModalProps) {
               <p className="mt-2 text-xs text-muted-foreground">
                 Stock on Hand: <span className="font-semibold text-foreground">{asset.quantity}</span>
                 {asset.quantity === 0 && <span className="ml-2 font-semibold text-amber-600">No stock available for allocation.</span>}
-                {quantity > asset.quantity && asset.quantity > 0 && (
-                  <span className="ml-2 font-semibold text-amber-600">Quantity cannot exceed Stock on Hand.</span>
-                )}
               </p>
               <button
                 type="button"
