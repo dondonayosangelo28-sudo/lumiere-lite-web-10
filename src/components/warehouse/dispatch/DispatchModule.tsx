@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AlertTriangle, Archive, ArrowDown, ArrowUp, ChevronDown, ChevronRight, Download, Search, SlidersHorizontal, Truck, User, X } from 'lucide-react'
+import { AlertTriangle, Archive, ArrowDown, ArrowUp, ChevronDown, ChevronRight, Download, Package, Search, SlidersHorizontal, Truck, User, X } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
 import {
@@ -29,6 +29,61 @@ import { Pill } from '@/components/warehouse/shared/Pill'
 import { cn } from '@/lib/utils'
 
 type ViewMode = 'grouped' | 'consolidated'
+type EventTab = 'overview' | 'items' | 'outbound' | 'returns'
+
+interface EventItemRow {
+  id: string
+  itemName: string
+  required: number
+  prepared: number | null
+  dispatched: number | null
+  remaining: number | null
+  status: string
+  batchLabel: string
+  batchId?: string
+  reconciliationStatus?: string
+  assetId?: string
+}
+
+function displayReconciliationStatus(status: string) {
+  return status === 'Pahabol' ? 'Additional Delivery' : status
+}
+
+function deriveEventItems(summary: EventDispatchSummary): EventItemRow[] {
+  const rows = new Map<string, EventItemRow>()
+  summary.batches.forEach((batch) => {
+    batch.reconciliation.forEach((row) => {
+      const key = row.itemName.toLowerCase()
+      const existing = rows.get(key)
+      const dispatched = batch.stage === 'In Transit' || batch.stage === 'Delivered' || batch.stage === 'Returned' ? row.actual : 0
+      const status = batch.stalled
+        ? 'Needs Attention'
+        : row.status === 'Pahabol'
+          ? 'Additional Delivery'
+          : batch.stage === 'Delivered' || batch.stage === 'Returned'
+            ? 'On Site'
+            : batch.stage === 'In Transit'
+              ? 'In Transit'
+              : batch.stage === 'Loaded'
+                ? 'Ready for Dispatch'
+                : 'Preparing'
+      rows.set(key, {
+        id: row.id,
+        itemName: row.itemName,
+        required: (existing?.required ?? 0) + row.planned,
+        prepared: (existing?.prepared ?? 0) + row.actual,
+        dispatched: (existing?.dispatched ?? 0) + dispatched,
+        remaining: Math.max(0, (existing?.remaining ?? 0) + row.planned - dispatched),
+        status,
+        batchLabel: batch.vehicleType,
+        batchId: batch.id,
+        reconciliationStatus: displayReconciliationStatus(row.status),
+        assetId: batch.assetId,
+      })
+    })
+  })
+  return Array.from(rows.values())
+}
 
 interface DispatchModuleProps {
   onClose: () => void
@@ -85,6 +140,11 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   const [stageFilter, setStageFilter] = useState('all')
   const [directionFilter, setDirectionFilter] = useState('all')
   const [reconciliationFilter, setReconciliationFilter] = useState('all')
+  const [eventTab, setEventTab] = useState<EventTab>('overview')
+  const [itemSearch, setItemSearch] = useState('')
+  const [itemStatusFilter, setItemStatusFilter] = useState('all')
+  const [itemBatchFilter, setItemBatchFilter] = useState('all')
+  const [selectedItem, setSelectedItem] = useState<EventItemRow | null>(null)
 
   const filteredSummaries = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -104,6 +164,16 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   }, [directionFilter, reconciliationFilter, search, stageFilter, summaries])
 
   const selectedEvent = filteredSummaries.find((s) => s.eventId === selectedEventId) ?? null
+  const eventItems = useMemo(() => {
+    if (!selectedEvent) return []
+    const query = itemSearch.trim().toLowerCase()
+    return deriveEventItems(selectedEvent).filter((item) => {
+      const matchesSearch = !query || item.itemName.toLowerCase().includes(query)
+      const matchesStatus = itemStatusFilter === 'all' || item.status === itemStatusFilter
+      const matchesBatch = itemBatchFilter === 'all' || (itemBatchFilter === 'unassigned' ? !item.batchId : item.batchId === itemBatchFilter)
+      return matchesSearch && matchesStatus && matchesBatch
+    })
+  }, [itemBatchFilter, itemSearch, itemStatusFilter, selectedEvent])
 
   // The list currently being navigated in the Level 3 overlay.
   const navList: NavigableBatch[] = useMemo(() => {
@@ -257,10 +327,29 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
               <button type="button" onClick={() => setSelectedEventId(null)} className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Close event detail"><X className="size-4" /></button>
             </div>
             <div className="border-b border-border px-6 py-5"><EventOverview summary={selectedEvent} /></div>
-            <div className="p-6"><EventBatchLevel summary={selectedEvent} onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })} onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)} onExportManifest={() => exportEventManifest(selectedEvent)} /></div>
+            <div className="border-b border-border px-6 pt-4">
+              <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Event dispatch views">
+                {(['overview', 'items', 'outbound', 'returns'] as EventTab[]).map((tab) => (
+                  <button key={tab} type="button" role="tab" aria-selected={eventTab === tab} onClick={() => setEventTab(tab)} className={cn('border-b-2 px-3 pb-3 text-[0.62rem] font-bold uppercase tracking-[0.1em] transition', eventTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+                    {tab === 'outbound' ? 'Outbound' : tab === 'returns' ? 'Returns' : tab[0].toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-6">
+              {eventTab === 'items' ? (
+                <EventItemsView summary={selectedEvent} items={eventItems} search={itemSearch} onSearch={setItemSearch} statusFilter={itemStatusFilter} onStatusFilter={setItemStatusFilter} batchFilter={itemBatchFilter} onBatchFilter={setItemBatchFilter} onSelectItem={setSelectedItem} />
+              ) : eventTab === 'returns' ? (
+                <EventReturnsView summary={selectedEvent} onNewBatch={() => setNewBatchModal({ eventId: selectedEvent.eventId, direction: 'return' })} />
+              ) : (
+                <EventBatchLevel summary={selectedEvent} onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })} onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)} onExportManifest={() => exportEventManifest(selectedEvent)} onlyOutbound={eventTab === 'outbound'} />
+              )}
+            </div>
           </aside>
         </div>
       )}
+
+      {selectedItem && <ItemDetailDialog item={selectedItem} onClose={() => setSelectedItem(null)} />}
 
       {activeNav && (
         <BatchDetailView
@@ -399,16 +488,49 @@ function EventOverview({ summary }: { summary: EventDispatchSummary }) {
   )
 }
 
+function EventItemsView({ summary, items, search, onSearch, statusFilter, onStatusFilter, batchFilter, onBatchFilter, onSelectItem }: { summary: EventDispatchSummary; items: EventItemRow[]; search: string; onSearch: (value: string) => void; statusFilter: string; onStatusFilter: (value: string) => void; batchFilter: string; onBatchFilter: (value: string) => void; onSelectItem: (item: EventItemRow) => void }) {
+  const allItems = deriveEventItems(summary)
+  const statuses = Array.from(new Set(allItems.map((item) => item.status)))
+  const batches = summary.batches
+  const attentionCount = allItems.filter((item) => item.status === 'Needs Attention' || item.reconciliationStatus === 'Short' || item.reconciliationStatus === 'Additional Delivery' || !item.batchId).length
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><p className="text-sm font-semibold text-card-foreground">Items to dispatch</p><p className="text-xs text-muted-foreground">All item lines currently linked to this event&apos;s dispatch batches.</p></div>
+        <span className={cn('rounded-full px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-wider', attentionCount ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300' : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300')}>{attentionCount ? `${attentionCount} needs attention` : 'No items require attention'}</span>
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <label className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2"><Search className="size-3.5 text-muted-foreground" aria-hidden="true" /><input value={search} onChange={(event) => onSearch(event.target.value)} placeholder="Search items..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" aria-label="Search items" /></label>
+        <select value={statusFilter} onChange={(event) => onStatusFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground" aria-label="Filter item status"><option value="all">All Statuses</option>{statuses.map((status) => <option key={status} value={status}>{status}</option>)}</select>
+        <select value={batchFilter} onChange={(event) => onBatchFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground" aria-label="Filter item batch"><option value="all">All Batches</option>{batches.map((batch) => <option key={batch.id} value={batch.id}>{batch.vehicleType}</option>)}{allItems.some((item) => !item.batchId) && <option value="unassigned">Unassigned</option>}</select>
+      </div>
+      {items.length === 0 ? <div className="rounded-lg border border-dashed border-border px-5 py-10 text-center"><Package className="mx-auto size-7 text-muted-foreground" /><p className="mt-2 text-sm font-medium text-card-foreground">No items found</p><p className="mt-1 text-xs text-muted-foreground">No items match the selected filters.</p></div> : <div className="overflow-x-auto rounded-lg border border-border"><table className="w-full min-w-[720px] text-left"><thead className="bg-muted/40"><tr>{['Item', 'Required', 'Prepared', 'Dispatched', 'Remaining', 'Status', 'Batch'].map((heading) => <th key={heading} className="px-3 py-3 text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">{heading}</th>)}</tr></thead><tbody>{items.map((item) => <tr key={item.id} onClick={() => onSelectItem(item)} className="cursor-pointer border-t border-border/60 transition hover:bg-muted/40"><td className="px-3 py-3 text-xs font-semibold text-card-foreground">{item.itemName}</td><td className="px-3 py-3 text-xs text-foreground">{item.required}</td><td className="px-3 py-3 text-xs text-foreground">{item.prepared ?? '—'}</td><td className="px-3 py-3 text-xs text-foreground">{item.dispatched ?? '—'}</td><td className="px-3 py-3 text-xs text-foreground">{item.remaining ?? '—'}</td><td className="px-3 py-3"><span className="rounded-full bg-primary/10 px-2 py-1 text-[0.58rem] font-bold text-primary">{item.status}</span></td><td className="px-3 py-3 text-xs text-muted-foreground">{item.batchLabel || 'Unassigned'}</td></tr>)}</tbody></table></div>}
+    </div>
+  )
+}
+
+function ItemDetailDialog({ item, onClose, hidden = false }: { item: EventItemRow; onClose: () => void; hidden?: boolean }) {
+  if (hidden) return null
+  return <div className="fixed inset-0 z-[60] flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true"><div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"><div className="flex items-start justify-between"><div><p className="text-[0.6rem] font-bold uppercase tracking-wider text-primary">Item detail</p><h3 className="mt-1 font-serif text-xl text-card-foreground">{item.itemName}</h3></div><button type="button" onClick={onClose} aria-label="Close item detail" className="rounded-md p-2 text-muted-foreground hover:bg-accent"><X className="size-4" /></button></div><dl className="mt-5 grid grid-cols-2 gap-3 text-xs">{[['Required', item.required], ['Prepared', item.prepared ?? '—'], ['Dispatched', item.dispatched ?? '—'], ['Remaining', item.remaining ?? '—'], ['Status', item.status], ['Batch', item.batchLabel || 'Unassigned']].map(([label, value]) => <div key={String(label)} className="rounded-md bg-muted/40 p-3"><dt className="text-[0.56rem] font-bold uppercase tracking-wider text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold text-foreground">{value}</dd></div>)}</dl>{!item.assetId && <p className="mt-4 rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-200">This item is not linked to a live asset record. Its dispatch status cannot be changed yet.</p>}</div></div>
+}
+
+function EventReturnsView({ summary, onNewBatch }: { summary: EventDispatchSummary; onNewBatch: () => void }) {
+  const returns = summary.batches.filter((batch) => batch.direction === 'return')
+  return <div className="space-y-4"><div className="flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-card-foreground">Returns</p><p className="text-xs text-muted-foreground">Returned batches and their current inspection state.</p></div><button type="button" onClick={onNewBatch} className="rounded-md border border-border px-3 py-2 text-[0.6rem] font-bold uppercase tracking-wider hover:bg-accent">+ New Return Batch</button></div>{returns.length === 0 ? <div className="rounded-lg border border-dashed border-border px-5 py-10 text-center text-sm text-muted-foreground">No return batches have been created for this event.</div> : <div className="space-y-2">{returns.map((batch) => <div key={batch.id} className="rounded-lg border border-border bg-background p-4"><div className="flex items-center justify-between"><span className="text-sm font-semibold text-card-foreground">{batch.vehicleType}</span><span className="text-xs text-muted-foreground">{batch.stage}</span></div><p className="mt-1 text-xs text-muted-foreground">{batch.plateNumber} · {batch.reconciliation.length} item lines</p></div>)}</div>}</div>
+}
+
 function EventBatchLevel({
   summary,
   onNewBatch,
   onOpenBatch,
   onExportManifest,
+  onlyOutbound = false,
 }: {
   summary: EventDispatchSummary
   onNewBatch: (direction: BatchDirection) => void
   onOpenBatch: (batchId: string) => void
   onExportManifest: () => void
+  onlyOutbound?: boolean
 }) {
   const [showArchived, setShowArchived] = useState(false)
 

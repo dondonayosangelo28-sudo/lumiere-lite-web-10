@@ -142,7 +142,7 @@ export function BatchDetailView({
                 <div>
                   <h3 className="font-serif text-lg font-bold text-card-foreground">Delete Batch?</h3>
                   <p className="text-xs text-muted-foreground">
-                    Deleting {batch.vehicleType} ({batch.plateNumber}) will release all reserved quantities back into the available pool.
+                    Deleting {batch.vehicleType} ({batch.plateNumber}) will archive this batch and preserve its operational history.
                   </p>
                 </div>
               </div>
@@ -397,7 +397,7 @@ export function BatchDetailView({
                                 htmlFor={`justification-${row.id}`}
                                 className="mb-1.5 block text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-destructive"
                               >
-                                Justification required — unplanned addition
+                                Justification required — additional delivery
                               </label>
                               <textarea
                                 id={`justification-${row.id}`}
