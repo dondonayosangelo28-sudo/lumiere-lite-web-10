@@ -62,7 +62,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
         status: (item.status as DeficitLine['status']) || 'Not Purchased',
         primaryVendorId: '',
         quantityNeeded: item.quantityNeeded,
-        orderedQuantity: 0,
+        orderedQuantity: item.quantityNeeded,
         receivedQuantity: 0,
         receipts: [],
       }))
@@ -125,8 +125,11 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
 
   const handleRecordReceipt = async (quantity: number, receivedDate: string, notes: string) => {
     if (!receiptLine) return
+    if (!receiptLine.id || receiptLine.id.startsWith('def-')) {
+      throw new Error('This item is not connected to a live receiving record.')
+    }
     const result = await recordDeficitReceiptApi(receiptLine.id, { quantity, receivedDate, notes: notes || undefined, poRef: receiptLine.poRef })
-    setLines((prev) => prev.map((line) => line.id === receiptLine.id ? { ...line, receivedQuantity: result.totalReceived, status: deriveDeficitStatus(line.orderedQuantity ?? 0, result.totalReceived), quantityNeeded: result.remainingToReceive, receipts: [...(line.receipts ?? []), { id: result.id, quantity, receivedDate, notes: notes || undefined, recordedBy: result.recordedBy ?? 'Warehouse', poRef: result.poRef ?? line.poRef }] } : line))
+    setLines((prev) => prev.map((line) => line.id === receiptLine.id ? { ...line, receivedQuantity: result.totalReceived, status: (result.status as DeficitLine['status']) || deriveDeficitStatus(line.orderedQuantity ?? 0, result.totalReceived), quantityNeeded: result.remainingToReceive, receipts: [...(line.receipts ?? []), { id: result.id, quantity, receivedDate, notes: notes || undefined, recordedBy: result.recordedBy ?? 'Warehouse', poRef: result.poRef ?? line.poRef }] } : line))
     setReceiptLine(null)
   }
 
