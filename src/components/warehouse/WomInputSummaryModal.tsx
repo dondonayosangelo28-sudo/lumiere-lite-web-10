@@ -323,19 +323,19 @@ export function WomInputSummaryModal({ event, onClose, onOpenFullDetail }: WomIn
             <div className="mt-4 grid grid-cols-2 gap-3 max-sm:grid-cols-1 sm:grid-cols-4">
               <div className="rounded-lg border border-border bg-background p-3">
                 <p className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">Registry Reference</p>
-                <p className="mt-1 text-xs font-semibold text-foreground truncate max-sm:whitespace-normal max-sm:break-words">{execRegistry.registryRef}</p>
+                <p className="mt-1 break-words text-xs font-semibold text-foreground">{execRegistry.registryRef}</p>
               </div>
               <div className="rounded-lg border border-border bg-background p-3">
                 <p className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">Client Name</p>
-                <p className="mt-1 text-xs font-semibold text-foreground truncate max-sm:whitespace-normal max-sm:break-words">{execRegistry.client}</p>
+                <p className="mt-1 break-words text-xs font-semibold text-foreground">{execRegistry.client}</p>
               </div>
               <div className="rounded-lg border border-border bg-background p-3">
                 <p className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">Target Date</p>
-                <p className="mt-1 text-xs font-semibold text-foreground truncate max-sm:whitespace-normal max-sm:break-words">{execRegistry.targetDate}</p>
+                <p className="mt-1 break-words text-xs font-semibold text-foreground">{execRegistry.targetDate}</p>
               </div>
               <div className="rounded-lg border border-border bg-background p-3">
                 <p className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">Venue Location</p>
-                <p className="mt-1 text-xs font-semibold text-foreground truncate max-sm:whitespace-normal max-sm:break-words">{execRegistry.venue}</p>
+                <p className="mt-1 break-words text-xs font-semibold text-foreground">{execRegistry.venue}</p>
               </div>
             </div>
           </div>
