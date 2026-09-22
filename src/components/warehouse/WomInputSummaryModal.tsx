@@ -91,12 +91,12 @@ export function WomInputSummaryModal({ event, onClose, onOpenFullDetail }: WomIn
       onClick={onClose}
     >
       <div
-        className="flex h-full max-h-[46rem] max-sm:max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-card shadow-2xl"
+        className="flex h-full max-h-[46rem] max-sm:max-h-[calc(100dvh-2rem)] max-sm:relative w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-card shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5 max-sm:flex-col max-sm:items-stretch max-sm:gap-3 sm:px-8 sm:flex sm:items-start sm:justify-between sm:gap-4">
-          <div>
+          <div className="max-sm:pr-8">
             <div className="flex items-center gap-2">
               <span className="rounded bg-primary/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary">
                 Warehouse Input Summary
@@ -114,7 +114,7 @@ export function WomInputSummaryModal({ event, onClose, onOpenFullDetail }: WomIn
             </div>
           </div>
 
-          <div className="flex items-center gap-2 max-sm:w-full max-sm:justify-between">
+          <div className="flex items-center gap-2 max-sm:w-full max-sm:justify-between max-sm:pr-10">
             {onOpenFullDetail && (
               <button
                 type="button"
@@ -131,7 +131,7 @@ export function WomInputSummaryModal({ event, onClose, onOpenFullDetail }: WomIn
               type="button"
               onClick={onClose}
               aria-label="Close modal"
-              className="flex size-9 max-sm:size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="flex size-9 max-sm:size-9 max-sm:absolute max-sm:top-3 max-sm:right-3 max-sm:z-10 sm:static items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
             >
               <X className="size-4" />
             </button>
