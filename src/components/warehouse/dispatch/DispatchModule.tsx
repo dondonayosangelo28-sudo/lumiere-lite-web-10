@@ -266,7 +266,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
                 viewMode === 'consolidated' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted',
               )}
             >
-              Consolidated
+              Dispatch Overview
             </button>
           </div>
             {viewMode === 'consolidated' && (
@@ -288,7 +288,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             </label>
             <div className="flex flex-wrap items-center gap-2">
               <SlidersHorizontal className="hidden size-4 text-muted-foreground sm:block" aria-hidden="true" />
-              <select value={stageFilter} onChange={(event) => setStageFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter by stage">
+              <select value={stageFilter} onChange={(event) => setStageFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter by dispatch status">
                 <option value="all">All stages</option><option value="Planned">Planned</option><option value="Loaded">Loaded</option><option value="In Transit">In Transit</option><option value="Delivered">Delivered</option><option value="Returned">Returned</option>
               </select>
               <select value={directionFilter} onChange={(event) => setDirectionFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter by direction">
@@ -490,7 +490,7 @@ function EventItemsView({ summary, items, search, onSearch, statusFilter, onStat
   const allItems = deriveEventItems(summary)
   const statuses = Array.from(new Set(allItems.map((item) => item.status)))
   const batches = summary.batches
-  const attentionCount = allItems.filter((item) => item.status === 'Needs Attention' || item.reconciliationStatus === 'Short' || item.reconciliationStatus === 'Additional Delivery' || !item.batchId).length
+  const attentionCount = allItems.filter((item) => item.status === 'Needs Attention' || item.reconciliationStatus === 'Additional Delivery' || !item.batchId).length
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -744,69 +744,78 @@ function ConsolidatedBatchTable({
   const rows = summaries.flatMap((summary) => summary.batches.map((batch) => ({ summary, batch })))
 
   if (rows.length === 0) {
-    return <p className="text-sm text-muted-foreground">No dispatch batches across any event yet.</p>
+    return <p className="text-sm text-muted-foreground">No dispatches available</p>
   }
 
+  const dispatchCount = rows.length
+  const inTransitCount = rows.filter(({ batch }) => batch.stage === 'In Transit').length
+  const attentionCount = rows.filter(({ batch }) => batch.reconciliation.some((row) => row.status === 'Pahabol' || row.status === 'Short') || batch.crew.length === 0).length
+
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[880px] text-left">
-        <thead>
-          <tr className="border-b border-border bg-muted/40">
-            {['Event', 'Vehicle', 'Direction', 'Crew', 'Stage', 'Reconciliation'].map((h) => (
-              <th key={h} className="px-5 py-3.5 text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                {h}
-              </th>
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border border-border bg-card px-4 py-3">
+        <div><p className="text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">Dispatch Overview</p><p className="mt-0.5 text-sm font-semibold text-card-foreground">{dispatchCount} dispatch{dispatchCount === 1 ? '' : 'es'}</p></div>
+        <div><p className="text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">In Transit</p><p className="mt-0.5 text-sm font-semibold text-card-foreground">{inTransitCount}</p></div>
+        <div><p className="text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">Attention</p><p className="mt-0.5 text-sm font-semibold text-card-foreground">{attentionCount}</p></div>
+      </div>
+      <div className="overflow-x-auto rounded-xl border border-border bg-card">
+        <table className="w-full min-w-[880px] text-left">
+          <thead>
+            <tr className="border-b border-border bg-muted/40">
+              {['Event', 'Vehicle', 'Direction', 'Crew', 'Dispatch Status', 'Reconciliation'].map((h) => (
+                <th key={h} className="px-5 py-3.5 text-[0.56rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {summaries.map((summary) => (
+              <Fragment key={summary.eventId}>
+                <tr className="border-t border-border bg-muted/20">
+                  <td colSpan={6} className="px-5 py-3">
+                    <p className="text-sm font-semibold text-card-foreground">{summary.eventTitle}</p>
+                    <p className="text-[0.62rem] text-muted-foreground">{summary.venue}</p>
+                  </td>
+                </tr>
+                {summary.batches.map((batch) => {
+                  const hasAdditionalDelivery = batch.reconciliation.some((row) => row.status === 'Pahabol' || row.status === 'Short')
+                  return (
+                    <tr
+                      key={batch.id}
+                      onClick={() => onOpenBatch(summary.eventId, batch.id)}
+                      className="cursor-pointer border-t border-border/60 align-middle transition hover:bg-muted/40"
+                    >
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">Dispatch batch</td>
+                      <td className="px-5 py-3.5">
+                        <p className="text-xs text-card-foreground">{batch.vehicleType}</p>
+                        <p className="text-[0.6rem] uppercase tracking-[0.06em] text-muted-foreground">{batch.plateNumber}</p>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-card-foreground">
+                          {batch.direction === 'outbound' ? <ArrowUp className="size-3.5" /> : <ArrowDown className="size-3.5" />}
+                          {batch.direction === 'outbound' ? 'Outbound' : 'Return'}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-1.5">
+                          {batch.crew.length === 0 ? <span className="rounded-full bg-amber-500/10 px-2 py-1 text-[0.6rem] font-medium text-amber-700 dark:text-amber-300">Unassigned</span> : batch.crew.slice(0, 3).map((member) => <Avatar key={member.id} name={member.name} />)}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
+                      </td>
+                      <td className="px-5 py-3.5">
+                        {hasAdditionalDelivery ? <Pill tone="critical">Additional Delivery</Pill> : <Pill tone="positive">Matched</Pill>}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </Fragment>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ summary, batch }) => {
-            const hasPahabol = batch.reconciliation.some((row) => row.status === 'Pahabol')
-            const hasShort = batch.reconciliation.some((row) => row.status === 'Short')
-            return (
-              <tr
-                key={batch.id}
-                onClick={() => onOpenBatch(summary.eventId, batch.id)}
-                className="cursor-pointer border-t border-border/60 align-middle transition hover:bg-muted/40"
-              >
-                <td className="px-5 py-3.5">
-                  <p className="text-sm font-medium text-card-foreground">{summary.eventTitle}</p>
-                  <p className="text-[0.6rem] uppercase tracking-[0.06em] text-muted-foreground">{summary.venue}</p>
-                </td>
-                <td className="px-5 py-3.5">
-                  <p className="text-xs text-card-foreground">{batch.vehicleType}</p>
-                  <p className="text-[0.6rem] uppercase tracking-[0.06em] text-muted-foreground">{batch.plateNumber}</p>
-                </td>
-                <td className="px-5 py-3.5">
-                  <span className="inline-flex items-center gap-1.5 text-xs text-card-foreground">
-                    {batch.direction === 'outbound' ? <ArrowUp className="size-3.5" /> : <ArrowDown className="size-3.5" />}
-                    {batch.direction === 'outbound' ? 'Outbound' : 'Return'}
-                  </span>
-                </td>
-                <td className="px-5 py-3.5">
-                  <div className="flex items-center gap-1.5">
-                    {batch.crew.length === 0 ? (
-                      <span className="text-[0.6rem] text-muted-foreground/60">Unassigned</span>
-                    ) : (
-                      batch.crew.slice(0, 3).map((member) => <Avatar key={member.id} name={member.name} />)
-                    )}
-                  </div>
-                </td>
-                <td className="px-5 py-3.5">
-                  <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
-                </td>
-                <td className="px-5 py-3.5">
-              {hasPahabol || hasShort ? (
-                <Pill tone="critical">Additional Delivery</Pill>
-              ) : (
-                <Pill tone="positive">Matched</Pill>
-              )}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
