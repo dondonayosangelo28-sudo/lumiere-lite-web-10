@@ -88,15 +88,17 @@ export function AssetCard({ asset, onOpen }: AssetCardProps) {
       onClick={onOpen}
       className="group flex flex-col overflow-hidden rounded-xl border border-border/80 bg-white dark:bg-card text-left shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-primary/50 hover:ring-1 hover:ring-primary/20"
     >
-      {/* Aspect Ratio 4:3 image for 5-col grid */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-        <img
-          src={asset.image || '/placeholder.svg'}
-          alt={asset.name}
-          crossOrigin="anonymous"
-          className="size-full object-cover transition duration-300 group-hover:scale-105"
-        />
-        <div className="absolute left-2 top-2 flex flex-wrap gap-1">
+      {/* Consistent neutral presentation frame keeps every catalog image aligned. */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f5f1e9] p-1.5 dark:bg-[#eee8dc]">
+        <div className="relative size-full overflow-hidden rounded-lg bg-white shadow-[inset_0_0_0_1px_rgba(98,77,52,0.12)] dark:bg-[#faf8f3]">
+          <img
+            src={asset.image || '/placeholder.svg'}
+            alt={asset.name}
+            crossOrigin="anonymous"
+            className="size-full object-cover transition duration-300 group-hover:scale-105"
+          />
+        </div>
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1">
           <Pill tone={statusTone} className="text-[0.6rem] px-2 py-0.5">
             {catalogStatus}
           </Pill>
