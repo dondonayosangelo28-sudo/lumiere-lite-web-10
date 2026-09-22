@@ -408,9 +408,8 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                         <span className="block text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Active deficit</span>
                         <span className="block text-sm font-semibold text-card-foreground">₱{totalCost.toLocaleString()}</span>
                       </span>
-                      <span className="inline-flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary">
-                        VIEW DEFICITS
-                        {expanded ? <ChevronUp aria-hidden="true" className="size-3.5" /> : <ChevronDown aria-hidden="true" className="size-3.5" />}
+                      <span className="inline-flex size-8 items-center justify-center rounded-md border border-primary/40 bg-primary/10 text-primary transition-colors hover:bg-primary/15">
+                        {expanded ? <ChevronUp aria-hidden="true" className="size-4" /> : <ChevronDown aria-hidden="true" className="size-4" />}
                       </span>
                     </span>
                   </button>
@@ -460,11 +459,10 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                     else next.add('general')
                     return next
                   })}
-                  className="border-t border-border px-5 py-3 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary"
+                  className="flex w-full items-center justify-end border-t border-border px-5 py-3 text-primary"
                 >
-                  <span className="inline-flex items-center gap-2">
-                    VIEW DEFICITS
-                    {expandedEvents.has('general') ? <ChevronUp aria-hidden="true" className="size-3.5" /> : <ChevronDown aria-hidden="true" className="size-3.5" />}
+                  <span className="inline-flex size-8 items-center justify-center rounded-md border border-primary/40 bg-primary/10 transition-colors hover:bg-primary/15">
+                    {expandedEvents.has('general') ? <ChevronUp aria-hidden="true" className="size-4" /> : <ChevronDown aria-hidden="true" className="size-4" />}
                   </span>
                 </button>
               </div>
