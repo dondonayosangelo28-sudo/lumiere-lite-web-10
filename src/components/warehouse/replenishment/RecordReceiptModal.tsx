@@ -19,7 +19,12 @@ export function RecordReceiptModal({ line, onClose, onConfirm }: RecordReceiptMo
   const submit = async () => {
     if (invalid || saving) { setError(`Enter a whole number between 1 and ${remaining}.`); return }
     setSaving(true); setError('')
-    try { await onConfirm(quantityNumber, receivedDate, notes) } catch (cause) { setError(cause instanceof Error ? cause.message : 'Receipt could not be recorded. Try again.'); setSaving(false) }
+    try {
+      await onConfirm(quantityNumber, receivedDate, notes)
+    } catch {
+      setError('Unable to record receipt. Please try again.')
+      setSaving(false)
+    }
   }
 
   return (

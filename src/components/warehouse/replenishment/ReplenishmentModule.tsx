@@ -447,6 +447,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                       onEdit={setEditLine}
                       onRemove={handleRemove}
                       onTagForDispatch={handleTagForDispatch}
+                      onRecordReceipt={setReceiptLine}
                     />
                   </div>
                 )}

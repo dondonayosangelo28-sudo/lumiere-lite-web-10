@@ -152,15 +152,6 @@ export function DeficitTable({ lines, selectedIds, onToggleSelect, onRowClick, o
                 </td>
                 <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-2">
-                    {(['In Procurement', 'Partially Received'].includes(line.status) && !line.id.startsWith('def-')) && (
-                      <button
-                        type="button"
-                        onClick={() => onRecordReceipt(line)}
-                        className="rounded-md border border-primary/40 px-3 py-1.5 text-[0.58rem] font-bold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-primary/10"
-                      >
-                        Receive
-                      </button>
-                    )}
                     <KebabMenu
                     label={`Actions for ${line.itemName}`}
                     actions={[
