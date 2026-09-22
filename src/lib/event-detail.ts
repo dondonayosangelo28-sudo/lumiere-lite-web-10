@@ -57,6 +57,8 @@ export interface BatchCrewMember {
 
 export interface DispatchBatch {
   id: string
+  /** Verified backend Asset ID. Synthetic batch IDs must never be used here. */
+  assetId?: string
   vehicleType: string
   plateNumber: string
   driverName?: string

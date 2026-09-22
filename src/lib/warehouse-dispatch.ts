@@ -223,7 +223,7 @@ export function getDispatchActivity(): DispatchActivityEntry[] {
   return activity
 }
 
-export function advanceBatchStage(eventId: string, batchId: string): boolean {
+export async function advanceBatchStage(eventId: string, batchId: string): Promise<boolean> {
   const batches = batchesByEvent.get(eventId)
   if (!batches) return false
   const target = batches.find((batch) => batch.id === batchId)
@@ -235,6 +235,12 @@ export function advanceBatchStage(eventId: string, batchId: string): boolean {
     return false
   }
   const stage = nextStage(target.direction, target.stage)
+  const statusUpdated = await updateAssetDispatchStatus(target.assetId, stage)
+  if (!statusUpdated) {
+    logActivity(`${target.vehicleType} (${target.plateNumber}) could not advance: no live asset link or status request failed.`, 'warning')
+    return false
+  }
+
   const updated = batches.map((batch) => (batch.id === batchId ? { ...batch, stage } : batch))
   batchesByEvent.set(eventId, updated)
   logActivity(
@@ -243,9 +249,6 @@ export function advanceBatchStage(eventId: string, batchId: string): boolean {
   )
   publish()
 
-  // Asynchronously dispatch asset movement status transition to REST API
-  void updateAssetDispatchStatus(batchId, stage)
-
   return true
 }
 
@@ -253,11 +256,13 @@ export function advanceBatchStage(eventId: string, batchId: string): boolean {
 // checkpoint (Ground Crew's Chain of Custody screen) when a vehicle breaks
 // down or a batch is otherwise interrupted mid-leg. The batch's `stage` is
 // left untouched so it resumes from exactly where it stopped once resolved.
-export function markBatchStalled(eventId: string, batchId: string, reason: string) {
+export async function markBatchStalled(eventId: string, batchId: string, reason: string) {
   const batches = batchesByEvent.get(eventId)
   if (!batches) return
   const target = batches.find((batch) => batch.id === batchId)
   if (!target) return
+  if (!(await updateAssetDispatchStatus(target.assetId, 'Stalled'))) return
+
   const updated = batches.map((batch) =>
     batch.id === batchId ? { ...batch, stalled: true, stalledReason: reason } : batch,
   )
@@ -268,14 +273,15 @@ export function markBatchStalled(eventId: string, batchId: string, reason: strin
   )
   publish()
 
-  void updateAssetDispatchStatus(batchId, 'Stalled')
 }
 
-export function resolveBatchStall(eventId: string, batchId: string) {
+export async function resolveBatchStall(eventId: string, batchId: string) {
   const batches = batchesByEvent.get(eventId)
   if (!batches) return
   const target = batches.find((batch) => batch.id === batchId)
   if (!target) return
+  if (!(await updateAssetDispatchStatus(target.assetId, target.stage))) return
+
   const updated = batches.map((batch) =>
     batch.id === batchId ? { ...batch, stalled: false, stalledReason: '' } : batch,
   )
@@ -283,7 +289,6 @@ export function resolveBatchStall(eventId: string, batchId: string) {
   logActivity(`${target.vehicleType} (${target.plateNumber}) resumed transit after a stall.`, 'info')
   publish()
 
-  void updateAssetDispatchStatus(batchId, target.stage)
 }
 
 export function updateBatchHandoffNote(eventId: string, batchId: string, handoffNote: string) {

@@ -49,7 +49,12 @@ export async function forceDispatchEvent(eventId: string): Promise<boolean> {
  * Updates asset dispatch movement status.
  * Endpoint: POST /api/dispatch/asset/{assetId}/status
  */
-export async function updateAssetDispatchStatus(assetId: string, targetState: string): Promise<boolean> {
+export async function updateAssetDispatchStatus(assetId: string | undefined, targetState: string): Promise<boolean> {
+  if (!assetId?.trim()) {
+    console.warn('[dispatchApi] Asset dispatch status skipped: no verified asset ID is available.')
+    return false
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}/api/dispatch/asset/${encodeURIComponent(assetId)}/status`, {
       method: 'POST',
@@ -58,7 +63,7 @@ export async function updateAssetDispatchStatus(assetId: string, targetState: st
     })
     return res.ok
   } catch (err) {
-    console.warn('[dispatchApi] Update asset dispatch status skipped/fallback:', err?.message ?? String(err))
-    return true
+    console.warn('[dispatchApi] Update asset dispatch status failed:', err?.message ?? String(err))
+    return false
   }
 }

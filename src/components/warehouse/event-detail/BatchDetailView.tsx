@@ -20,7 +20,7 @@ interface BatchDetailViewProps {
   onClose: () => void
   onJustificationChange: (rowId: string, value: string) => void
   onHandoffNoteChange: (value: string) => void
-  onAdvanceStage: () => void
+  onAdvanceStage: () => boolean | Promise<boolean>
   onStall?: (reason: string) => void
   onResume?: () => void
   onUpdateInfo?: (info: Partial<Pick<DispatchBatch, 'vehicleType' | 'plateNumber' | 'driverName'>>) => void
@@ -47,6 +47,7 @@ export function BatchDetailView({
   onDelete,
 }: BatchDetailViewProps) {
   const [handoffError, setHandoffError] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
   const [stallModalOpen, setStallModalOpen] = useState(false)
   const [stallReason, setStallReason] = useState('')
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false)
@@ -445,6 +446,10 @@ export function BatchDetailView({
             </button>
           </div>
 
+          {actionError && (
+            <p className="w-full text-right text-[0.65rem] font-medium text-destructive" role="alert">{actionError}</p>
+          )}
+
           {isFinal ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-2 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary">
               {finalStage}
@@ -457,7 +462,10 @@ export function BatchDetailView({
                   setHandoffError(true)
                   return
                 }
-                onAdvanceStage()
+                setActionError(null)
+                void Promise.resolve(onAdvanceStage()).then((succeeded) => {
+                  if (!succeeded) setActionError('Dispatch item is not linked to a live asset record. This action cannot be completed.')
+                })
               }}
               disabled={missingJustifications || batch.stalled}
               title={batch.stalled ? 'Resolve the stall before advancing this batch' : undefined}
