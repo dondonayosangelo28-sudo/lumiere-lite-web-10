@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Download, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
-import { getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
+import { deriveDeficitStatus, getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
 import { createDeficitItemApi, fetchDeficitQueueApi, recordDeficitReceiptApi, updateDeficitStatusApi } from '@/lib/deficitApi'
 import { DeficitTable } from '@/components/warehouse/replenishment/DeficitTable'
 import { GeneratePOModal } from '@/components/warehouse/replenishment/GeneratePOModal'
@@ -50,18 +50,21 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
       const mapped: DeficitLine[] = items.map((item) => ({
         id: item.id,
         eventId: item.eventId || undefined,
-        eventTitle: item.eventName || undefined,
-        itemName: item.itemName,
-        category: (item.itemCategory as any) || 'General',
-        unit: 'pcs',
-        triggerSource: 'Auto-Threshold',
-        currentStock: 0,
-        threshold: item.quantityNeeded,
-        costPerUnit: 100,
-        priority: (item.urgencyLevel as any) || 'Medium',
-        status: (item.status as any) || 'Not Purchased',
+        eventTitle: undefined,
+        itemName: item.assetDescription || 'Unnamed asset',
+        category: item.category || 'General',
+        unit: item.unit || 'pcs',
+        triggerSource: (item.triggerSource as DeficitLine['triggerSource']) || 'Auto-Threshold',
+        currentStock: item.currentStock ?? 0,
+        threshold: item.threshold ?? item.quantityNeeded,
+        costPerUnit: item.costPerUnit ?? 0,
+        priority: (item.priority as DeficitLine['priority']) || 'Medium',
+        status: (item.status as DeficitLine['status']) || 'Not Purchased',
         primaryVendorId: '',
         quantityNeeded: item.quantityNeeded,
+        orderedQuantity: 0,
+        receivedQuantity: 0,
+        receipts: [],
       }))
       setLines((prev) => {
         const existingIds = new Set(prev.map((l) => l.id))
@@ -123,7 +126,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
   const handleRecordReceipt = async (quantity: number, receivedDate: string, notes: string) => {
     if (!receiptLine) return
     const result = await recordDeficitReceiptApi(receiptLine.id, { quantity, receivedDate, notes: notes || undefined, poRef: receiptLine.poRef })
-    setLines((prev) => prev.map((line) => line.id === receiptLine.id ? { ...line, receivedQuantity: result.totalReceived, status: result.status as DeficitLine['status'], quantityNeeded: result.remainingToReceive, receipts: [...(line.receipts ?? []), { id: result.id, quantity, receivedDate, notes: notes || undefined, recordedBy: result.recordedBy ?? 'Warehouse', poRef: result.poRef ?? line.poRef }] } : line))
+    setLines((prev) => prev.map((line) => line.id === receiptLine.id ? { ...line, receivedQuantity: result.totalReceived, status: deriveDeficitStatus(line.orderedQuantity ?? 0, result.totalReceived), quantityNeeded: result.remainingToReceive, receipts: [...(line.receipts ?? []), { id: result.id, quantity, receivedDate, notes: notes || undefined, recordedBy: result.recordedBy ?? 'Warehouse', poRef: result.poRef ?? line.poRef }] } : line))
     setReceiptLine(null)
   }
 
@@ -416,6 +419,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                         onEdit={setEditLine}
                         onRemove={handleRemove}
                         onTagForDispatch={handleTagForDispatch}
+                        onRecordReceipt={setReceiptLine}
                       />
                     </div>
                   )}

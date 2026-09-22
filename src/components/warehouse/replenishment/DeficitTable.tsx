@@ -65,7 +65,7 @@ function TriggerCell({ source }: { source: TriggerSource }) {
   )
 }
 
-export function DeficitTable({ lines, selectedIds, onToggleSelect, onRowClick, onEdit, onRemove, onTagForDispatch }: DeficitTableProps) {
+export function DeficitTable({ lines, selectedIds, onToggleSelect, onRowClick, onEdit, onRemove, onTagForDispatch, onRecordReceipt }: DeficitTableProps) {
   if (lines.length === 0) {
     return (
       <div className="px-5 py-10 text-center text-xs text-muted-foreground">No deficit lines in this view.</div>

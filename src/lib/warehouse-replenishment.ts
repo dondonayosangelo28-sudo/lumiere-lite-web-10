@@ -13,6 +13,13 @@ export type DeficitPriority = 'Low' | 'Medium' | 'High' | 'Critical'
 
 export type { DeficitStatus }
 
+export function deriveDeficitStatus(orderedQuantity = 0, receivedQuantity = 0): DeficitStatus {
+  if (orderedQuantity <= 0) return 'Not Purchased'
+  if (receivedQuantity >= orderedQuantity) return 'Received'
+  if (receivedQuantity > 0) return 'Partially Received'
+  return 'In Procurement'
+}
+
 export interface DeficitLine {
   id: string
   eventId?: string
