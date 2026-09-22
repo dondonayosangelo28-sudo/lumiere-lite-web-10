@@ -152,15 +152,25 @@ export function DeficitTable({ lines, selectedIds, onToggleSelect, onRowClick, o
                 </td>
                 <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-2">
+                    {(['In Procurement', 'Partially Received'].includes(line.status)) && (
+                      <button
+                        type="button"
+                        onClick={() => onRecordReceipt(line)}
+                        aria-label={`Receive ${line.itemName}`}
+                        className="rounded-md border border-primary bg-primary/10 px-2.5 py-1.5 text-[0.58rem] font-bold uppercase tracking-[0.1em] text-primary transition hover:bg-primary hover:text-primary-foreground"
+                      >
+                        Receive
+                      </button>
+                    )}
                     <KebabMenu
-                    label={`Actions for ${line.itemName}`}
-                    actions={[
-                      { label: 'View Details', onSelect: () => onRowClick(line) },
-                      ...(['In Procurement', 'Partially Received'].includes(line.status) && !line.id.startsWith('def-') ? [{ label: 'Receive', onSelect: () => onRecordReceipt(line) }] : []),
-                      { label: 'Tag for Dispatch', onSelect: () => onTagForDispatch(line.id) },
-                      { label: 'Edit', onSelect: () => onEdit(line) },
-                      { label: 'Remove', onSelect: () => onRemove(line.id), destructive: true },
-                    ]}
+                      label={`Actions for ${line.itemName}`}
+                      actions={[
+                        { label: 'View Details', onSelect: () => onRowClick(line) },
+                        ...(['In Procurement', 'Partially Received'].includes(line.status) ? [{ label: 'Receive', onSelect: () => onRecordReceipt(line) }] : []),
+                        { label: 'Tag for Dispatch', onSelect: () => onTagForDispatch(line.id) },
+                        { label: 'Edit', onSelect: () => onEdit(line) },
+                        { label: 'Remove', onSelect: () => onRemove(line.id), destructive: true },
+                      ]}
                     />
                   </div>
                 </td>
