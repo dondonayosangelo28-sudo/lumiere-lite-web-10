@@ -25,7 +25,7 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
   }
 
   return (
-    <div className={`${desktopOnly ? 'hidden md:block' : ''} border-b border-border bg-background px-5 py-6 sm:px-8`}>
+    <div className={`${desktopOnly ? 'hidden md:block' : ''} max-md:sticky max-md:top-16 max-md:z-20 border-b border-border bg-background px-5 py-6 sm:px-8`}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex items-center gap-3">
           {mobileLeading}
@@ -39,7 +39,7 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
           </div>
         </div>
         {searchInHeader && (
-          <div className="relative w-full sm:max-w-sm max-md:sticky max-md:top-16 max-md:z-20 max-md:-mx-5 max-md:w-[calc(100%+2.5rem)] max-md:bg-background max-md:px-5 max-md:py-3 sm:max-md:-mx-8 sm:max-md:w-[calc(100%+4rem)] sm:max-md:px-8">
+          <div className="relative w-full sm:max-w-sm">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <label htmlFor="warehouse-event-search" className="sr-only">Search events</label>
             <input id="warehouse-event-search" type="search" value={searchQuery} onChange={(event) => onSearchChange(event.target.value)} placeholder="Search events" className="h-10 w-full rounded-lg border border-border/80 bg-card pl-10 pr-4 text-xs text-card-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20" />
