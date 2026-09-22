@@ -95,7 +95,7 @@ export function WomInputSummaryModal({ event, onClose, onOpenFullDetail }: WomIn
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
-        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5 max-sm:flex-col max-sm:items-stretch max-sm:gap-3 sm:px-8 sm:flex sm:items-start sm:justify-between sm:gap-4">
+        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5 max-sm:flex-col max-sm:items-start max-sm:gap-2 max-sm:px-4 max-sm:py-3 sm:px-8 sm:flex sm:items-start sm:justify-between sm:gap-4">
           <div className="max-sm:pr-8">
             <div className="flex items-center gap-2">
               <span className="rounded bg-primary/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary">
