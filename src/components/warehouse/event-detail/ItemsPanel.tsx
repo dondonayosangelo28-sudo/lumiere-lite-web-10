@@ -21,7 +21,7 @@ export function ItemsPanel({ items, onViewAllocation, onOpenItem }: ItemsPanelPr
       action={<SectionButton onClick={onViewAllocation}>View Full Allocation</SectionButton>}
     >
       {items.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border bg-background px-5 py-8 text-center text-sm text-muted-foreground">
+          <p className="py-2 text-sm text-muted-foreground">
           No items allocated yet.
         </p>
       ) : (
