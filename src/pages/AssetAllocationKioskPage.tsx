@@ -4,12 +4,14 @@ import {
   AlertTriangle, ShoppingCart, ArrowRight, X,
   Boxes, CheckCircle2, Loader2, MapPin, Building2,
 } from 'lucide-react'
-import { ConsoleLayout } from '@/components/ConsoleLayout'
+import { ExecutiveShell } from '@/components/executive/ExecutiveShell'
 import { EmptyState } from '@/components/EmptyState'
 import { cn } from '@/lib/utils'
 import { fetchAssetsApi } from '@/lib/assetKioskApi'
 import type { AssetResponse, AssetFilterParams } from '@/lib/assetKioskApi'
 import { createDeficitItemApi, DeficitApiError } from '@/lib/deficitApi'
+import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
+import { useNav } from '@/lib/nav'
 import { usePortal } from '@/lib/store'
 import { useScrollCollapsed } from '@/lib/use-scroll-collapsed'
 import type { PortalEvent } from '@/lib/types'
@@ -444,6 +446,8 @@ const ALL_CATEGORY = '__all__'
 
 /* ---- Main page ---- */
 export function AssetAllocationKioskPage() {
+  const { navigate } = useNav()
+  const destination = (id: ExecutiveDestinationId) => navigate(id)
   const { events } = usePortal()
 
   // Data state
@@ -601,10 +605,7 @@ export function AssetAllocationKioskPage() {
 
   return (
     <>
-      <ConsoleLayout>
-        <div className="sticky top-0 z-20 -mx-4 border-b border-border bg-background/95 px-4 pb-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-12 lg:px-12">
-          {stickyHeader}
-        </div>
+      <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
         {/* Two-pane kiosk layout */}
         <div className="grid h-auto grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
           {/* ---- Visual category menu ---- */}
@@ -736,7 +737,7 @@ export function AssetAllocationKioskPage() {
             )}
           </div>
         </div>
-      </ConsoleLayout>
+      </ExecutiveShell>
 
       {/* Procurement / crossdock step modal */}
       {selectedAsset && (
