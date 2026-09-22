@@ -1,31 +1,27 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import type { DeficitLine } from '@/lib/warehouse-replenishment'
-import { getVendorById } from '@/lib/warehouse-vendors'
+import { getVendorById, getWarehouseVendors } from '@/lib/warehouse-vendors'
 import { Pill } from '@/components/warehouse/shared/Pill'
 import { DEFICIT_STATUS_TONE } from '@/components/warehouse/replenishment/tone'
-import { cn } from '@/lib/utils'
 
 interface GeneratePOModalProps {
   line: DeficitLine
   onClose: () => void
-  onGenerate: (id: string, quantity: number, vendorId: string) => void
+  onGenerate: (id: string, quantity: number, vendorId: string | null) => void
 }
 
 export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalProps) {
-  const primaryVendor = getVendorById(line.primaryVendorId)
-  const backupVendor = getVendorById(line.backupVendorId)
-  const [useBackup, setUseBackup] = useState(false)
+  const vendors = getWarehouseVendors()
+  const [selectedVendorId, setSelectedVendorId] = useState<string | null>(line.primaryVendorId ?? null)
   const [quantity, setQuantity] = useState(String(line.quantityNeeded))
 
-  const activeVendor = useBackup && backupVendor ? backupVendor : primaryVendor
+  const activeVendor = selectedVendorId ? getVendorById(selectedVendorId) : undefined
   const qtyNumber = Number(quantity) || 0
   const estimatedCost = qtyNumber * line.costPerUnit
-  const validationMessage = !activeVendor
-    ? 'A valid vendor is required.'
-    : !Number.isInteger(qtyNumber) || qtyNumber <= 0
-      ? 'Quantity must be a whole number greater than zero.'
-      : ''
+  const validationMessage = !Number.isInteger(qtyNumber) || qtyNumber <= 0
+    ? 'Quantity must be a whole number greater than zero.'
+    : ''
 
   return (
     <div
@@ -41,7 +37,7 @@ export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalPr
         <div className="flex items-start justify-between border-b border-border px-6 py-5">
           <div>
             <p className="text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Purchase order
+              Order preparation
             </p>
             <h2 className="mt-1 font-serif text-xl font-medium text-card-foreground">{line.itemName}</h2>
             <div className="mt-2 flex items-center gap-2">
@@ -64,45 +60,24 @@ export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalPr
         </div>
 
         <div className="flex flex-col gap-4 px-6 py-5">
-          <div>
-            <p className="mb-2 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Vendor</p>
-            <div className="flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => setUseBackup(false)}
-                className={cn(
-                  'flex items-center justify-between rounded-lg border px-3.5 py-3 text-left transition',
-                  !useBackup ? 'border-primary/50 bg-primary/10' : 'border-border bg-background',
-                )}
-              >
-                <div>
-                  <p className="text-sm font-medium text-card-foreground">{primaryVendor?.name ?? '—'}</p>
-                  <p className="text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
-                    Primary vendor · {primaryVendor?.leadTimeHours}h lead time
-                  </p>
-                </div>
-                {!useBackup && <span className="text-[0.58rem] font-bold uppercase tracking-[0.08em] text-primary">Selected</span>}
-              </button>
-              {backupVendor && (
-                <button
-                  type="button"
-                  onClick={() => setUseBackup(true)}
-                  className={cn(
-                    'flex items-center justify-between rounded-lg border px-3.5 py-3 text-left transition',
-                    useBackup ? 'border-primary/50 bg-primary/10' : 'border-border bg-background',
-                  )}
-                >
-                  <div>
-                    <p className="text-sm font-medium text-card-foreground">{backupVendor.name}</p>
-                    <p className="text-[0.6rem] uppercase tracking-[0.08em] text-muted-foreground">
-                      Backup vendor · redirect order here instead · {backupVendor.leadTimeHours}h lead time
-                    </p>
-                  </div>
-                  {useBackup && <span className="text-[0.58rem] font-bold uppercase tracking-[0.08em] text-primary">Selected</span>}
-                </button>
-              )}
-            </div>
-          </div>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Vendor</span>
+            <select
+              value={selectedVendorId ?? ''}
+              onChange={(event) => setSelectedVendorId(event.target.value || null)}
+              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+            >
+              <option value="">No Vendor</option>
+              {vendors.map((vendor) => (
+                <option key={vendor.id} value={vendor.id}>
+                  {vendor.name}
+                </option>
+              ))}
+            </select>
+            <span className="text-[0.6rem] text-muted-foreground">
+              Optional — an order can proceed before a supplier is assigned.
+            </span>
+          </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Quantity to order</span>
@@ -131,14 +106,14 @@ export function GeneratePOModal({ line, onClose, onGenerate }: GeneratePOModalPr
           >
             Cancel
           </button>
-          <button
-            type="button"
-            disabled={!activeVendor || qtyNumber <= 0}
-            onClick={() => activeVendor && onGenerate(line.id, qtyNumber, activeVendor.id)}
-            className="rounded-md bg-primary px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
-          >
-            Generate PO
-          </button>
+            <button
+              type="button"
+              disabled={qtyNumber <= 0}
+              onClick={() => onGenerate(line.id, qtyNumber, selectedVendorId)}
+              className="rounded-md bg-primary px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
+            >
+              Proceed with Order
+            </button>
           </div>
         </div>
       </div>

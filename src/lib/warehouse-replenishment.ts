@@ -33,7 +33,7 @@ export interface DeficitLine {
   costPerUnit: number
   priority: DeficitPriority
   status: DeficitStatus
-  primaryVendorId: string
+  primaryVendorId: string | null
   backupVendorId?: string
   quantityNeeded: number
   orderedQuantity?: number

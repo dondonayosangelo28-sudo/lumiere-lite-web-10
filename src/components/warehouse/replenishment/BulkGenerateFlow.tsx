@@ -276,7 +276,7 @@ export function BulkGenerateFlow({ candidates, onClose, onConfirm }: BulkGenerat
               onClick={() => setShowAck(true)}
               className="rounded-md bg-primary px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
             >
-              Confirm &amp; Generate POs
+              Confirm &amp; Prepare Orders
             </button>
           )}
         </div>

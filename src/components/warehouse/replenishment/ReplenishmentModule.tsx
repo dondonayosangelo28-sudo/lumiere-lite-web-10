@@ -21,7 +21,7 @@ const SUMMARY_FILTERS: Array<{ id: SummaryFilter; label: string; dot: string }> 
   { id: 'open', label: 'Open deficits', dot: 'bg-destructive' },
   { id: 'critical', label: 'Critical', dot: 'bg-destructive' },
   { id: 'high', label: 'High priority', dot: 'bg-amber-500' },
-  { id: 'po', label: 'PO candidates', dot: 'bg-primary' },
+  { id: 'po', label: 'Order candidates', dot: 'bg-primary' },
 ]
 
 interface ReplenishmentModuleProps {
@@ -115,7 +115,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
     return { groups: [...groups.entries()], general }
   }, [filtered])
 
-  const handleGeneratePO = async (id: string, quantity: number, vendorId: string) => {
+  const handleGeneratePO = async (id: string, quantity: number, vendorId: string | null) => {
     setLines((prev) =>
       prev.map((line) => (line.id === id ? { ...line, status: 'In Procurement', quantityNeeded: quantity, primaryVendorId: vendorId } : line)),
     )
@@ -208,7 +208,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
               <h1 className="mt-1 pb-1 font-serif text-4xl font-medium leading-tight text-foreground">Replenishment / Deficits</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Automated deficit detection, inventory replenishment alerts, and purchase order drafting.
+              Automated deficit detection, inventory replenishment alerts, and order preparation.
             </p>
           </div>
         </div>
@@ -271,7 +271,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               onClick={() => setViewMode('draft')}
               className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90"
             >
-              Draft Master PO ({openCandidates.length})
+              Prepare Order ({openCandidates.length})
             </button>
           </div>
         </div>
@@ -343,7 +343,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                   onClick={() => setBulkOpen(true)}
                   className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
                 >
-                  Draft Master PO ({openCandidates.length})
+                  Prepare Order ({openCandidates.length})
                 </button>
               )}
             </div>
