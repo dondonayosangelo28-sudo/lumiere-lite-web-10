@@ -17,7 +17,7 @@ export function DispatchStepper({ direction, stage, stalled = false }: DispatchS
   const activeIndex = sequence.indexOf(stage)
 
   return (
-    <div className="flex items-center gap-1.5" aria-label={`Batch stage: ${stage}${stalled ? ' — stalled in transit' : ''}`}>
+    <div className="flex flex-wrap items-center gap-1.5 gap-y-1.5" aria-label={`Batch stage: ${stage}${stalled ? ' — stalled in transit' : ''}`}>
       {sequence.map((step, index) => (
         <div key={step} className="flex items-center gap-1.5">
           <span
@@ -37,7 +37,7 @@ export function DispatchStepper({ direction, stage, stalled = false }: DispatchS
           </span>
           {index < sequence.length - 1 && (
             <span
-              className={cn('h-px w-3 shrink-0', index < activeIndex ? 'bg-primary' : 'bg-border')}
+              className={cn('h-px w-3 shrink-0 max-sm:hidden', index < activeIndex ? 'bg-primary' : 'bg-border')}
               aria-hidden="true"
             />
           )}

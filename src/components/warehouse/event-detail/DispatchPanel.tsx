@@ -33,13 +33,13 @@ export function DispatchPanel({ banner, batches, onNewBatch, onOpenBatch }: Disp
             No dispatch batches created for this event yet.
           </p>
         ) : (
-          <ul className="flex max-h-80 flex-col gap-2 overflow-y-auto">
+          <ul className="flex min-w-0 max-h-80 flex-col gap-2 overflow-y-auto">
             {batches.map((batch) => (
               <li key={batch.id}>
                 <button
                   type="button"
                   onClick={() => onOpenBatch(batch.id)}
-                  className="flex w-full flex-wrap items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-left transition-colors hover:bg-accent"
+                  className="flex min-w-0 w-full flex-wrap items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-left transition-colors hover:bg-accent max-sm:flex-col max-sm:items-start max-sm:gap-2"
                 >
                   <span
                     className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary"
@@ -60,7 +60,7 @@ export function DispatchPanel({ banner, batches, onNewBatch, onOpenBatch }: Disp
                     </p>
                   </div>
 
-                  <div className="ml-auto shrink-0">
+                  <div className="ml-auto shrink-0 max-sm:ml-0 max-sm:w-full max-sm:justify-start">
                     <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
                   </div>
                 </button>
