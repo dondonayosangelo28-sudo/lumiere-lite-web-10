@@ -23,6 +23,7 @@ interface DeficitTableProps {
   onEdit: (line: DeficitLine) => void
   onRemove: (id: string) => void
   onTagForDispatch: (id: string) => void
+  onRecordReceipt: (line: DeficitLine) => void
 }
 
 function TriggerCell({ source }: { source: TriggerSource }) {
@@ -154,6 +155,7 @@ export function DeficitTable({ lines, selectedIds, onToggleSelect, onRowClick, o
                     label={`Actions for ${line.itemName}`}
                     actions={[
                       { label: 'View Details', onSelect: () => onRowClick(line) },
+                      ...(['In Procurement', 'Partially Received'].includes(line.status) ? [{ label: 'Record Receipt', onSelect: () => onRecordReceipt(line) }] : []),
                       { label: 'Tag for Dispatch', onSelect: () => onTagForDispatch(line.id) },
                       { label: 'Edit', onSelect: () => onEdit(line) },
                       { label: 'Remove', onSelect: () => onRemove(line.id), destructive: true },

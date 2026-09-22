@@ -3,11 +3,12 @@ import { Download, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
 import { getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
-import { createDeficitItemApi, fetchDeficitQueueApi, updateDeficitStatusApi } from '@/lib/deficitApi'
+import { createDeficitItemApi, fetchDeficitQueueApi, recordDeficitReceiptApi, updateDeficitStatusApi } from '@/lib/deficitApi'
 import { DeficitTable } from '@/components/warehouse/replenishment/DeficitTable'
 import { GeneratePOModal } from '@/components/warehouse/replenishment/GeneratePOModal'
 import { AddMasterItemModal, type MasterItemDraft } from '@/components/warehouse/replenishment/AddMasterItemModal'
 import { BulkGenerateFlow } from '@/components/warehouse/replenishment/BulkGenerateFlow'
+import { RecordReceiptModal } from '@/components/warehouse/replenishment/RecordReceiptModal'
 import { cn } from '@/lib/utils'
 import { exportReplenishmentDeficitPdf } from '@/lib/pdf-exporter'
 
@@ -33,6 +34,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grouped')
   const [query, setQuery] = useState('')
   const [poLine, setPoLine] = useState<DeficitLine | null>(null)
+  const [receiptLine, setReceiptLine] = useState<DeficitLine | null>(null)
   const [editLine, setEditLine] = useState<DeficitLine | null>(null)
   const [addOpen, setAddOpen] = useState(false)
   const [addPresetEvent, setAddPresetEvent] = useState<{ id: string; title: string } | null>(null)
@@ -116,6 +118,13 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
     )
     setPoLine(null)
     await updateDeficitStatusApi(id, 'In Procurement')
+  }
+
+  const handleRecordReceipt = async (quantity: number, receivedDate: string, notes: string) => {
+    if (!receiptLine) return
+    const result = await recordDeficitReceiptApi(receiptLine.id, { quantity, receivedDate, notes: notes || undefined, poRef: receiptLine.poRef })
+    setLines((prev) => prev.map((line) => line.id === receiptLine.id ? { ...line, receivedQuantity: result.totalReceived, status: result.status as DeficitLine['status'], quantityNeeded: result.remainingToReceive, receipts: [...(line.receipts ?? []), { id: result.id, quantity, receivedDate, notes: notes || undefined, recordedBy: result.recordedBy ?? 'Warehouse', poRef: result.poRef ?? line.poRef }] } : line))
+    setReceiptLine(null)
   }
 
   const handleSaveEdit = (draft: MasterItemDraft) => {
@@ -315,6 +324,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
               onEdit={setEditLine}
               onRemove={handleRemove}
               onTagForDispatch={handleTagForDispatch}
+              onRecordReceipt={setReceiptLine}
             />
           </div>
         ) : viewMode === 'draft' ? (
@@ -503,6 +513,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
         </div>
       )}
       {poLine && <GeneratePOModal line={poLine} onClose={() => setPoLine(null)} onGenerate={handleGeneratePO} />}
+      {receiptLine && <RecordReceiptModal line={receiptLine} onClose={() => setReceiptLine(null)} onConfirm={handleRecordReceipt} />}
       {editLine && <AddMasterItemModal initial={editLine} onClose={() => setEditLine(null)} onSave={handleSaveEdit} />}
       {addOpen && (
         <AddMasterItemModal

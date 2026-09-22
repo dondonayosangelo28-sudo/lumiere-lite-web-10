@@ -103,6 +103,44 @@ export async function createDeficitItemApi(req: CreateDeficitItemRequestDto): Pr
 /**
  * PATCH /api/deficit-queue/{id}/status
  */
+export interface RecordReceiptRequestDto {
+  quantity: number
+  receivedDate: string
+  notes?: string
+  poRef?: string
+}
+
+export interface RecordReceiptResponseDto {
+  id: string
+  deficitId: string
+  quantity: number
+  receivedDate: string
+  notes?: string | null
+  recordedBy?: string | null
+  poRef?: string | null
+  totalReceived: number
+  remainingToReceive: number
+  status: string
+}
+
+/**
+ * POST /api/deficit-queue/{id}/receipts
+ * The backend must atomically persist the receipt, update inventory, and
+ * recalculate the deficit. The UI only applies the response after success.
+ */
+export async function recordDeficitReceiptApi(id: string, req: RecordReceiptRequestDto): Promise<RecordReceiptResponseDto> {
+  const res = await fetch(`${API_BASE_URL}/api/deficit-queue/${encodeURIComponent(id)}/receipts`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(req),
+  })
+  if (!res.ok) {
+    const responseBody = await res.text().catch(() => '')
+    throw new DeficitApiError(res.status, responseBody.slice(0, 240))
+  }
+  return await res.json()
+}
+
 export async function updateDeficitStatusApi(id: string, status: string): Promise<boolean> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/deficit-queue/${encodeURIComponent(id)}/status`, {

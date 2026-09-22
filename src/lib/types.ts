@@ -27,6 +27,7 @@ export type Route =
 // Lifecycle state of a stocked asset relative to its replenishment threshold.
 export type DeficitStatus =
   | 'Received'
+  | 'Partially Received'
   | 'Not Purchased'
   | 'In Procurement'
 

@@ -12,6 +12,7 @@ export const PRIORITY_TONE: Record<DeficitPriority, Tone> = {
 export const DEFICIT_STATUS_TONE: Record<DeficitStatus, Tone> = {
   'Not Purchased': 'caution',
   'In Procurement': 'progress',
+  'Partially Received': 'caution',
   Received: 'positive',
 }
 

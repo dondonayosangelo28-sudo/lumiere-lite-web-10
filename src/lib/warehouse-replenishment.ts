@@ -29,7 +29,20 @@ export interface DeficitLine {
   primaryVendorId: string
   backupVendorId?: string
   quantityNeeded: number
+  orderedQuantity?: number
+  receivedQuantity?: number
+  poRef?: string
+  receipts?: ReceiptRecord[]
   taggedForDispatch?: boolean
+}
+
+export interface ReceiptRecord {
+  id: string
+  quantity: number
+  receivedDate: string
+  notes?: string
+  recordedBy: string
+  poRef?: string
 }
 
 function hashOf(value: string) {
@@ -105,6 +118,9 @@ export function getDeficitLines(events: PortalEvent[]): DeficitLine[] {
       primaryVendorId: primaryVendor.id,
       backupVendorId: backupVendor.id !== primaryVendor.id ? backupVendor.id : undefined,
       quantityNeeded: Math.max(4, threshold - currentStock),
+      orderedQuantity: 0,
+      receivedQuantity: 0,
+      receipts: [],
     })
   }
 
