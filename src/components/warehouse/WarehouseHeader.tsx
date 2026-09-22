@@ -39,10 +39,12 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
           </div>
         </div>
         {searchInHeader && (
-          <div className="relative w-full sm:max-w-sm">
+          <div className="max-md:sticky max-md:top-[env(safe-area-inset-top)] max-md:z-20 max-md:bg-background">
+            <div className="relative w-full sm:max-w-sm">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <label htmlFor="warehouse-event-search" className="sr-only">Search events</label>
             <input id="warehouse-event-search" type="search" value={searchQuery} onChange={(event) => onSearchChange(event.target.value)} placeholder="Search events" className="h-10 w-full rounded-lg border border-border/80 bg-card pl-10 pr-4 text-xs text-card-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20" />
+            </div>
           </div>
         )}
       </div>
