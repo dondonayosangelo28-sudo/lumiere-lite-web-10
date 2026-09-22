@@ -15,20 +15,34 @@ export function AssetUpdateModal({ asset, mode, onClose, onSaved }: AssetUpdateM
   const [description, setDescription] = useState(asset.description ?? '')
   const [count, setCount] = useState(String(asset.currentStock ?? 0))
   const [reason, setReason] = useState('Routine Physical Count')
+  const [condition, setCondition] = useState('')
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
 
   const isStock = mode === 'stock'
   const numericCount = Number(count)
-  const variance = numericCount - (asset.currentStock ?? 0)
+  const hasValidCount = count.trim() !== '' && Number.isInteger(numericCount) && numericCount >= 0
+  const variance = hasValidCount ? numericCount - (asset.currentStock ?? 0) : null
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError('')
 
-    if (isStock && (!count.trim() || !Number.isInteger(numericCount) || numericCount < 0)) {
-      setError('Enter a whole number of zero or greater.')
+    if (isStock && !hasValidCount) {
+      setError('Physical Count is required and must be a whole number of zero or greater.')
+      return
+    }
+    if (isStock && reason === 'Stock Correction' && !notes.trim()) {
+      setError('Enter a correction explanation before saving.')
+      return
+    }
+    if (isStock && reason === 'Damaged / Missing' && (!condition || !notes.trim())) {
+      setError('Select a condition and enter notes before saving.')
+      return
+    }
+    if (isStock && reason === 'Other' && !notes.trim()) {
+      setError('Enter an explanation before saving.')
       return
     }
     if (!isStock && !name.trim()) {
@@ -66,12 +80,13 @@ export function AssetUpdateModal({ asset, mode, onClose, onSaved }: AssetUpdateM
             <>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="rounded-lg border border-border bg-background/70 p-3"><p className="text-[0.58rem] uppercase tracking-wider text-muted-foreground">Stock on hand</p><p className="mt-1 text-lg font-semibold text-card-foreground">{asset.currentStock ?? 0} {asset.unit}</p></div>
-                <div className="rounded-lg border border-border bg-background/70 p-3"><p className="text-[0.58rem] uppercase tracking-wider text-muted-foreground">Physical count</p><p className={"mt-1 text-lg font-semibold " + (variance === 0 ? 'text-card-foreground' : variance > 0 ? 'text-emerald-600' : 'text-destructive')}>{count || '—'}</p></div>
-                <div className="rounded-lg border border-border bg-background/70 p-3"><p className="text-[0.58rem] uppercase tracking-wider text-muted-foreground">Variance</p><p className={"mt-1 text-lg font-semibold " + (variance === 0 ? 'text-card-foreground' : variance > 0 ? 'text-emerald-600' : 'text-destructive')}>{Number.isFinite(variance) ? (variance > 0 ? `+${variance}` : variance) : '—'}</p></div>
+                <div className="rounded-lg border border-border bg-background/70 p-3"><p className="text-[0.58rem] uppercase tracking-wider text-muted-foreground">Physical count</p><p className={"mt-1 text-lg font-semibold " + (variance === null || variance === 0 ? 'text-card-foreground' : variance > 0 ? 'text-emerald-600' : 'text-destructive')}>{hasValidCount ? count : '—'}</p></div>
+                <div className="rounded-lg border border-border bg-background/70 p-3"><p className="text-[0.58rem] uppercase tracking-wider text-muted-foreground">Variance</p><p className={"mt-1 text-lg font-semibold " + (variance === null || variance === 0 ? 'text-card-foreground' : variance > 0 ? 'text-emerald-600' : 'text-destructive')}>{variance === null ? '—' : variance > 0 ? `+${variance}` : variance} {variance === null ? '' : asset.unit}</p></div>
               </div>
               <label className="block text-xs font-semibold text-card-foreground">Physical Count<input autoFocus inputMode="numeric" value={count} onChange={(event) => setCount(event.target.value)} className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring/30" /></label>
               <label className="block text-xs font-semibold text-card-foreground">Reason<select value={reason} onChange={(event) => setReason(event.target.value)} className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary"><option>Routine Physical Count</option><option>Stock Correction</option><option>Damaged / Missing</option><option>Returned</option><option>Other</option></select></label>
-              <label className="block text-xs font-semibold text-card-foreground">Notes <span className="font-normal text-muted-foreground">(optional)</span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
+              {reason === 'Damaged / Missing' && <label className="block text-xs font-semibold text-card-foreground">Condition<select value={condition} onChange={(event) => setCondition(event.target.value)} className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary"><option value="">Select condition</option><option>Damaged</option><option>Missing</option><option>Damaged + Missing</option></select></label>}
+              <label className="block text-xs font-semibold text-card-foreground">{reason === 'Stock Correction' ? 'Correction Explanation' : reason === 'Other' ? 'Explanation' : reason === 'Damaged / Missing' ? 'Notes / Explanation' : 'Notes'} <span className="font-normal text-muted-foreground">{reason === 'Routine Physical Count' ? '(optional)' : '(required)'}</span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
             </>
           ) : (
             <>
