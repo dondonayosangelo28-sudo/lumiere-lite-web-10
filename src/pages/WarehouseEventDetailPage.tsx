@@ -59,7 +59,6 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
   const [selectedAssetItem, setSelectedAssetItem] = useState<EventAllocatedItem | null>(null)
   const [selectedCrewMember, setSelectedCrewMember] = useState<EventCrewAssignment | null>(null)
   const [changesModalOpen, setChangesModalOpen] = useState(false)
-  const [zoom, setZoom] = useState(100)
 
   const fieldCrew = useMemo(() => staff.filter((member) => member.role === 'Field & Production Crew'), [staff])
 
@@ -87,18 +86,7 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
   return (
     <div className="min-h-screen bg-background max-md:static max-md:inset-auto max-md:h-auto max-md:min-h-[100dvh] max-md:overflow-visible">
       <WarehouseHeader topBarOnly mobileLeading={<WarehouseMobileMenu />} searchQuery="" onSearchChange={() => {}} />
-      <main className="mx-auto flex w-full max-w-[78rem] flex-col px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+6rem)] sm:px-8 sm:py-10">
-        <div className="mx-auto mb-4 flex w-full max-w-[54rem] items-center justify-end gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground print:hidden">
-          <span className="mr-auto text-[0.58rem] tracking-[0.16em]">Document view</span>
-          <button type="button" onClick={() => setZoom((value) => Math.max(75, value - 5))} className="rounded border border-border px-2 py-1.5 transition-colors hover:bg-muted" aria-label="Zoom out">−</button>
-          <span className="min-w-12 text-center tabular-nums">{zoom}%</span>
-          <button type="button" onClick={() => setZoom((value) => Math.min(125, value + 5))} className="rounded border border-border px-2 py-1.5 transition-colors hover:bg-muted" aria-label="Zoom in">+</button>
-          <button type="button" onClick={() => window.print()} className="ml-2 rounded border border-border px-3 py-1.5 transition-colors hover:bg-muted">Print</button>
-        </div>
-        <div className="flex justify-center">
-          <div className="w-full max-w-[54rem] origin-top transition-transform duration-200" style={{ transform: `scale(${zoom / 100})`, marginBottom: `${(zoom - 100) * 7}px` }}>
-            <div className="document-paper flex flex-col gap-7 border border-border/80 bg-card px-6 py-8 shadow-[0_18px_50px_rgba(52,42,32,0.12)] sm:px-12 sm:py-12">
-
+      <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10 pb-[calc(env(safe-area-inset-bottom)+6rem)] sm:px-8 sm:py-14">
         <EventDetailHeader
           event={event}
           overallStatus={snapshot.overallStatus}
@@ -130,10 +118,7 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
           onNewBatch={handleNewBatch}
           onOpenBatch={setActiveBatchId}
         />
-            </div>
-          </div>
-        </div>
-      </main>
+      </div>
 
       {activeBatch && (
         <BatchDetailView

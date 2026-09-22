@@ -8,12 +8,12 @@ interface EventDetailSectionProps {
 
 export function EventDetailSection({ title, action, children }: EventDetailSectionProps) {
   return (
-    <section className="border-t border-border/80 pt-7 first:border-t-0 first:pt-0">
-      <div className="flex items-end justify-between gap-4 border-b border-border/80 pb-2.5">
-        <h2 className="font-serif text-xl font-medium tracking-[-0.015em] text-foreground">{title}</h2>
+    <section className="rounded-xl border border-border bg-card">
+      <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+        <h2 className="font-serif text-lg font-medium text-card-foreground">{title}</h2>
         {action}
       </div>
-      <div className="pt-5">{children}</div>
+      <div className="px-5 py-5">{children}</div>
     </section>
   )
 }

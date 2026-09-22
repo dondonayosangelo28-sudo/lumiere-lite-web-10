@@ -29,7 +29,7 @@ export function DispatchPanel({ banner, batches, onNewBatch, onOpenBatch }: Disp
         <StateBanner label={banner} tone={BANNER_TONE[banner]} />
 
         {batches.length === 0 ? (
-          <p className="py-2 text-sm text-muted-foreground">
+          <p className="rounded-lg border border-dashed border-border bg-background px-5 py-8 text-center text-sm text-muted-foreground">
             No dispatch batches created for this event yet.
           </p>
         ) : (

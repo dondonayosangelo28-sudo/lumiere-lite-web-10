@@ -29,17 +29,17 @@ export function EventDetailHeader({
   const tone = STATUS_TONE[overallStatus]
 
   return (
-    <header className="flex flex-col gap-7">
+    <header className="flex flex-col gap-4">
       <button
         type="button"
         onClick={onBack}
-        className="flex items-center gap-2 self-start text-[0.62rem] font-semibold uppercase tracking-[0.13em] text-muted-foreground transition-colors hover:text-foreground"
+        className="flex items-center gap-2 self-start text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-3.5" aria-hidden="true" />
         Back to dashboard
       </button>
 
-      <div className="flex flex-wrap items-start justify-between gap-5 border-b border-border/80 pb-7">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-xl border border-border bg-card px-6 py-5">
         <div className="min-w-0">
           <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Event detail</p>
           <div className="mt-1 flex flex-wrap items-center gap-2.5">

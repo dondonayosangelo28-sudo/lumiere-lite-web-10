@@ -22,14 +22,14 @@ export function DispatchStepper({ direction, stage, stalled = false }: DispatchS
         <div key={step} className="flex items-center gap-1.5">
           <span
             className={cn(
-              'flex items-center gap-1.5 px-0.5 py-1 text-[0.55rem] font-semibold uppercase tracking-[0.04em] transition-colors',
+              'flex items-center gap-1.5 rounded-full px-2 py-1 text-[0.55rem] font-bold uppercase tracking-[0.04em] transition-colors',
               index === activeIndex
                 ? stalled
-                  ? 'font-bold text-amber-700 dark:text-amber-300'
-                  : 'font-bold text-primary'
+                  ? 'border border-amber-400/50 bg-amber-500 text-white dark:bg-amber-600'
+                  : 'bg-primary text-primary-foreground'
                 : index < activeIndex
-                  ? 'text-foreground/70'
-                  : 'text-muted-foreground',
+                  ? 'bg-primary/15 text-primary'
+                  : 'bg-muted text-muted-foreground',
             )}
           >
             {index === activeIndex && stalled && <AlertTriangle className="size-2.5" aria-hidden="true" />}
@@ -44,7 +44,7 @@ export function DispatchStepper({ direction, stage, stalled = false }: DispatchS
         </div>
       ))}
       {stalled && (
-        <span className="ml-1 inline-flex items-center gap-1 text-[0.55rem] font-bold uppercase tracking-[0.04em] text-amber-700 dark:text-amber-300">
+        <span className="ml-1 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-100 px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.04em] text-amber-900 shadow-sm dark:border-amber-700/50 dark:bg-amber-950/60 dark:text-amber-200">
           <AlertTriangle className="size-2.5 text-amber-700 dark:text-amber-400" aria-hidden="true" />
           Stalled In Transit
         </span>
