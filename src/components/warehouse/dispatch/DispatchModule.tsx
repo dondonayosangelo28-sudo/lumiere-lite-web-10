@@ -45,9 +45,9 @@ interface EventItemRow {
   assetId?: string
 }
 
-function displayReconciliationStatus(status: string) {
-  return status === 'Pahabol' ? 'Additional Delivery' : status
-}
+  function displayReconciliationStatus(status: string) {
+  return status === 'Pahabol' || status === 'Short' ? 'Additional Delivery' : status
+  }
 
 function deriveEventItems(summary: EventDispatchSummary): EventItemRow[] {
   const rows = new Map<string, EventItemRow>()
@@ -796,13 +796,11 @@ function ConsolidatedBatchTable({
                   <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
                 </td>
                 <td className="px-5 py-3.5">
-                  {hasPahabol ? (
-                    <Pill tone="critical">Additional Delivery</Pill>
-                  ) : hasShort ? (
-                    <Pill tone="caution">Short</Pill>
-                  ) : (
-                    <Pill tone="positive">Matched</Pill>
-                  )}
+              {hasPahabol || hasShort ? (
+                <Pill tone="critical">Additional Delivery</Pill>
+              ) : (
+                <Pill tone="positive">Matched</Pill>
+              )}
                 </td>
               </tr>
             )

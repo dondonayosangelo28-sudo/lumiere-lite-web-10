@@ -11,6 +11,14 @@ const RECONCILIATION_TONE: Record<ReconciliationStatus, Tone> = {
   Pahabol: 'critical',
 }
 
+function isAdditionalDelivery(row: DispatchBatch['reconciliation'][number]) {
+  return row.actual < row.planned || row.status === 'Short' || row.status === 'Pahabol'
+}
+
+function reconciliationLabel(row: DispatchBatch['reconciliation'][number]) {
+  return isAdditionalDelivery(row) ? 'Additional Delivery' : row.status === 'Matched' ? 'Matched' : row.status
+}
+
 interface BatchDetailViewProps {
   batch: DispatchBatch
   hasPrevious: boolean
@@ -63,7 +71,7 @@ export function BatchDetailView({
   // like it had failed to jump straight to Delivered.
   const upcomingStage = nextStage(batch.direction, batch.stage)
   const missingJustifications = batch.reconciliation.some(
-    (row) => row.status === 'Pahabol' && row.justification.trim().length === 0,
+    (row) => isAdditionalDelivery(row) && row.justification.trim().length === 0,
   )
 
   return (
@@ -364,6 +372,9 @@ export function BatchDetailView({
                     <th className="px-4 py-2.5 text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                       Actual
                     </th>
+                    <th className="px-4 py-2.5 text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                      Remaining
+                    </th>
                     <th className="px-4 py-2.5 text-right text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                       Status
                     </th>
@@ -371,13 +382,18 @@ export function BatchDetailView({
                 </thead>
                 <tbody>
                   {batch.reconciliation.map((row) => {
-                    const tone = RECONCILIATION_TONE[row.status]
+                    const additionalDelivery = isAdditionalDelivery(row)
+                    const displayStatus = reconciliationLabel(row)
+                    const tone = additionalDelivery ? 'critical' : RECONCILIATION_TONE[row.status]
                     return (
                       <Fragment key={row.id}>
                         <tr className="border-t border-border bg-card">
                           <td className="px-4 py-3 text-sm text-card-foreground">{row.itemName}</td>
                           <td className="px-4 py-3 text-sm text-muted-foreground">{row.planned}</td>
-                          <td className="px-4 py-3 text-sm text-muted-foreground">{row.actual}</td>
+                          <td className="px-4 py-3 text-sm text-muted-foreground">{row.actual ?? '—'}</td>
+                          <td className="px-4 py-3 text-sm text-muted-foreground">
+                            {typeof row.actual === 'number' && typeof row.planned === 'number' ? Math.max(0, row.planned - row.actual) : '—'}
+                          </td>
                           <td className="px-4 py-3 text-right">
                             <span
                               className={cn(
@@ -386,13 +402,13 @@ export function BatchDetailView({
                               )}
                             >
                               <span className={cn('size-1.5 rounded-full', toneDot[tone])} aria-hidden="true" />
-                              {row.status === 'Pahabol' ? 'Additional Delivery' : row.status}
+                              {displayStatus}
                             </span>
                           </td>
                         </tr>
-                        {row.status === 'Pahabol' && (
+                        {additionalDelivery && (
                           <tr className="border-t border-border/60 bg-destructive/5">
-                            <td colSpan={4} className="px-4 py-3">
+                            <td colSpan={5} className="px-4 py-3">
                               <label
                                 htmlFor={`justification-${row.id}`}
                                 className="mb-1.5 block text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-destructive"
