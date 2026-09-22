@@ -943,7 +943,7 @@ function BackgroundTab({ onApply }: { onApply: (color: string | null, photoDataU
 
 /* ════════════════════����═════════════════════
    LEFT PANEL SHELL
-   ══════════════════����══���═════���══════════════ */
+   ══════════════════�����══���═════���══════════════ */
 const PANEL_TABS: { id: PanelTab; icon: React.ElementType; label: string }[] = [
   { id: 'elements',   icon: ImageIcon,  label: 'Elements' },
   { id: 'text',       icon: Type,       label: 'Text' },
@@ -1983,15 +1983,21 @@ function AllocationModal({
   const [deficitOpen, setDeficitOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   useOutsideClick(ref, onClose)
-  const requested = Math.max(0, Number(qty) || 0)
+  const parsedQty = Number(qty)
+  const isValidQuantity = qty.trim() !== '' && Number.isInteger(parsedQty) && parsedQty > 0
+  const requested = isValidQuantity ? parsedQty : 0
   const requestedBase = convertToBase(requested, unit)
   const availableBase = convertToBase(asset.availableStock, asset.unit)
   const deficit = Math.max(0, requestedBase - availableBase) / (UNIT_FACTORS[unit] ?? 1)
 
   function handleDeclareMax(checked: boolean) { setDeclareMax(checked); if (checked) setQty(asset.availableStock.toString()) }
   function handleSave() {
-    if (requested <= 0) return
+    if (!isValidQuantity) return
     // Allocation records event demand; it must not consume warehouse stock.
+    if (deficit > 0) {
+      setDeficitOpen(true)
+      return
+    }
     onSave(asset.id, requested, unit)
     onClose()
   }
@@ -2003,7 +2009,7 @@ function AllocationModal({
     setUnit(newUnit)
   }
 
-  if (deficitOpen) return <DeficitModal asset={asset} requested={requested} unit={unit} deficit={deficit} onClose={onClose} onAccept={() => { onSave(asset.id, asset.availableStock, unit); onClose() }} onBack={() => setDeficitOpen(false)} onStrategy={onStrategy} />
+  if (deficitOpen) return <DeficitModal asset={asset} requested={requested} unit={unit} deficit={deficit} onClose={onClose} onAccept={() => { onSave(asset.id, requested, unit); onClose() }} onBack={() => setDeficitOpen(false)} onStrategy={onStrategy} />
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 backdrop-blur-sm">
@@ -2019,9 +2025,10 @@ function AllocationModal({
           </div>
           <div className="flex gap-2">
             <div className="flex-1">
-              <label className="mb-1 block text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">Enter Quantity</label>
+              <label className="mb-1 block text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">Event Requirement</label>
               <input type="number" min="1" value={qty} onChange={(e) => { setQty(e.target.value); setDeclareMax(false) }}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none focus:border-primary transition" />
+              {!isValidQuantity && qty !== '' && <p className="mt-1 text-[0.58rem] text-destructive">Enter a whole number greater than 0.</p>}
             </div>
             <div className="w-24">
               <label className="mb-1 block text-[0.58rem] font-bold uppercase tracking-[0.12em] text-muted-foreground">Unit</label>
