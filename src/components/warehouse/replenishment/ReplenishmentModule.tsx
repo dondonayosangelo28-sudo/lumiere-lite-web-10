@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Download, Search } from 'lucide-react'
+import { ChevronDown, ChevronUp, Download, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
 import { deriveDeficitStatus, getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
@@ -408,8 +408,9 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                         <span className="block text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Active deficit</span>
                         <span className="block text-sm font-semibold text-card-foreground">₱{totalCost.toLocaleString()}</span>
                       </span>
-                      <span className="rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary">
-                        {expanded ? 'Hide details' : 'Review'}
+                      <span className="inline-flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary">
+                        VIEW DEFICITS
+                        {expanded ? <ChevronUp aria-hidden="true" className="size-3.5" /> : <ChevronDown aria-hidden="true" className="size-3.5" />}
                       </span>
                     </span>
                   </button>
@@ -461,7 +462,10 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
                   })}
                   className="border-t border-border px-5 py-3 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary"
                 >
-                  {expandedEvents.has('general') ? 'Hide details' : 'Review'}
+                  <span className="inline-flex items-center gap-2">
+                    VIEW DEFICITS
+                    {expandedEvents.has('general') ? <ChevronUp aria-hidden="true" className="size-3.5" /> : <ChevronDown aria-hidden="true" className="size-3.5" />}
+                  </span>
                 </button>
               </div>
             )}
