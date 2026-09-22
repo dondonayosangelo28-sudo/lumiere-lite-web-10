@@ -25,7 +25,7 @@ export function WarehouseHeader({ searchQuery, onSearchChange, searchInHeader = 
   }
 
   return (
-    <div className={`${desktopOnly ? 'hidden md:block' : ''} border-b border-border px-5 py-6 sm:px-8`}>
+    <div className={`${desktopOnly ? 'hidden md:block' : ''} max-md:sticky max-md:top-16 max-md:z-20 border-b border-border bg-background px-5 py-6 sm:px-8`}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex items-center gap-3">
           {mobileLeading}
