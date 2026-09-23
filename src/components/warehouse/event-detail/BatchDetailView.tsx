@@ -88,26 +88,19 @@ export function BatchDetailView({
         className="flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
           <div>
             <p className="text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Batch detail
             </p>
             <div className="mt-1 flex items-center gap-2.5">
-              <span
-                className="flex size-8 items-center justify-center rounded-full bg-primary/15 text-primary"
-                aria-hidden="true"
-              >
-                {batch.direction === 'outbound' ? (
-                  <ArrowUp className="size-4" />
-                ) : (
-                  <ArrowDown className="size-4" />
-                )}
+              <span className="flex size-7 items-center justify-center rounded-full bg-primary/15 text-primary" aria-hidden="true">
+                {batch.direction === 'outbound' ? <ArrowUp className="size-3.5" /> : <ArrowDown className="size-3.5" />}
               </span>
               <div>
                 <h2 id="batch-detail-title" className="font-serif text-xl font-medium text-card-foreground">{batch.vehicleType}</h2>
                 <p className="text-[0.65rem] uppercase tracking-[0.08em] text-muted-foreground">
-                  {batch.plateNumber} · Driver: <span className="font-semibold text-foreground">{batch.driverName || 'Unassigned'}</span> · {batch.direction === 'outbound' ? 'Outbound / egress' : 'Return / ingress'}
+                  {batch.plateNumber} · {batch.direction === 'outbound' ? 'Outbound / egress' : 'Return / ingress'}
                 </p>
               </div>
             </div>
@@ -181,7 +174,7 @@ export function BatchDetailView({
         )}
 
         <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="flex flex-col gap-6 px-6 py-6">
+          <div className="flex flex-col gap-5 px-6 py-5">
           {/* Automated Ingress / Return Batch Prompt Banner */}
           {batch.direction === 'outbound' && batch.stage === 'Delivered' && onCreateReturnBatch && (
             <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 flex items-center justify-between">
@@ -204,7 +197,7 @@ export function BatchDetailView({
           )}
 
           {/* Vehicle & Driver Info Editable Controls */}
-          <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+          <div className="border-y border-border py-4">
             <div className="flex items-center justify-between">
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 Vehicle &amp; Driver Assignment
@@ -255,7 +248,7 @@ export function BatchDetailView({
                 </label>
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
                 <div>
                   <span className="text-[0.58rem] font-bold uppercase text-muted-foreground block">Vehicle</span>
                   <span className="font-semibold text-foreground">{batch.vehicleType}</span>
@@ -273,9 +266,11 @@ export function BatchDetailView({
           </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
+              <div>
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 Dispatch stage
               </p>
+              </div>
               {!batch.stalled && !isFinal && (
                 <button
                   type="button"
@@ -318,9 +313,9 @@ export function BatchDetailView({
           )}
 
           {batch.direction === 'outbound' && batch.stage === 'Planned' && (
-            <div>
+            <div className="border-t border-border pt-4">
               <label htmlFor="egress-handoff-note" className="mb-2 block text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                Field Lead handoff note <span className="text-destructive">*</span>
+                Field Lead handoff <span className="text-destructive">*</span>
               </label>
               <textarea
                 id="egress-handoff-note"
@@ -336,7 +331,7 @@ export function BatchDetailView({
             </div>
           )}
 
-          <div>
+          <div className="border-t border-border pt-4">
             <p className="mb-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               Assigned crew
             </p>
@@ -359,8 +354,8 @@ export function BatchDetailView({
             )}
           </div>
 
-          <div>
-            <p className="mb-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="border-t border-border pt-4">
+            <p className="mb-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-foreground">
               Item reconciliation
             </p>
             <div className="overflow-hidden rounded-lg border border-border">
@@ -385,7 +380,11 @@ export function BatchDetailView({
                   </tr>
                 </thead>
                 <tbody>
-                  {batch.reconciliation.map((row) => {
+                  {batch.reconciliation.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">No reconciliation items recorded.</td>
+                    </tr>
+                  ) : batch.reconciliation.map((row) => {
                     const additionalDelivery = isAdditionalDelivery(row)
                     const displayStatus = reconciliationLabel(row)
                     const tone = additionalDelivery ? 'critical' : RECONCILIATION_TONE[row.status]
@@ -445,7 +444,7 @@ export function BatchDetailView({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-background/40 px-6 py-4">
           <div className="flex items-center gap-2">
             <button
               type="button"
