@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/auth'
 import { useNav } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 import { CompactStatStrip } from '@/components/CompactStatStrip'
+import { parseEventDate } from '@/components/EventCalendar'
 import type { PortalEvent } from '@/lib/types'
 import type { ExecutiveDestinationId } from '@/lib/executive-destinations'
 
@@ -110,9 +111,37 @@ export function EventRegistryPage() {
     [events, listQuery, statusFilter],
   )
 
+  const currentMonth = useMemo(() => {
+    const now = new Date()
+    return { year: now.getFullYear(), month: now.getMonth() }
+  }, [])
+
+  const currentMonthEvents = useMemo(
+    () => events.filter((event) => {
+      const parts = parseEventDate(event.targetDate)
+      return parts?.year === currentMonth.year && parts.month === currentMonth.month
+    }),
+    [events, currentMonth],
+  )
+
+  const operationalMetrics = useMemo(
+    () => ({
+      total: currentMonthEvents.length,
+      upcoming: currentMonthEvents.filter((event) => ['Reserved', 'Initialized'].includes(event.status)).length,
+      inProgress: currentMonthEvents.filter((event) => ['In Production', 'On Hold'].includes(event.status)).length,
+      completed: currentMonthEvents.filter((event) => ['Completed', 'Settled'].includes(event.status)).length,
+    }),
+    [currentMonthEvents],
+  )
+
+  const currentMonthLabel = useMemo(
+    () => new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(new Date()),
+    [],
+  )
+
   const progressEvents = useMemo(
-    () => events.filter((event) => event.status !== 'Cancelled' && matchesEventQuery(event, progressQuery)),
-    [events, progressQuery],
+    () => currentMonthEvents.filter((event) => event.status !== 'Cancelled' && matchesEventQuery(event, progressQuery)),
+    [currentMonthEvents, progressQuery],
   )
 
   const destination = (id: ExecutiveDestinationId) => navigate(id)
@@ -165,32 +194,31 @@ export function EventRegistryPage() {
         <LoadingSkeleton variant="table" />
       ) : (
         <>
-          {/* Operational Progress — compact overview with detail available on demand */}
-          <section className="mx-2 rounded-xl border border-border bg-card px-4 py-3 shadow-sm" aria-labelledby="operational-progress-heading">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <div>
+          {/* Operational Progress — current-month overview with detail available on demand */}
+          <section className="mx-2 rounded-xl border border-border bg-card px-4 py-4 shadow-sm sm:px-5" aria-labelledby="operational-progress-heading">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
                   <h2 id="operational-progress-heading" className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground">Operational Progress</h2>
-                  <p className="mt-0.5 text-[0.68rem] text-muted-foreground">Dispatch readiness across active event portfolios.</p>
+                  <p className="mt-1 text-[0.68rem] text-muted-foreground">{currentMonthLabel} operational activity</p>
                 </div>
-                <div className="hidden h-8 w-px bg-border sm:block" aria-hidden="true" />
-                <div className="grid grid-cols-4 gap-3 sm:flex sm:items-center sm:gap-5" aria-label="Operational progress summary">
-                  {[
-                    { label: 'Total', value: events.length },
-                    { label: 'Upcoming', value: events.filter((e) => ['Reserved', 'Initialized'].includes(e.status)).length },
-                    { label: 'In Progress', value: events.filter((e) => ['In Production', 'On Hold'].includes(e.status)).length },
-                    { label: 'Completed', value: events.filter((e) => ['Completed', 'Settled'].includes(e.status)).length },
-                  ].map((metric) => (
-                    <div key={metric.label} className="min-w-0">
-                      <p className="text-base font-semibold leading-none text-foreground">{metric.value}</p>
-                      <p className="mt-1 whitespace-nowrap text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">{metric.label}</p>
-                    </div>
-                  ))}
-                </div>
+                <button type="button" onClick={() => setProgressOpen(true)} className="inline-flex shrink-0 items-center justify-center gap-1 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-primary transition hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
+                  View Progress <ChevronRight className="size-3.5" />
+                </button>
               </div>
-              <button type="button" onClick={() => setProgressOpen(true)} className="inline-flex shrink-0 items-center justify-center gap-1 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-primary transition hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
-                View Progress <ChevronRight className="size-3.5" />
-              </button>
+              <div className="grid grid-cols-2 gap-x-5 gap-y-3 border-t border-border/70 pt-3 sm:grid-cols-4 sm:gap-5" aria-label={`${currentMonthLabel} operational progress summary`}>
+                {[
+                  { label: 'Total', value: operationalMetrics.total },
+                  { label: 'Upcoming', value: operationalMetrics.upcoming },
+                  { label: 'In Progress', value: operationalMetrics.inProgress },
+                  { label: 'Completed', value: operationalMetrics.completed },
+                ].map((metric) => (
+                  <div key={metric.label} className="min-w-0">
+                    <p className="text-base font-semibold leading-none text-foreground">{metric.value}</p>
+                    <p className="mt-1 whitespace-nowrap text-[0.55rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">{metric.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 
