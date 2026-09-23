@@ -180,7 +180,8 @@ export function BatchDetailView({
           </div>
         )}
 
-        <div className="flex flex-1 flex-col gap-6 px-6 py-6">
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="flex flex-col gap-6 px-6 py-6">
           {/* Automated Ingress / Return Batch Prompt Banner */}
           {batch.direction === 'outbound' && batch.stage === 'Delivered' && onCreateReturnBatch && (
             <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 flex items-center justify-between">
@@ -440,6 +441,7 @@ export function BatchDetailView({
                 All additional delivery items require a justification before this batch can be marked {finalStage.toLowerCase()}.
               </p>
             )}
+          </div>
           </div>
         </div>
 
