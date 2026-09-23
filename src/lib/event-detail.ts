@@ -187,6 +187,33 @@ function buildReconciliation(seed: number, procurement: ProcurementItem[]): Reco
 }
 
 function buildBatches(event: PortalEvent, procurement: ProcurementItem[], crewPool: Staff[]): DispatchBatch[] {
+  const completedBatchCounts: Record<string, number> = { 'e-201': 2, 'e-202': 1, 'e-203': 2, 'e-204': 1 }
+  const completedCount = completedBatchCounts[event.id]
+  if (completedCount) {
+    const seed = hashOf(event.refId)
+    const crew = crewPool.slice(0, 4).map((member) => ({ id: member.id, name: `${member.firstName} ${member.surname}` }))
+    const rowsFor = (offset: number): ReconciliationRow[] => buildReconciliation(seed + offset, procurement).map((row) => ({ ...row, status: 'Matched', actual: row.planned, justification: 'Returned and verified against the event manifest.' }))
+    const batches: DispatchBatch[] = []
+    for (let i = 0; i < completedCount; i += 1) {
+      const outbound = i === 0 || completedCount === 1
+      batches.push({
+        id: `${event.id}-history-${i + 1}`,
+        assetId: `${event.id}-historical-asset-${i + 1}`,
+        vehicleType: outbound ? (i === 0 ? 'Truck Alpha (6-Ton)' : 'Van Beta (Transit)') : 'Truck Gamma (4-Ton)',
+        plateNumber: outbound ? `HST${201 + i}LG` : `HST${201 + i}RT`,
+        driverName: ['Miguel Santos', 'Andrea Cruz', 'Daniel Reyes'][i % 3],
+        direction: outbound ? 'outbound' : 'return',
+        stage: outbound ? 'Delivered' : 'Returned',
+        handoffNote: 'All event assets delivered and verified on site. Final staging completed before guest arrival.',
+        crew,
+        reconciliation: rowsFor(i * 43),
+        stalled: false,
+        stalledReason: '',
+      })
+    }
+    return batches
+  }
+
   const seed = hashOf(event.refId)
   const batchCount = seed % 4 // 0–3 batches; some events have none yet
   const batches: DispatchBatch[] = []

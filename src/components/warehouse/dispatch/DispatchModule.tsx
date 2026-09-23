@@ -185,7 +185,10 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
       .map((summary) => ({ summary, event: events.find((event) => event.id === summary.eventId) }))
       .filter(({ summary, event }) => {
         if (!event || summary.batches.length === 0 || summary.hasStalled || summary.handshakePercent < 100) return false
-        const allWorkComplete = summary.batches.every((batch) => batch.stage === 'Returned')
+        const allWorkComplete = summary.batches.every((batch) =>
+          (batch.direction === 'outbound' && batch.stage === 'Delivered')
+          || (batch.direction === 'return' && batch.stage === 'Returned'),
+        )
         if (!allWorkComplete) return false
         const matchesSearch = !query || `${summary.eventTitle} ${event.client} ${summary.venue}`.toLowerCase().includes(query)
         const dateValue = new Date(summary.targetDate).getTime()
@@ -218,10 +221,11 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
         summary.batches.map((batch) => ({ eventId: summary.eventId, eventTitle: summary.eventTitle, batch })),
       )
     }
-    if (selectedEvent) {
-      return selectedEvent.batches.map((batch) => ({
-        eventId: selectedEvent.eventId,
-        eventTitle: selectedEvent.eventTitle,
+    const eventForNavigation = selectedEvent ?? selectedCompletedEvent
+    if (eventForNavigation) {
+      return eventForNavigation.batches.map((batch) => ({
+        eventId: eventForNavigation.eventId,
+        eventTitle: eventForNavigation.eventTitle,
         batch,
       }))
     }
