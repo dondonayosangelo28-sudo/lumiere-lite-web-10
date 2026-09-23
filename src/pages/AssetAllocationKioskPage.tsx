@@ -556,7 +556,7 @@ export function AssetAllocationKioskPage() {
   }
 
   const stickyHeader = (
-    <div className="flex flex-col gap-3">
+    <div className="bg-background md:sticky md:top-0 md:z-20 flex flex-col gap-3">
       <div>
         <div className={cn(
           'flex items-center gap-2 max-sm:overflow-hidden max-sm:transition-[max-height,opacity,margin] max-sm:duration-[250ms] max-sm:ease-out motion-reduce:transition-none',
@@ -609,7 +609,7 @@ export function AssetAllocationKioskPage() {
         {/* Two-pane kiosk layout */}
         <div className="grid h-auto grid-cols-1 items-start gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
           {/* ---- Visual category menu ---- */}
-          <aside className="min-w-0 self-start sm:sticky sm:top-[9.5rem] sm:max-h-[calc(100vh-9.5rem)] sm:overflow-y-auto">
+          <aside className="min-w-0 self-start sm:sticky sm:top-[9.5rem] sm:max-h-[calc(100vh-9.5rem)] sm:overflow-y-auto md:sticky md:top-[11rem] md:max-h-[calc(100vh-11rem)]">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Classifications</p>
               <span className="text-[0.6rem] text-muted-foreground">{categories.length + 1} categories</span>
