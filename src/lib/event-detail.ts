@@ -36,6 +36,22 @@ export interface EventReplenishmentSummary {
   critical: number
 }
 
+export type AdditionalRequestStatus = 'Needs Review' | 'Reviewed' | 'Available' | 'In Replenishment' | 'Ready for Dispatch' | 'Added to Outbound'
+
+export interface EventAdditionalRequest {
+  id: string
+  itemName: string
+  requestedQuantity: number
+  requestedBy: string
+  requestedAt: string
+  reason: string
+  status: AdditionalRequestStatus
+  availableStock: number
+  replenishmentNeeded: number
+  linkedDeficit?: string
+  linkedBatchId?: string
+}
+
 export type BatchDirection = 'outbound' | 'return'
 export type BatchStage = 'Planned' | 'Loaded' | 'In Transit' | 'Delivered' | 'Returned'
 export type DispatchBannerState = 'No Dispatch Yet' | 'Dispatch In Progress' | 'Delayed Dispatch' | 'Stalled In Transit — Needs Attention'
@@ -100,6 +116,7 @@ export interface EventDetailSnapshot {
   editedFields: EditedEventField[]
   crew: EventCrewAssignment[]
   items: EventAllocatedItem[]
+  additionalRequests: EventAdditionalRequest[]
   replenishment: EventReplenishmentSummary
   dispatch: { banner: DispatchBannerState; batches: DispatchBatch[] }
 }
@@ -299,6 +316,25 @@ export function getEventDetailSnapshot(
   const critical = (seed >> 4) % 2
   const replenishment: EventReplenishmentSummary = { resolved, pending, critical }
 
+  // Additional requests are kept separate from original event items. This is a
+  // deterministic frontend fallback until the API exposes request records; no
+  // request is persisted or converted into a deficit by this derivation.
+  const requestSource = pick(procurement, seed, 2)
+  const requestedQuantity = 2 + (seed % 7)
+  const availableStock = requestSource?.currentStock ?? 0
+  const replenishmentNeeded = Math.max(0, requestedQuantity - availableStock)
+  const additionalRequests: EventAdditionalRequest[] = seed % 3 === 0 ? [] : [{
+    id: `${event.id}-additional-request-1`,
+    itemName: requestSource?.name ?? 'Additional event item',
+    requestedQuantity,
+    requestedBy: 'Executive',
+    requestedAt: event.targetDate,
+    reason: 'Additional item requested after the original event plan.',
+    status: replenishmentNeeded > 0 ? 'In Replenishment' : 'Available',
+    availableStock,
+    replenishmentNeeded,
+  }]
+
   // Logistics / dispatch panel
   const batches = buildBatches(event, procurement, fieldCrew)
   const dispatchBanner = dispatchBannerFor(batches)
@@ -319,6 +355,7 @@ export function getEventDetailSnapshot(
     editedFields: changedSinceLastView ? deriveEditedFields(event, seed) : [],
     crew,
     items,
+    additionalRequests,
     replenishment,
     dispatch: { banner: dispatchBanner, batches },
   }

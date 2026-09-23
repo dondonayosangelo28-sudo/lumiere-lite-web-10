@@ -22,6 +22,7 @@ import {
 import { EventDetailHeader } from '@/components/warehouse/event-detail/EventDetailHeader'
 import { CrewPanel } from '@/components/warehouse/event-detail/CrewPanel'
 import { ItemsPanel } from '@/components/warehouse/event-detail/ItemsPanel'
+import { AdditionalRequestsPanel } from '@/components/warehouse/event-detail/AdditionalRequestsPanel'
 import { ReplenishmentPanel } from '@/components/warehouse/event-detail/ReplenishmentPanel'
 import { DispatchPanel } from '@/components/warehouse/event-detail/DispatchPanel'
 import { BatchDetailView } from '@/components/warehouse/event-detail/BatchDetailView'
@@ -105,6 +106,11 @@ export function WarehouseEventDetailPage({ event, onBack, onOpenModule }: Wareho
           items={snapshot.items}
           onViewAllocation={() => onOpenModule('assets')}
           onOpenItem={setSelectedAssetItem}
+        />
+
+        <AdditionalRequestsPanel
+          requests={snapshot.additionalRequests}
+          onOpenReplenishment={() => onOpenModule('replenishment')}
         />
 
         <ReplenishmentPanel

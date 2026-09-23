@@ -24,12 +24,13 @@ import { getEventDetailSnapshot } from '@/lib/event-detail'
 import { DispatchStepper } from '@/components/warehouse/event-detail/DispatchStepper'
 import { exportDispatchConsolidatedPdf, exportDispatchEventPdf } from '@/lib/pdf-exporter'
 import { BatchDetailView } from '@/components/warehouse/event-detail/BatchDetailView'
+import { AdditionalRequestsPanel } from '@/components/warehouse/event-detail/AdditionalRequestsPanel'
 import { ConfirmArchiveBatchModal } from '@/components/warehouse/dispatch/ConfirmArchiveBatchModal'
 import { Pill } from '@/components/warehouse/shared/Pill'
 import { cn } from '@/lib/utils'
 
 type ViewMode = 'grouped' | 'consolidated' | 'completed'
-type EventTab = 'overview' | 'items'
+type EventTab = 'overview' | 'items' | 'requests'
 
 interface EventItemRow {
   id: string
@@ -398,7 +399,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
               <div className="border-b border-border px-5 py-5 sm:px-8"><EventOverview summary={(selectedCompletedEvent ?? selectedEvent)!} /></div>
               <div className="border-b border-border px-5 pt-4 sm:px-8">
                 <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Event dispatch views">
-                  {(['overview', 'items'] as EventTab[]).map((tab) => (
+                  {(['overview', 'items', 'requests'] as EventTab[]).map((tab) => (
                     <button
                       key={tab}
                       type="button"
@@ -415,6 +416,8 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
               <div className="p-5 sm:p-8">
                 {eventTab === 'items' && selectedEvent ? (
                   <EventItemsView summary={selectedEvent} items={eventItems} search={itemSearch} onSearch={setItemSearch} statusFilter={itemStatusFilter} onStatusFilter={setItemStatusFilter} batchFilter={itemBatchFilter} onBatchFilter={setItemBatchFilter} onSelectItem={setSelectedItem} />
+                ) : eventTab === 'requests' && selectedEvent ? (
+                  <AdditionalRequestsPanel requests={getEventDetailSnapshot(events.find((event) => event.id === selectedEvent.eventId)!, staff, procurement).additionalRequests} />
                 ) : (
                   <EventBatchLevel
                     summary={(selectedCompletedEvent ?? selectedEvent)!}
@@ -442,7 +445,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             <div className="border-b border-border px-6 py-5"><EventOverview summary={selectedEvent} /></div>
             <div className="border-b border-border px-6 pt-4">
               <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Event dispatch views">
-                {(['overview', 'items'] as EventTab[]).map((tab) => (
+                {(['overview', 'items', 'requests'] as EventTab[]).map((tab) => (
                   <button key={tab} type="button" role="tab" aria-selected={eventTab === tab} onClick={() => setEventTab(tab)} className={cn('border-b-2 px-3 pb-3 text-[0.62rem] font-bold uppercase tracking-[0.1em] transition', eventTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
                     {tab[0].toUpperCase() + tab.slice(1)}
                   </button>
@@ -452,6 +455,8 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             <div className="p-6">
               {eventTab === 'items' ? (
                 <EventItemsView summary={selectedEvent} items={eventItems} search={itemSearch} onSearch={setItemSearch} statusFilter={itemStatusFilter} onStatusFilter={setItemStatusFilter} batchFilter={itemBatchFilter} onBatchFilter={setItemBatchFilter} onSelectItem={setSelectedItem} />
+              ) : eventTab === 'requests' ? (
+                <AdditionalRequestsPanel requests={getEventDetailSnapshot(events.find((event) => event.id === selectedEvent.eventId)!, staff, procurement).additionalRequests} />
               ) : (
                 <EventBatchLevel summary={selectedEvent} onNewBatch={(direction) => setNewBatchModal({ eventId: selectedEvent.eventId, direction })} onOpenBatch={(batchId) => openBatch(selectedEvent.eventId, batchId)} onExportManifest={() => exportEventManifest(selectedEvent)} />
               )}
