@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 
 const TRIGGER_EXPLANATION: Record<TriggerSource, string> = {
   Canvas: 'Flagged automatically — a Canvas allocation exceeded projected stock for this event.',
-  'Batch Pahabol': 'Flagged during batch reconciliation — an unplanned (pahabol) item pushed stock below threshold.',
+  'Batch Pahabol': 'Flagged during batch reconciliation — an unplanned additional item pushed stock below threshold.',
   'Manual Audit': 'Flagged manually by a warehouse manager during a stockroom audit.',
   'Auto-Threshold':
     'Queued automatically — the Asset Catalog reported available stock below this item’s reorder threshold.',
@@ -24,6 +24,10 @@ interface DeficitTableProps {
   onRemove: (id: string) => void
   onTagForDispatch: (id: string) => void
   onRecordReceipt: (line: DeficitLine) => void
+}
+
+function triggerLabel(source: TriggerSource) {
+  return source === 'Batch Pahabol' ? 'Additional Item' : source
 }
 
 function TriggerCell({ source }: { source: TriggerSource }) {
@@ -48,7 +52,7 @@ function TriggerCell({ source }: { source: TriggerSource }) {
             : 'border-border bg-background text-muted-foreground hover:bg-muted',
         )}
       >
-        {source}
+        {triggerLabel(source)}
       </button>
       <FloatingPanel
         anchorRef={triggerRef}

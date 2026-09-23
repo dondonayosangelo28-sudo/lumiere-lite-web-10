@@ -6,6 +6,11 @@ import { SearchableVendorSelect } from '@/components/warehouse/shared/Searchable
 
 const PRIORITIES: DeficitPriority[] = ['Low', 'Medium', 'High', 'Critical']
 const TRIGGERS: TriggerSource[] = ['Canvas', 'Batch Pahabol', 'Manual Audit', 'Auto-Threshold']
+
+function triggerLabel(source: TriggerSource) {
+  return source === 'Batch Pahabol' ? 'Additional Item' : source
+}
+
 const CATEGORIES = ['Event Asset', 'Bespoke', 'Stockroom', 'Rental', 'Office Asset'] as const
 
 export interface MasterItemDraft {
@@ -159,7 +164,7 @@ export function AddMasterItemModal({ initial, presetEvent, onClose, onSave }: Ad
                   onChange={(e) => setTriggerSource(e.target.value as TriggerSource)}
                   className="h-11 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
                 >
-                  {TRIGGERS.map((t) => <option key={t} value={t}>{t}</option>)}
+                  {TRIGGERS.map((t) => <option key={t} value={t}>{triggerLabel(t)}</option>)}
                 </select>
               </label>
               <div className="flex flex-col gap-2">

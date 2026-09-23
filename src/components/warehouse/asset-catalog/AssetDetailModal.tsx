@@ -18,6 +18,10 @@ import { cn } from '@/lib/utils'
 
 type TabId = 'overview' | 'details' | 'history' | 'simulation'
 
+function reconciliationLabel(tag: ReconciliationTag) {
+  return tag === 'Pahabol' ? 'Additional' : tag
+}
+
 const RECON_TONE: Record<ReconciliationTag, Tone> = {
   Matched: 'positive',
   Short: 'caution',
@@ -450,7 +454,7 @@ export function AssetDetailModal({ asset, onClose, onCompleteMaintenance, onEdit
                       <span className="text-[0.6rem] text-muted-foreground">{entry.timestamp}</span>
                       {entry.reconciliationTag && (
                         <Pill tone={RECON_TONE[entry.reconciliationTag]} className="text-[0.5rem]">
-                          {entry.reconciliationTag}
+                          {reconciliationLabel(entry.reconciliationTag)}
                         </Pill>
                       )}
                     </div>
