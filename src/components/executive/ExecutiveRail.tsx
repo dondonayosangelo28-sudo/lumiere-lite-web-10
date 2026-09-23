@@ -35,7 +35,7 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
 
       <div className="hidden md:mb-3 md:block md:h-px md:w-8 md:bg-sidebar-border" aria-hidden="true" />
 
-      <nav className="hidden items-center gap-2 md:flex md:w-auto md:flex-col" aria-label="Executive destinations">
+      <nav className={cn('hidden gap-2 md:flex md:flex-col', open ? 'items-stretch px-3' : 'items-center')} aria-label="Executive destinations">
         {EXECUTIVE_DESTINATIONS.map((destination) => {
           const Icon = destination.icon
           const active = destination.id === activeId
@@ -48,7 +48,8 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
               aria-current={active ? 'true' : undefined}
               title={destination.label}
               className={cn(
-                'flex size-11 items-center justify-center gap-3 rounded-lg transition-colors md:h-10 md:w-10 md:justify-center md:px-0',
+                'flex h-10 items-center gap-3 rounded-lg transition-colors',
+                open ? 'w-full justify-start px-3' : 'w-10 justify-center',
                 active
                   ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                   : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
