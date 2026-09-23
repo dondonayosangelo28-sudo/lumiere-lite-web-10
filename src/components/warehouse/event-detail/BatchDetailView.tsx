@@ -78,13 +78,14 @@ export function BatchDetailView({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-background/65 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/65 p-4 backdrop-blur-sm sm:p-6"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="batch-detail-title"
       onClick={onClose}
     >
       <div
-        className="flex h-full w-full max-w-2xl flex-col overflow-y-auto bg-card shadow-2xl"
+        className="flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
@@ -104,7 +105,7 @@ export function BatchDetailView({
                 )}
               </span>
               <div>
-                <h2 className="font-serif text-xl font-medium text-card-foreground">{batch.vehicleType}</h2>
+                <h2 id="batch-detail-title" className="font-serif text-xl font-medium text-card-foreground">{batch.vehicleType}</h2>
                 <p className="text-[0.65rem] uppercase tracking-[0.08em] text-muted-foreground">
                   {batch.plateNumber} · Driver: <span className="font-semibold text-foreground">{batch.driverName || 'Unassigned'}</span> · {batch.direction === 'outbound' ? 'Outbound / egress' : 'Return / ingress'}
                 </p>
