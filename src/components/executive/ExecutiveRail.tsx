@@ -18,7 +18,7 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
       }}
       className={cn(
         'hidden shrink-0 cursor-pointer items-center justify-center border-r border-sidebar-border bg-sidebar transition-all duration-200 md:flex md:h-full md:flex-col md:justify-start md:px-0 md:py-4',
-        open ? 'md:w-64' : 'md:w-12',
+        open ? 'md:w-64' : 'md:w-16',
       )}
     >
       <div className={cn('mb-3 hidden items-center md:flex', open ? 'w-full justify-between px-4' : 'justify-center')}>
@@ -48,7 +48,7 @@ export function ExecutiveRail({ activeId, onSelect, open, onToggle }: ExecutiveR
               aria-current={active ? 'true' : undefined}
               title={destination.label}
               className={cn(
-                'flex size-11 items-center justify-center gap-3 rounded-lg transition-colors md:h-10 md:w-full md:justify-start md:px-3',
+                'flex size-11 items-center justify-center gap-3 rounded-lg transition-colors md:h-10 md:w-10 md:justify-center md:px-0',
                 active
                   ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                   : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
