@@ -36,8 +36,35 @@ export function WorkforceTable({
   stats,
 }: Props) {
   const [menuId, setMenuId] = useState<string | null>(null)
+  const [menuPosition, setMenuPosition] = useState<{
+    top?: number
+    bottom?: number
+    right: number
+  } | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
   const highlightRef = useRef<HTMLTableRowElement | null>(null)
+  const menuHeight = 3 * 34 + 8
+
+  const closeMenu = () => {
+    setMenuId(null)
+    setMenuPosition(null)
+  }
+
+  const openMenu = (id: string, trigger: HTMLButtonElement) => {
+    triggerRef.current = trigger
+    const rect = trigger.getBoundingClientRect()
+    const right = Math.max(8, window.innerWidth - rect.right)
+    const openDownward = rect.bottom + menuHeight <= window.innerHeight - 8
+
+    setMenuPosition(
+      openDownward
+        ? { top: rect.bottom + 4, right }
+        : { bottom: window.innerHeight - rect.top + 4, right },
+    )
+    setMenuId(id)
+  }
 
   // Scroll the highlighted row into view once it's rendered.
   useEffect(() => {
@@ -46,14 +73,27 @@ export function WorkforceTable({
     }
   }, [highlightId])
 
-  // Close the kebab menu on any outside click.
+  // Close the kebab menu on any outside click, table scroll, or viewport change.
   useEffect(() => {
     if (!menuId) return
+
     const onDoc = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuId(null)
+      const target = e.target as Node
+      if (!menuRef.current?.contains(target) && !triggerRef.current?.contains(target)) {
+        closeMenu()
+      }
     }
+    const onScroll = () => closeMenu()
+    const onResize = () => closeMenu()
+
     document.addEventListener('mousedown', onDoc)
-    return () => document.removeEventListener('mousedown', onDoc)
+    scrollContainerRef.current?.addEventListener('scroll', onScroll)
+    window.addEventListener('resize', onResize)
+    return () => {
+      document.removeEventListener('mousedown', onDoc)
+      scrollContainerRef.current?.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+    }
   }, [menuId])
 
   return (
@@ -66,7 +106,7 @@ export function WorkforceTable({
           non-scrolling ancestor and break `position: sticky` on the thead below). Giving it
           an explicit max-height makes that scroll behavior real and lets the header stick
           to the top of this table specifically, independent of the page's own scroll. */}
-      <div className="max-h-[65vh] overflow-auto">
+      <div ref={scrollContainerRef} className="max-h-[65vh] overflow-auto">
         <table className="w-full min-w-[860px] border-collapse text-left">
           <thead className="sticky top-0 z-10">
             <tr className="border-b border-border bg-muted">
@@ -134,12 +174,16 @@ export function WorkforceTable({
                   <td className="px-4 py-3.5 text-xs text-muted-foreground">{sessionLabel(s)}</td>
                   <td className="px-4 py-3.5 text-xs text-muted-foreground">{s.lastAccess}</td>
                   <td className="px-4 py-3.5">
-                    <div className="relative" ref={menuId === s.id ? menuRef : undefined}>
+                    <div className="relative">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setMenuId((prev) => (prev === s.id ? null : s.id))
+                          if (menuId === s.id) {
+                            closeMenu()
+                          } else {
+                            openMenu(s.id, e.currentTarget)
+                          }
                         }}
                         className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
                         aria-label={`Actions for ${s.firstName} ${s.middleName?.trim() ? `${s.middleName.trim()} ` : ''}${s.surname}`}
@@ -150,8 +194,10 @@ export function WorkforceTable({
                       </button>
                       {menuId === s.id && (
                         <div
+                          ref={menuRef}
                           role="menu"
-                          className="absolute right-0 top-9 z-30 w-44 overflow-hidden rounded-lg border border-border bg-popover py-1 shadow-xl"
+                          className="fixed z-30 w-44 overflow-hidden rounded-lg border border-border bg-popover py-1 shadow-xl"
+                          style={menuPosition ?? undefined}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <button
