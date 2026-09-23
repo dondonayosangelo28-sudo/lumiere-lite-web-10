@@ -28,7 +28,7 @@ import { ConfirmArchiveBatchModal } from '@/components/warehouse/dispatch/Confir
 import { Pill } from '@/components/warehouse/shared/Pill'
 import { cn } from '@/lib/utils'
 
-type ViewMode = 'grouped' | 'consolidated'
+type ViewMode = 'grouped' | 'consolidated' | 'completed'
 type EventTab = 'overview' | 'items'
 
 interface EventItemRow {
@@ -132,6 +132,8 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
 
   const [viewMode, setViewMode] = useState<ViewMode>('grouped')
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const [completedSearch, setCompletedSearch] = useState('')
+  const [completedDateFilter, setCompletedDateFilter] = useState('all')
   const [activeBatchIndex, setActiveBatchIndex] = useState<number | null>(null)
   const [pendingBatchId, setPendingBatchId] = useState<string | null>(null)
   const [newBatchModal, setNewBatchModal] = useState<{ eventId: string; direction: BatchDirection } | null>(null)
@@ -163,7 +165,32 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
       .filter((summary) => summary.batches.length > 0)
   }, [directionFilter, reconciliationFilter, search, stageFilter, summaries])
 
+  const completedSummaries = useMemo(() => {
+    const query = completedSearch.trim().toLowerCase()
+    const now = new Date()
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+    const startOfWeek = startOfToday - ((now.getDay() + 6) % 7) * 86400000
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime()
+
+    return summaries
+      .map((summary) => ({ summary, event: events.find((event) => event.id === summary.eventId) }))
+      .filter(({ summary, event }) => {
+        if (!event || summary.batches.length === 0 || summary.hasStalled || summary.handshakePercent < 100) return false
+        const allWorkComplete = summary.batches.every((batch) => batch.stage === 'Returned')
+        if (!allWorkComplete) return false
+        const matchesSearch = !query || `${summary.eventTitle} ${event.client} ${summary.venue}`.toLowerCase().includes(query)
+        const dateValue = new Date(summary.targetDate).getTime()
+        const matchesDate = completedDateFilter === 'all'
+          || (completedDateFilter === 'today' && dateValue >= startOfToday)
+          || (completedDateFilter === 'week' && dateValue >= startOfWeek)
+          || (completedDateFilter === 'month' && dateValue >= startOfMonth)
+        return matchesSearch && matchesDate
+      })
+      .map(({ summary, event }) => ({ ...summary, client: event?.client ?? '' }))
+  }, [completedDateFilter, completedSearch, events, summaries])
+
   const selectedEvent = filteredSummaries.find((s) => s.eventId === selectedEventId) ?? null
+  const selectedCompletedEvent = completedSummaries.find((s) => s.eventId === selectedEventId) ?? null
   const eventItems = useMemo(() => {
     if (!selectedEvent) return []
     const query = itemSearch.trim().toLowerCase()
@@ -268,6 +295,20 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             >
               Dispatch Overview
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                setViewMode('completed')
+                setSelectedEventId(null)
+              }}
+              aria-pressed={viewMode === 'completed'}
+              className={cn(
+                'rounded-sm px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] transition',
+                viewMode === 'completed' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted',
+              )}
+            >
+              Completed Events
+            </button>
           </div>
             {viewMode === 'consolidated' && (
               <button
@@ -281,6 +322,17 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             )}
           </div>
 
+          {viewMode === 'completed' ? (
+            <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
+              <label className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
+                <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                <input value={completedSearch} onChange={(event) => setCompletedSearch(event.target.value)} placeholder="Search event, client, venue..." className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" aria-label="Search completed events" />
+              </label>
+              <select value={completedDateFilter} onChange={(event) => setCompletedDateFilter(event.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground outline-none" aria-label="Filter completed events by date">
+                <option value="all">All Dates</option><option value="today">Today</option><option value="week">This Week</option><option value="month">This Month</option>
+              </select>
+            </div>
+          ) : (
           <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
             <label className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
               <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -299,6 +351,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
               </select>
             </div>
           </div>
+          )}
 
         {viewMode === 'grouped' && selectedEvent && (
           <div className="flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -314,12 +367,27 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
       <div className="flex-1 px-6 py-6 sm:px-10">
         {viewMode === 'consolidated' ? (
           <ConsolidatedBatchTable summaries={filteredSummaries} onOpenBatch={openBatch} />
+        ) : viewMode === 'completed' ? (
+          <CompletedEventsList summaries={completedSummaries} onOpenEvent={setSelectedEventId} />
         ) : (
           <EventCardGrid summaries={filteredSummaries} onOpenEvent={setSelectedEventId} />
         )}
       </div>
 
-      {selectedEvent && viewMode === 'grouped' && (
+      {(selectedEvent || selectedCompletedEvent) && (viewMode === 'grouped' || viewMode === 'completed') && (
+        <div className="fixed inset-0 z-40 flex justify-end bg-background/65 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
+          <aside className="flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="dispatch-event-detail-title">
+            <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+              <div><p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-primary">{viewMode === 'completed' ? 'Completed event' : 'Event detail'}</p><h2 id="dispatch-event-detail-title" className="mt-1 font-serif text-2xl font-medium text-card-foreground">{(selectedCompletedEvent ?? selectedEvent)?.eventTitle}</h2><p className="mt-1 text-sm text-muted-foreground">{(selectedCompletedEvent ?? selectedEvent)?.venue}</p></div>
+              <button type="button" onClick={() => setSelectedEventId(null)} className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Close event detail"><X className="size-4" /></button>
+            </div>
+            <div className="border-b border-border px-6 py-5"><EventOverview summary={(selectedCompletedEvent ?? selectedEvent)!} /></div>
+            <div className="p-6"><EventBatchLevel summary={(selectedCompletedEvent ?? selectedEvent)!} onNewBatch={() => undefined} onOpenBatch={(batchId) => openBatch((selectedCompletedEvent ?? selectedEvent)!.eventId, batchId)} onExportManifest={() => exportEventManifest((selectedCompletedEvent ?? selectedEvent)!)} readOnly={viewMode === 'completed'} /></div>
+          </aside>
+        </div>
+      )}
+
+      {false && selectedEvent && viewMode === 'grouped' && (
         <div className="fixed inset-0 z-40 flex justify-end bg-background/65 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
           <aside className="flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="dispatch-event-detail-title">
             <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
@@ -372,6 +440,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             exportBatchPdf({ eventTitle: activeNav.eventTitle, venue: ev?.venue || '', targetDate: ev?.targetDate || '' }, activeNav.batch)
           }}
           onCreateReturnBatch={() => createReturnBatchFromDelivered(activeNav.eventId, activeNav.batch)}
+          readOnly={viewMode === 'completed'}
           onDelete={() => {
             setArchiveBatchTarget({ eventId: activeNav.eventId, batch: activeNav.batch })
           }}
@@ -406,6 +475,13 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
       )}
     </div>
   )
+}
+
+function CompletedEventsList({ summaries, onOpenEvent }: { summaries: Array<EventDispatchSummary & { client: string }>; onOpenEvent: (eventId: string) => void }) {
+  if (summaries.length === 0) {
+    return <div className="rounded-xl border border-dashed border-border bg-card px-6 py-14 text-center"><Archive className="mx-auto size-8 text-muted-foreground" /><p className="mt-3 text-sm font-semibold text-card-foreground">No completed events yet.</p><p className="mt-1 text-xs text-muted-foreground">Completed events will appear here after their dispatch and logistics workflow is finished.</p></div>
+  }
+  return <div className="flex flex-col gap-3">{summaries.map((summary) => <button key={summary.eventId} type="button" onClick={() => onOpenEvent(summary.eventId)} className="group flex flex-col gap-4 rounded-xl border border-border bg-card px-5 py-5 text-left transition hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-6"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="truncate font-serif text-base font-medium text-card-foreground">{summary.eventTitle}</p><p className="truncate text-xs text-muted-foreground">{summary.client} · {summary.venue}</p><p className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{summary.targetDate}</p></div><span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">Completed <ChevronRight className="size-3" /></span></div><div className="flex flex-wrap items-center gap-4 border-t border-border/60 pt-3 text-[0.62rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground"><span className="inline-flex items-center gap-1.5"><Truck className="size-3.5" />{summary.batches.length} batch{summary.batches.length === 1 ? '' : 'es'}</span><span>{summary.batches.filter((batch) => batch.direction === 'outbound').length} outbound</span><span>{summary.batches.filter((batch) => batch.direction === 'return').length} return</span><span>{summary.batches.reduce((count, batch) => count + batch.reconciliation.length, 0)} item lines</span></div></button>)}</div>
 }
 
 function EventCardGrid({
@@ -523,12 +599,14 @@ function EventBatchLevel({
   onOpenBatch,
   onExportManifest,
   onlyOutbound = false,
+  readOnly = false,
 }: {
   summary: EventDispatchSummary
   onNewBatch: (direction: BatchDirection) => void
   onOpenBatch: (batchId: string) => void
   onExportManifest: () => void
   onlyOutbound?: boolean
+  readOnly?: boolean
 }) {
   const [showArchived, setShowArchived] = useState(false)
 
@@ -548,20 +626,22 @@ function EventBatchLevel({
             <Download className="size-3.5" />
             Export Manifest (PDF)
           </button>
-          <button
-            type="button"
-            onClick={() => onNewBatch('outbound')}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
-          >
-            + New Outbound Batch
-          </button>
-          <button
-            type="button"
-            onClick={() => onNewBatch('return')}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-border bg-background px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
-          >
-            + New Return Batch
-          </button>
+          {!readOnly && <>
+            <button
+              type="button"
+              onClick={() => onNewBatch('outbound')}
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+            >
+              + New Outbound Batch
+            </button>
+            <button
+              type="button"
+              onClick={() => onNewBatch('return')}
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-border bg-background px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+            >
+              + New Return Batch
+            </button>
+          </>}
         </div>
       </div>
 

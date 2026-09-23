@@ -35,6 +35,7 @@ interface BatchDetailViewProps {
   onExportPdf?: () => void
   onCreateReturnBatch?: () => void
   onDelete?: () => void
+  readOnly?: boolean
 }
 
 export function BatchDetailView({
@@ -53,6 +54,7 @@ export function BatchDetailView({
   onExportPdf,
   onCreateReturnBatch,
   onDelete,
+  readOnly = false,
 }: BatchDetailViewProps) {
   const [handoffError, setHandoffError] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -466,7 +468,11 @@ export function BatchDetailView({
             <p className="w-full text-right text-[0.65rem] font-medium text-destructive" role="alert">{actionError}</p>
           )}
 
-          {isFinal ? (
+          {readOnly ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-2 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary">
+              Historical record · {finalStage}
+            </span>
+          ) : isFinal ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-2 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary">
               {finalStage}
             </span>
