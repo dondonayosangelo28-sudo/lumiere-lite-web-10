@@ -607,9 +607,9 @@ export function AssetAllocationKioskPage() {
     <>
       <ExecutiveShell activeId="assets" onSelect={destination} stickyHeader={stickyHeader}>
         {/* Two-pane kiosk layout */}
-        <div className="grid h-auto grid-cols-1 gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
+        <div className="grid h-auto grid-cols-1 items-start gap-5 sm:h-auto sm:min-h-[60vh] sm:grid-cols-[minmax(15rem,20%)_minmax(0,1fr)] sm:gap-6">
           {/* ---- Visual category menu ---- */}
-          <aside className="min-w-0 sm:max-h-[65vh]">
+          <aside className="min-w-0 self-start sm:sticky sm:top-[9.5rem] sm:max-h-[calc(100vh-9.5rem)] sm:overflow-y-auto">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Classifications</p>
               <span className="text-[0.6rem] text-muted-foreground">{categories.length + 1} categories</span>
