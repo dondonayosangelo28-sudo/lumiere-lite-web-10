@@ -20,6 +20,21 @@ const emptyDraft: NewStaffDraft = {
 }
 
 // Generate a one-time temporary password the user must change on first login.
+const COMPANY_EMAIL_DOMAIN = '@lumiere.com'
+
+const normalizeCompanyEmail = (value: string) => {
+  const trimmed = value.trim().toLowerCase()
+  if (!trimmed) return ''
+  return trimmed.endsWith(COMPANY_EMAIL_DOMAIN) ? trimmed : `${trimmed}${COMPANY_EMAIL_DOMAIN}`
+}
+
+const emailLocalPart = (value: string) => {
+  const normalized = value.trim().toLowerCase()
+  return normalized.endsWith(COMPANY_EMAIL_DOMAIN)
+    ? normalized.slice(0, -COMPANY_EMAIL_DOMAIN.length)
+    : normalized
+}
+
 const generateTempPassword = () => `Lm-Temp-${Math.floor(1000 + Math.random() * 9000)}`
 
 const labelClass =
@@ -61,14 +76,16 @@ export function EmployeeModal({ open, onClose }: Props) {
     }))
   }
 
-  const isValidEmail = draft.email.trim().toLowerCase().endsWith('@lumiere.com')
+  const displayedEmailLocalPart = emailLocalPart(draft.email)
+  const finalEmail = normalizeCompanyEmail(draft.email)
+  const isValidEmail = Boolean(displayedEmailLocalPart) && /^[^\s@]+@lumiere\.com$/.test(finalEmail)
   const isValidContact = draft.contact.length === 11
 
   const canProceed = Boolean(
     draft.employeeId &&
       draft.surname.trim() &&
       draft.firstName.trim() &&
-      draft.email.trim() &&
+      finalEmail &&
       isValidEmail &&
       draft.contact.trim() &&
       isValidContact &&
@@ -77,14 +94,14 @@ export function EmployeeModal({ open, onClose }: Props) {
   const missingRequired = [
     !draft.surname.trim() ? 'surname' : null,
     !draft.firstName.trim() ? 'first name' : null,
-    !draft.email.trim() || !isValidEmail ? 'valid Lumière email' : null,
+    !finalEmail || !isValidEmail ? 'valid Lumière email' : null,
     !draft.contact.trim() || !isValidContact ? '11-digit contact number' : null,
     !draft.role ? 'role' : null,
   ].filter(Boolean) as string[]
 
   const commit = async () => {
     if (!canProceed) return
-    await addStaff(draft)
+    await addStaff({ ...draft, email: finalEmail })
     close()
   }
 
@@ -173,14 +190,20 @@ export function EmployeeModal({ open, onClose }: Props) {
                 <label className={labelClass} htmlFor="email">
                   Email:
                 </label>
-                <input
-                  id="email"
-                  type="email"
-                  className={inputClass}
-                  placeholder="juandelacruz@lumiere.com"
-                  value={draft.email}
-                  onChange={(e) => set('email', e.target.value)}
-                />
+                <div className="mt-1.5 flex items-center rounded-md border border-input bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-ring/30">
+                  <input
+                    id="email"
+                    type="text"
+                    className="min-w-0 flex-1 rounded-l-md bg-transparent px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60"
+                    placeholder="juan.delacruz"
+                    value={displayedEmailLocalPart}
+                    onChange={(e) => set('email', e.target.value)}
+                    aria-describedby="email-domain"
+                  />
+                  <span id="email-domain" className="shrink-0 pr-3 text-sm text-muted-foreground">
+                    {COMPANY_EMAIL_DOMAIN}
+                  </span>
+                </div>
                 {draft.email && !isValidEmail && (
                   <p className="mt-1 text-[0.65rem] text-rose-600">
                     Email must be a @lumiere.com address

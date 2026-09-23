@@ -1601,7 +1601,10 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     async (draft: NewStaffDraft) => {
       const role = STAFF_ROLES.includes(draft.role as StaffRole) ? (draft.role as StaffRole) : 'Executive'
       const fullName = `${draft.firstName} ${draft.middleName} ${draft.surname}`.replace(/\s+/g, ' ').trim()
-      const email = draft.email.trim().toLowerCase()
+      const normalizedEmail = draft.email.trim().toLowerCase()
+      const email = normalizedEmail.endsWith('@lumiere.com')
+        ? normalizedEmail
+        : `${normalizedEmail}@lumiere.com`
 
       // Persist the account to the database so it can authenticate at the login page.
       if (!supabase) {
