@@ -212,25 +212,9 @@ export function BatchDetailView({
 
           {/* Vehicle & Driver Info Editable Controls */}
           <div className="border-y border-border py-4">
-            <div className="flex items-center justify-between">
-              <p className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                Vehicle &amp; Driver Assignment
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditVehicle(batch.vehicleType)
-                  setEditPlate(batch.plateNumber)
-                  setEditDriver(batch.driverName || '')
-                  setEditError(null)
-                  setIsEditingInfo(true)
-                }}
-                disabled={readOnly || isSavingInfo}
-                className="rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary transition hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Edit Vehicle &amp; Driver
-              </button>
-            </div>
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Vehicle &amp; Driver Assignment
+            </p>
 
             {isEditingInfo ? (
               <div className="mt-3 rounded-lg border border-primary/25 bg-primary/[0.04] p-4">
@@ -310,15 +294,30 @@ export function BatchDetailView({
                 </div>
               </div>
             )}
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditVehicle(batch.vehicleType)
+                  setEditPlate(batch.plateNumber)
+                  setEditDriver(batch.driverName || '')
+                  setEditError(null)
+                  setIsEditingInfo(true)
+                }}
+                disabled={readOnly || isSavingInfo}
+                className="rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary transition hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Edit Vehicle &amp; Driver
+              </button>
+            </div>
           </div>
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-2">
-              <div>
-              <p className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                Dispatch stage
-              </p>
-              </div>
-              {!batch.stalled && !isFinal && (
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Dispatch stage
+            </p>
+            <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
+            {!batch.stalled && !isFinal && (
+              <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={() => setStallModalOpen(true)}
@@ -327,9 +326,8 @@ export function BatchDetailView({
                   <AlertTriangle className="size-3 text-amber-600 dark:text-amber-400" />
                   Interrupt / Report Breakdown
                 </button>
-              )}
-            </div>
-            <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
+              </div>
+            )}
           </div>
 
           {batch.stalled && (
