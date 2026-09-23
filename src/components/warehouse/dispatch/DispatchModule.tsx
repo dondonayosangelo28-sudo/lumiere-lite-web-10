@@ -148,6 +148,15 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   const [itemBatchFilter, setItemBatchFilter] = useState('all')
   const [selectedItem, setSelectedItem] = useState<EventItemRow | null>(null)
 
+  useEffect(() => {
+    if (!selectedEventId) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedEventId(null)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedEventId])
+
   const filteredSummaries = useMemo(() => {
     const query = search.trim().toLowerCase()
     return summaries
@@ -375,15 +384,17 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
       </div>
 
       {(selectedEvent || selectedCompletedEvent) && (viewMode === 'grouped' || viewMode === 'completed') && (
-        <div className="fixed inset-0 z-40 flex justify-end bg-background/65 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
-          <aside className="flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="dispatch-event-detail-title">
-            <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/70 p-3 backdrop-blur-sm sm:p-6" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedEventId(null) }}>
+          <section className="flex max-h-[88vh] w-full max-w-[1320px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="dispatch-event-detail-title">
+            <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border px-5 py-5 sm:px-8">
               <div><p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-primary">{viewMode === 'completed' ? 'Completed event' : 'Event detail'}</p><h2 id="dispatch-event-detail-title" className="mt-1 font-serif text-2xl font-medium text-card-foreground">{(selectedCompletedEvent ?? selectedEvent)?.eventTitle}</h2><p className="mt-1 text-sm text-muted-foreground">{(selectedCompletedEvent ?? selectedEvent)?.venue}</p></div>
               <button type="button" onClick={() => setSelectedEventId(null)} className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Close event detail"><X className="size-4" /></button>
             </div>
-            <div className="border-b border-border px-6 py-5"><EventOverview summary={(selectedCompletedEvent ?? selectedEvent)!} /></div>
-            <div className="p-6"><EventBatchLevel summary={(selectedCompletedEvent ?? selectedEvent)!} onNewBatch={() => undefined} onOpenBatch={(batchId) => openBatch((selectedCompletedEvent ?? selectedEvent)!.eventId, batchId)} onExportManifest={() => exportEventManifest((selectedCompletedEvent ?? selectedEvent)!)} readOnly={viewMode === 'completed'} /></div>
-          </aside>
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <div className="border-b border-border px-5 py-5 sm:px-8"><EventOverview summary={(selectedCompletedEvent ?? selectedEvent)!} /></div>
+              <div className="p-5 sm:p-8"><EventBatchLevel summary={(selectedCompletedEvent ?? selectedEvent)!} onNewBatch={() => undefined} onOpenBatch={(batchId) => openBatch((selectedCompletedEvent ?? selectedEvent)!.eventId, batchId)} onExportManifest={() => exportEventManifest((selectedCompletedEvent ?? selectedEvent)!)} readOnly={viewMode === 'completed'} /></div>
+            </div>
+          </section>
         </div>
       )}
 
