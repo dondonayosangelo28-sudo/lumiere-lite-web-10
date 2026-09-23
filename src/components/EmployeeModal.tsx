@@ -219,7 +219,9 @@ export function EmployeeModal({ open, onClose }: Props) {
                   className={inputClass}
                   placeholder="09123456789"
                   value={draft.contact}
-                  onChange={(e) => set('contact', e.target.value)}
+                  onChange={(e) => set('contact', e.target.value.replace(/\D/g, '').slice(0, 11))}
+                  inputMode="numeric"
+                  maxLength={11}
                 />
                 {draft.contact && !isValidContact && (
                   <p className="mt-1 text-[0.65rem] text-rose-600">
