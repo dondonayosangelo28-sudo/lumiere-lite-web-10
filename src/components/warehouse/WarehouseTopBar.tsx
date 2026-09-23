@@ -5,12 +5,14 @@ import { useAuth } from '@/lib/auth'
 import { useDarkMode } from '@/lib/theme'
 import { NotificationsBell, type NotificationEntry } from '@/components/NotificationsBell'
 import { WarehouseMobileMenu } from '@/components/warehouse/WarehouseMobileMenu'
+import { ProfileDirectoryDialog } from '@/components/ProfileDirectoryDialog'
 import { getCatalogAssets, getLowStockAssets } from '@/lib/warehouse-catalog'
 import { getDispatchActivity } from '@/lib/warehouse-dispatch'
 import { useEffect, useRef, useState } from 'react'
 
 export function WarehouseTopBar() {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
+  const [profileOpen, setProfileOpen] = useState(false)
   const { events } = usePortal()
   const { dark, toggle } = useDarkMode()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -67,6 +69,7 @@ export function WarehouseTopBar() {
   const timeLabel = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
   return (
+    <>
     <header className="max-md:sticky max-md:top-0 max-md:z-30 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 pt-[env(safe-area-inset-top)] sm:px-8">
       <div className="flex min-w-0 items-center gap-3">
         <WarehouseMobileMenu />
@@ -84,6 +87,7 @@ export function WarehouseTopBar() {
             <div role="menu" className="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-lg border border-border bg-card shadow-xl">
               <div className="px-4 py-3"><p className="truncate text-sm font-semibold text-card-foreground">{adminName}</p><p className="truncate text-[0.65rem] uppercase tracking-[0.15em] text-muted-foreground">{adminRole}</p></div>
               <div className="border-t border-border">
+                <button type="button" role="menuitem" onClick={() => { setMenuOpen(false); setProfileOpen(true) }} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-xs font-medium text-card-foreground transition-colors hover:bg-accent"><User className="size-3.5" aria-hidden="true" />View profile</button>
                 <button type="button" role="menuitem" onClick={toggle} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-xs font-medium text-card-foreground transition-colors hover:bg-accent">{dark ? <Sun className="size-3.5" aria-hidden="true" /> : <Moon className="size-3.5" aria-hidden="true" />}{dark ? 'Switch to light mode' : 'Switch to dark mode'}</button>
                 <button type="button" role="menuitem" onClick={() => { setMenuOpen(false); setConfirmLogout(true) }} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-xs font-medium text-destructive transition-colors hover:bg-accent">Sign out</button>
               </div>
@@ -92,5 +96,7 @@ export function WarehouseTopBar() {
         </div>
       </div>
     </header>
+      <ProfileDirectoryDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
+    </>
   )
 }

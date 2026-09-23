@@ -6,6 +6,7 @@ import { useDarkMode } from '@/lib/theme'
 import { NotificationsBell, type NotificationEntry } from '@/components/NotificationsBell'
 import { SECURITY_EVENTS, type SecurityEvent } from '@/lib/security-events'
 import { MaskedPinInput } from '@/components/admin/MaskedPinInput'
+import { ProfileDirectoryDialog } from '@/components/ProfileDirectoryDialog'
 
 const ADMIN_NOTIFICATIONS: NotificationEntry[] = [
   { id: 'admin-1', icon: ShieldAlert, color: 'text-destructive', text: 'A privileged account was locked after repeated sign-in failures.', time: '12 minutes ago', unread: true, destination: { route: 'workforce', intent: { kind: 'unlock-user' } } },
@@ -22,6 +23,7 @@ interface AdminTopBarProps {
 
 export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
   const { adminName, adminRole, setConfirmLogout } = useAuth()
+  const [profileOpen, setProfileOpen] = useState(false)
   const { dark, toggle } = useDarkMode()
   const [menuOpen, setMenuOpen] = useState(false)
   const [now, setNow] = useState(() => new Date())
@@ -54,6 +56,7 @@ export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
   const timeLabel = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
   return (
+    <>
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 sm:px-8">
       <div className="flex min-w-0 items-center">
         {onOpenMenu && (
@@ -98,6 +101,10 @@ export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
                 </p>
               </div>
               <div className="border-t border-border">
+                <button type="button" role="menuitem" onClick={() => { setMenuOpen(false); setProfileOpen(true) }} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-xs font-medium text-card-foreground transition-colors hover:bg-accent">
+                  <User className="size-3.5" aria-hidden="true" />
+                  View profile
+                </button>
                 <button
                   type="button"
                   role="menuitem"
@@ -132,6 +139,8 @@ export function AdminTopBar({ onOpenMenu }: AdminTopBarProps) {
       </div>
 
     </header>
+      <ProfileDirectoryDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
+    </>
   )
 }
 
