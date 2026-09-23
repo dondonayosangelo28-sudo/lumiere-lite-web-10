@@ -396,7 +396,37 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
               <div className="border-b border-border px-5 py-5 sm:px-8"><EventOverview summary={(selectedCompletedEvent ?? selectedEvent)!} /></div>
-              <div className="p-5 sm:p-8"><EventBatchLevel summary={(selectedCompletedEvent ?? selectedEvent)!} onNewBatch={() => undefined} onOpenBatch={(batchId) => openBatch((selectedCompletedEvent ?? selectedEvent)!.eventId, batchId)} onExportManifest={() => exportEventManifest((selectedCompletedEvent ?? selectedEvent)!)} readOnly={viewMode === 'completed'} /></div>
+              <div className="border-b border-border px-5 pt-4 sm:px-8">
+                <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Event dispatch views">
+                  {(['overview', 'items'] as EventTab[]).map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      role="tab"
+                      aria-selected={eventTab === tab}
+                      onClick={() => setEventTab(tab)}
+                      className={cn('border-b-2 px-3 pb-3 text-[0.62rem] font-bold uppercase tracking-[0.1em] transition', eventTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}
+                    >
+                      {tab[0].toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="p-5 sm:p-8">
+                {eventTab === 'items' && selectedEvent ? (
+                  <EventItemsView summary={selectedEvent} items={eventItems} search={itemSearch} onSearch={setItemSearch} statusFilter={itemStatusFilter} onStatusFilter={setItemStatusFilter} batchFilter={itemBatchFilter} onBatchFilter={setItemBatchFilter} onSelectItem={setSelectedItem} />
+                ) : (
+                  <EventBatchLevel
+                    summary={(selectedCompletedEvent ?? selectedEvent)!}
+                    onNewBatch={(direction) => {
+                      if (selectedEvent && viewMode === 'grouped') setNewBatchModal({ eventId: selectedEvent.eventId, direction })
+                    }}
+                    onOpenBatch={(batchId) => openBatch((selectedCompletedEvent ?? selectedEvent)!.eventId, batchId)}
+                    onExportManifest={() => exportEventManifest((selectedCompletedEvent ?? selectedEvent)!)}
+                    readOnly={viewMode === 'completed'}
+                  />
+                )}
+              </div>
             </div>
           </section>
         </div>
@@ -934,6 +964,7 @@ function NewBatchModal({
   const [vehicleType, setVehicleType] = useState('Box Truck (14ft)')
   const [plateNumber, setPlateNumber] = useState('NBC 1234')
   const [driverName, setDriverName] = useState('')
+  const [formError, setFormError] = useState<string | null>(null)
 
   // Event Master Inventory Items
   const masterItems = useMemo(() => {
@@ -982,13 +1013,18 @@ function NewBatchModal({
   }
 
   const handleCreate = () => {
-    const itemsToAssign = Object.entries(selectedQuantities).map(([itemName, planned]) => ({
-      itemName,
-      planned,
-    }))
+  const itemsToAssign = Object.entries(selectedQuantities).map(([itemName, planned]) => ({
+  itemName,
+  planned,
+  }))
 
-    addNewCustomBatch(eventId, direction, vehicleType, plateNumber, driverName, itemsToAssign)
-    onClose()
+  if (!eventId || !vehicleType.trim() || !plateNumber.trim() || itemsToAssign.length === 0) {
+  setFormError('Select an event, enter the vehicle details, and assign at least one item before creating the batch.')
+  return
+  }
+
+  addNewCustomBatch(eventId, direction, vehicleType.trim(), plateNumber.trim(), driverName.trim(), itemsToAssign)
+  onClose()
   }
 
   return (
@@ -1128,6 +1164,8 @@ function NewBatchModal({
             </div>
           </div>
         </div>
+
+        {formError && <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive" role="alert">{formError}</p>}
 
         <div className="flex items-center justify-end gap-2 border-t border-border pt-3">
           <button
