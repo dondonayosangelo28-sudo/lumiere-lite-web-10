@@ -20,6 +20,35 @@ export function deriveDeficitStatus(orderedQuantity = 0, receivedQuantity = 0): 
   return 'In Procurement'
 }
 
+export type DeficitFilter = 'open' | 'critical' | 'high' | 'po'
+
+export function isOpenDeficit(line: DeficitLine): boolean {
+  return line.status !== 'Received'
+}
+
+export function isCriticalDeficit(line: DeficitLine): boolean {
+  return isOpenDeficit(line) && line.priority === 'Critical'
+}
+
+export function isHighPriorityDeficit(line: DeficitLine): boolean {
+  return isOpenDeficit(line) && line.priority === 'High'
+}
+
+export function isPendingProcurement(line: DeficitLine): boolean {
+  return isOpenDeficit(line) && (line.status === 'Not Purchased' || line.status === 'In Procurement' || line.status === 'Partially Received')
+}
+
+export function isOrderCandidate(line: DeficitLine): boolean {
+  return line.status === 'Not Purchased' && line.quantityNeeded > 0
+}
+
+export function matchesDeficitFilter(line: DeficitLine, filter: DeficitFilter): boolean {
+  if (filter === 'open') return isOpenDeficit(line)
+  if (filter === 'critical') return isCriticalDeficit(line)
+  if (filter === 'high') return isHighPriorityDeficit(line)
+  return isOrderCandidate(line)
+}
+
 export interface DeficitLine {
   id: string
   eventId?: string

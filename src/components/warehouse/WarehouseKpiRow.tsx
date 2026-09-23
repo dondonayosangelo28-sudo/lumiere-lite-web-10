@@ -7,7 +7,7 @@ import type { WarehouseModuleId } from '@/lib/warehouse-modules'
 
 interface WarehouseKpiRowProps {
   events: PortalEvent[]
-  onOpenModule: (id: WarehouseModuleId) => void
+  onOpenModule: (id: WarehouseModuleId, filter?: 'critical' | 'po') => void
 }
 
 export function WarehouseKpiRow({ events, onOpenModule }: WarehouseKpiRowProps) {
@@ -27,7 +27,7 @@ export function WarehouseKpiRow({ events, onOpenModule }: WarehouseKpiRowProps) 
         <button
           key={label}
           type="button"
-          onClick={() => onOpenModule(moduleId)}
+          onClick={() => onOpenModule(moduleId, label === 'Critical Deficits' ? 'critical' : label === 'Pending Procurement' ? 'po' : undefined)}
           className={cn(
             'group rounded-xl border border-border bg-card px-4 py-4 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
             'border-l-4',

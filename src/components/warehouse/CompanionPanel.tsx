@@ -1,4 +1,5 @@
 import { getWarehouseModule, type WarehouseModuleId } from '@/lib/warehouse-modules'
+import type { DeficitFilter } from '@/lib/warehouse-replenishment'
 import { AssetCatalogModule } from '@/components/warehouse/asset-catalog/AssetCatalogModule'
 import { ReplenishmentModule } from '@/components/warehouse/replenishment/ReplenishmentModule'
 import { VendorManagementModule } from '@/components/warehouse/vendors/VendorManagementModule'
@@ -8,12 +9,13 @@ import { WarehouseDashboardModule } from '@/components/warehouse/dashboard/Wareh
 
 interface CompanionPanelProps {
   moduleId: WarehouseModuleId
+  replenishmentFilter?: DeficitFilter
   onClose: () => void
   onSelectModule?: (id: WarehouseModuleId) => void
   onOpenEventDetail?: (id: string) => void
 }
 
-export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventDetail }: CompanionPanelProps) {
+export function CompanionPanel({ moduleId, replenishmentFilter, onClose, onSelectModule, onOpenEventDetail }: CompanionPanelProps) {
   const module = getWarehouseModule(moduleId)
   if (!module) return null
 
@@ -26,7 +28,7 @@ export function CompanionPanel({ moduleId, onClose, onSelectModule, onOpenEventD
   }
 
   if (moduleId === 'replenishment') {
-    return <ReplenishmentModule onClose={onClose} />
+    return <ReplenishmentModule onClose={onClose} initialFilter={replenishmentFilter} />
   }
 
   if (moduleId === 'dispatch') {

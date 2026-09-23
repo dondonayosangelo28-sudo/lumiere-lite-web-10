@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ChevronDown, ChevronUp, Download, Search } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
-import { deriveDeficitStatus, getDeficitLines, lineCost, type DeficitLine } from '@/lib/warehouse-replenishment'
+import { deriveDeficitStatus, getDeficitLines, isOrderCandidate, lineCost, matchesDeficitFilter, type DeficitFilter, type DeficitLine } from '@/lib/warehouse-replenishment'
 import { createDeficitItemApi, fetchDeficitQueueApi, recordDeficitReceiptApi, updateDeficitStatusApi } from '@/lib/deficitApi'
 import { DeficitTable } from '@/components/warehouse/replenishment/DeficitTable'
 import { GeneratePOModal } from '@/components/warehouse/replenishment/GeneratePOModal'
@@ -26,9 +26,10 @@ const SUMMARY_FILTERS: Array<{ id: SummaryFilter; label: string; dot: string }> 
 
 interface ReplenishmentModuleProps {
   onClose: () => void
+  initialFilter?: DeficitFilter
 }
 
-export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
+export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentModuleProps) {
   const { events } = usePortal()
   const [lines, setLines] = useState<DeficitLine[]>(() => getDeficitLines(events))
   const [viewMode, setViewMode] = useState<ViewMode>('grouped')
@@ -41,7 +42,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
   const [bulkOpen, setBulkOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set())
-  const [summaryFilter, setSummaryFilter] = useState<SummaryFilter | null>(null)
+  const [summaryFilter, setSummaryFilter] = useState<SummaryFilter | null>(initialFilter ?? null)
 
   useEffect(() => {
     let active = true
@@ -79,28 +80,16 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return lines
-    return lines.filter(
-      (line) =>
-        line.itemName.toLowerCase().includes(q) ||
-        (line.eventTitle ?? 'general stockroom').toLowerCase().includes(q),
-    )
-  }, [lines, query])
+    return lines.filter((line) => {
+      const matchesFilter = !summaryFilter || matchesDeficitFilter(line, summaryFilter)
+      const matchesQuery = !q || `${line.itemName} ${line.eventTitle ?? ''} ${line.category}`.toLowerCase().includes(q)
+      return matchesFilter && matchesQuery
+    })
+  }, [lines, query, summaryFilter])
 
-  const openCandidates = lines.filter((line) => line.status === 'Not Purchased')
+  const openCandidates = useMemo(() => lines.filter(isOrderCandidate), [lines])
+  const summaryLines = filtered
 
-  const summaryLines = useMemo(() => {
-    if (!summaryFilter) return []
-    const base = summaryFilter === 'open'
-      ? lines.filter((line) => line.status !== 'Received')
-      : summaryFilter === 'critical'
-        ? lines.filter((line) => line.priority === 'Critical')
-        : summaryFilter === 'high'
-          ? lines.filter((line) => line.priority === 'High')
-          : openCandidates
-    const q = query.trim().toLowerCase()
-    return q ? base.filter((line) => `${line.itemName} ${line.eventTitle ?? ''} ${line.category}`.toLowerCase().includes(q)) : base
-  }, [lines, openCandidates, query, summaryFilter])
 
   const grouped = useMemo(() => {
     const withEvent = filtered.filter((line) => line.eventId)
@@ -283,13 +272,7 @@ export function ReplenishmentModule({ onClose }: ReplenishmentModuleProps) {
       <div className="flex-1 px-6 py-6 sm:px-10">
         <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {SUMMARY_FILTERS.map(({ id, label, dot }) => {
-            const value = id === 'open'
-              ? lines.filter((line) => line.status !== 'Received').length
-              : id === 'critical'
-                ? lines.filter((line) => line.priority === 'Critical').length
-                : id === 'high'
-                  ? lines.filter((line) => line.priority === 'High').length
-                  : openCandidates.length
+            const value = lines.filter((line) => matchesDeficitFilter(line, id)).length
             return (
               <button
                 key={id}

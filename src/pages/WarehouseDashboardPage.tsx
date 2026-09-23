@@ -13,13 +13,16 @@ export function WarehouseDashboardPage() {
   const { events } = usePortal()
   const { navigate } = useNav()
   const [activeModuleId, setActiveModuleId] = useState<WarehouseModuleId>('dashboard')
+  const [replenishmentFilter, setReplenishmentFilter] = useState<'critical' | 'po' | undefined>()
   const [detailEvent, setDetailEvent] = useState<PortalEvent | null>(null)
 
-  const selectModule = (moduleId: WarehouseModuleId) => {
+  const selectModule = (moduleId: WarehouseModuleId, filter?: 'critical' | 'po') => {
     if (moduleId === 'dashboard') {
       setActiveModuleId('dashboard')
+      setReplenishmentFilter(undefined)
       return
     }
+    setReplenishmentFilter(moduleId === 'replenishment' ? filter : undefined)
     setActiveModuleId(moduleId)
   }
 
@@ -56,6 +59,7 @@ export function WarehouseDashboardPage() {
       ) : (
         <CompanionPanel
           moduleId={activeModuleId}
+          replenishmentFilter={replenishmentFilter}
           onSelectModule={selectModule}
           onOpenEventDetail={openEventDetail}
           onClose={() => setActiveModuleId('dashboard')}
