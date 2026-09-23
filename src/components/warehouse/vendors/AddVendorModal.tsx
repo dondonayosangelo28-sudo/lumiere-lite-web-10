@@ -1,9 +1,7 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
-import { addVendor, type VendorStatus, type WarehouseVendor } from '@/lib/warehouse-vendors'
+import { addVendor, type WarehouseVendor } from '@/lib/warehouse-vendors'
 import { createVendorApi } from '@/lib/vendorApi'
-
-const STATUSES: VendorStatus[] = ['Active', 'On Hold', 'Inactive']
 
 interface AddVendorModalProps {
   onClose: () => void
@@ -18,39 +16,42 @@ export function AddVendorModal({ onClose, onCreated }: AddVendorModalProps) {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [specialty, setSpecialty] = useState('')
-  const [leadTimeHours, setLeadTimeHours] = useState('24')
-  const [status, setStatus] = useState<VendorStatus>('Active')
-  const [performanceNotes, setPerformanceNotes] = useState('')
+  const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const canSubmit = name.trim().length > 0 && contactName.trim().length > 0
-  // Spell out what is still missing — a silently disabled submit button reads
-  // as a broken form.
   const missing = [
     name.trim().length === 0 ? 'vendor name' : null,
     contactName.trim().length === 0 ? 'contact person' : null,
   ].filter(Boolean)
+  const canSubmit = missing.length === 0
 
   const fieldClass =
     'rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30'
   const labelClass = 'text-[0.6rem] font-bold uppercase tracking-[0.1em] text-muted-foreground'
 
-  const handleSubmit = async () => {
-    await createVendorApi({
-      name,
-      contactName,
-      email,
-      phone,
-      specialty: specialty || 'General supply',
-    })
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setHasSubmitted(true)
+    setError(null)
+    if (!canSubmit) return
+
+    setIsSubmitting(true)
+    const apiVendor = await createVendorApi({ name: name.trim() })
+    if (!apiVendor) {
+      setError('Unable to add vendor. Please try again.')
+      setIsSubmitting(false)
+      return
+    }
+
     const vendor = addVendor({
       name,
       contactName,
       email,
       phone,
       specialty: specialty || 'General supply',
-      leadTimeHours: Number(leadTimeHours) || 24,
-      status,
-      performanceNotes,
+      leadTimeHours: 24,
+      status: 'Active',
     })
     onCreated?.(vendor)
     onClose()
@@ -89,7 +90,17 @@ export function AddVendorModal({ onClose, onCreated }: AddVendorModalProps) {
           </button>
         </div>
 
-        <div className="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto px-6 py-5">
+        <form id="add-vendor-form" onSubmit={handleSubmit} className="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto px-6 py-5">
+          {hasSubmitted && missing.length > 0 && (
+            <p className="col-span-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive" role="alert">
+              Required information is missing. Please complete the highlighted fields.
+            </p>
+          )}
+          {error && (
+            <p className="col-span-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive" role="alert">
+              {error}
+            </p>
+          )}
           <label className="col-span-2 flex flex-col gap-1.5">
             <span className={labelClass}>Vendor name</span>
             <input
@@ -102,16 +113,6 @@ export function AddVendorModal({ onClose, onCreated }: AddVendorModalProps) {
           <label className="flex flex-col gap-1.5">
             <span className={labelClass}>Contact person</span>
             <input value={contactName} onChange={(event) => setContactName(event.target.value)} className={fieldClass} />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className={labelClass}>Lead time (hours)</span>
-            <input
-              type="number"
-              min={1}
-              value={leadTimeHours}
-              onChange={(event) => setLeadTimeHours(event.target.value)}
-              className={fieldClass}
-            />
           </label>
           <label className="flex flex-col gap-1.5">
             <span className={labelClass}>Email</span>
@@ -135,35 +136,11 @@ export function AddVendorModal({ onClose, onCreated }: AddVendorModalProps) {
               className={fieldClass}
             />
           </label>
-          <label className="flex flex-col gap-1.5">
-            <span className={labelClass}>Status</span>
-            <select
-              value={status}
-              onChange={(event) => setStatus(event.target.value as VendorStatus)}
-              className={fieldClass}
-            >
-              {STATUSES.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="col-span-2 flex flex-col gap-1.5">
-            <span className={labelClass}>Performance notes</span>
-            <textarea
-              value={performanceNotes}
-              onChange={(event) => setPerformanceNotes(event.target.value)}
-              rows={2}
-              placeholder="Optional — sourcing context, pricing tier, reliability…"
-              className={fieldClass}
-            />
-          </label>
-        </div>
+        </form>
 
         <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
           <p className="text-[0.62rem] text-muted-foreground">
-            {missing.length > 0 ? `Still needed: ${missing.join(' and ')}.` : 'Ready to register.'}
+            {isSubmitting ? 'Adding vendor…' : 'Add the vendor’s master information.'}
           </p>
           <div className="flex items-center gap-3">
           <button
@@ -174,12 +151,12 @@ export function AddVendorModal({ onClose, onCreated }: AddVendorModalProps) {
             Cancel
           </button>
           <button
-            type="button"
-            disabled={!canSubmit}
-            onClick={handleSubmit}
+            type="submit"
+            form="add-vendor-form"
+            disabled={isSubmitting}
             className="rounded-md bg-primary px-4 py-2.5 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
           >
-            Register vendor
+            Add Vendor
           </button>
           </div>
         </div>
