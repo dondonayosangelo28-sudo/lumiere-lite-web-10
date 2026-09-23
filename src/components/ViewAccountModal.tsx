@@ -83,7 +83,7 @@ export function ViewAccountModal({
             </div>
 
             {/* Full Name */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label className="block text-[0.65rem] font-bold uppercase tracking-[0.1em] text-foreground">
                   First Name:
@@ -97,6 +97,22 @@ export function ViewAccountModal({
                   />
                 ) : (
                   readField(staff.firstName)
+                )}
+              </div>
+              <div>
+                <label className="block text-[0.65rem] font-bold uppercase tracking-[0.1em] text-foreground">
+                  Middle Name:
+                </label>
+                {editable ? (
+                  <input
+                    type="text"
+                    value={draft.middleName ?? ''}
+                    onChange={(e) => set('middleName', e.target.value)}
+                    className={inputClass}
+                    placeholder="Optional"
+                  />
+                ) : (
+                  readField(staff.middleName || '—')
                 )}
               </div>
               <div>
