@@ -31,7 +31,9 @@ interface BatchDetailViewProps {
   onAdvanceStage: () => boolean | Promise<boolean>
   onStall?: (reason: string) => void
   onResume?: () => void
-  onUpdateInfo?: (info: Partial<Pick<DispatchBatch, 'vehicleType' | 'plateNumber' | 'driverName'>>) => void
+  onUpdateInfo?: (info: Partial<Pick<DispatchBatch, 'vehicleType' | 'plateNumber' | 'driverName'>>) => void | Promise<boolean>
+  availableVehicles?: Array<{ vehicleType: string; plateNumber: string }>
+  availableDrivers?: string[]
   onExportPdf?: () => void
   onCreateReturnBatch?: () => void
   onDelete?: () => void
@@ -51,6 +53,8 @@ export function BatchDetailView({
   onStall,
   onResume,
   onUpdateInfo,
+  availableVehicles = [],
+  availableDrivers = [],
   onExportPdf,
   onCreateReturnBatch,
   onDelete,
@@ -65,6 +69,16 @@ export function BatchDetailView({
   const [editVehicle, setEditVehicle] = useState(batch.vehicleType)
   const [editPlate, setEditPlate] = useState(batch.plateNumber)
   const [editDriver, setEditDriver] = useState(batch.driverName || '')
+  const [editError, setEditError] = useState<string | null>(null)
+  const [isSavingInfo, setIsSavingInfo] = useState(false)
+
+  const vehicleOptions = Array.from(
+    new Map(
+      [{ vehicleType: batch.vehicleType, plateNumber: batch.plateNumber }, ...availableVehicles]
+        .map((vehicle) => [`${vehicle.vehicleType}:${vehicle.plateNumber}`, vehicle]),
+    ).values(),
+  )
+  const driverOptions = Array.from(new Set([...(batch.driverName ? [batch.driverName] : []), ...availableDrivers]))
 
   const finalStage = batch.direction === 'outbound' ? 'Delivered' : 'Returned'
   const isFinal = batch.stage === finalStage
@@ -205,47 +219,80 @@ export function BatchDetailView({
               <button
                 type="button"
                 onClick={() => {
-                  if (isEditingInfo && onUpdateInfo) {
-                    onUpdateInfo({ vehicleType: editVehicle, plateNumber: editPlate, driverName: editDriver })
-                  }
-                  setIsEditingInfo(!isEditingInfo)
+                  setEditVehicle(batch.vehicleType)
+                  setEditPlate(batch.plateNumber)
+                  setEditDriver(batch.driverName || '')
+                  setEditError(null)
+                  setIsEditingInfo(true)
                 }}
-                className="text-[0.6rem] font-bold uppercase tracking-wider text-primary hover:underline"
+                disabled={readOnly || isSavingInfo}
+                className="rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary transition hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isEditingInfo ? 'Save Vehicle Info' : 'Edit Vehicle & Driver'}
+                Edit Vehicle &amp; Driver
               </button>
             </div>
 
             {isEditingInfo ? (
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-                <label className="flex flex-col gap-1">
-                  <span className="text-[0.55rem] font-bold uppercase text-muted-foreground">Vehicle Type</span>
-                  <input
-                    type="text"
-                    value={editVehicle}
-                    onChange={(e) => setEditVehicle(e.target.value)}
-                    className="rounded border border-input bg-card px-2.5 py-1 text-xs text-foreground outline-none focus:border-primary"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="text-[0.55rem] font-bold uppercase text-muted-foreground">Plate Number</span>
-                  <input
-                    type="text"
-                    value={editPlate}
-                    onChange={(e) => setEditPlate(e.target.value)}
-                    className="rounded border border-input bg-card px-2.5 py-1 text-xs text-foreground outline-none focus:border-primary"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="text-[0.55rem] font-bold uppercase text-muted-foreground">Driver Name</span>
-                  <input
-                    type="text"
-                    value={editDriver}
-                    onChange={(e) => setEditDriver(e.target.value)}
-                    placeholder="Enter driver name..."
-                    className="rounded border border-input bg-card px-2.5 py-1 text-xs text-foreground outline-none focus:border-primary"
-                  />
-                </label>
+              <div className="mt-3 rounded-lg border border-primary/25 bg-primary/[0.04] p-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">Vehicle / Truck</span>
+                    <select
+                      value={`${editVehicle}:${editPlate}`}
+                      onChange={(event) => {
+                        const selected = vehicleOptions.find((vehicle) => `${vehicle.vehicleType}:${vehicle.plateNumber}` === event.target.value)
+                        if (selected) {
+                          setEditVehicle(selected.vehicleType)
+                          setEditPlate(selected.plateNumber)
+                        }
+                      }}
+                      className="rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    >
+                      {vehicleOptions.map((vehicle) => (
+                        <option key={`${vehicle.vehicleType}:${vehicle.plateNumber}`} value={`${vehicle.vehicleType}:${vehicle.plateNumber}`}>
+                          {vehicle.vehicleType} · {vehicle.plateNumber}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-[0.62rem] text-muted-foreground">Plate: {editPlate}</span>
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">Driver</span>
+                    <select
+                      value={editDriver}
+                      onChange={(event) => setEditDriver(event.target.value)}
+                      className="rounded-md border border-input bg-background px-2.5 py-2 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    >
+                      <option value="">Unassigned</option>
+                      {driverOptions.map((driver) => <option key={driver} value={driver}>{driver}</option>)}
+                    </select>
+                  </label>
+                </div>
+                {editError && <p className="mt-3 text-xs font-medium text-destructive" role="alert">{editError}</p>}
+                <div className="mt-4 flex justify-end gap-2 border-t border-border pt-3">
+                  <button type="button" onClick={() => { setIsEditingInfo(false); setEditError(null) }} disabled={isSavingInfo} className="rounded-md border border-border px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-muted-foreground hover:bg-accent disabled:opacity-50">Cancel</button>
+                  <button
+                    type="button"
+                    disabled={isSavingInfo || !onUpdateInfo}
+                    onClick={async () => {
+                      if (!onUpdateInfo) return
+                      setIsSavingInfo(true)
+                      setEditError(null)
+                      try {
+                        const saved = await onUpdateInfo({ vehicleType: editVehicle, plateNumber: editPlate, driverName: editDriver })
+                        if (saved === false) throw new Error('save failed')
+                        setIsEditingInfo(false)
+                      } catch {
+                        setEditError('Unable to save vehicle and driver assignment. Please try again.')
+                      } finally {
+                        setIsSavingInfo(false)
+                      }
+                    }}
+                    className="rounded-md bg-primary px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSavingInfo ? 'Saving…' : 'Save Changes'}
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">

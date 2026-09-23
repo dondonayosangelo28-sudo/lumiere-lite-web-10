@@ -48,11 +48,11 @@ type DispatchGlobal = typeof globalThis & { [storeKey]?: Map<string, DispatchBat
 const globalStore = globalThis as DispatchGlobal
 let batchesByEvent: Map<string, DispatchBatch[]> = globalStore[storeKey] ?? new Map()
 
-export async function persistBatchToSupabase(eventId: string, batch: DispatchBatch) {
-  if (!supabase) return
+export async function persistBatchToSupabase(eventId: string, batch: DispatchBatch): Promise<boolean> {
+  if (!supabase) return true
 
   try {
-    await supabase.from('manning_dispatch_batches').upsert({
+    const { error } = await supabase.from('manning_dispatch_batches').upsert({
       id: batch.id,
       event_id: eventId,
       vehicle_type: batch.vehicleType,
@@ -67,8 +67,14 @@ export async function persistBatchToSupabase(eventId: string, batch: DispatchBat
       stalled_reason: batch.stalledReason,
       updated_at: new Date().toISOString(),
     })
+    if (error) {
+      console.warn('[v0] Supabase dispatch assignment save failed.', error.message)
+      return false
+    }
+    return true
   } catch (e) {
-    console.warn('[v0] Supabase dispatch batch persist fallback to local store.', e?.message ?? String(e))
+    console.warn('[v0] Supabase dispatch assignment save failed.', e instanceof Error ? e.message : String(e))
+    return false
   }
 }
 
@@ -318,16 +324,21 @@ export function updateReconciliationRow(
   publish()
 }
 
-export function updateBatchInfo(
+export async function updateBatchInfo(
   eventId: string,
   batchId: string,
   info: Partial<Pick<DispatchBatch, 'vehicleType' | 'plateNumber' | 'driverName'>>,
-) {
+): Promise<boolean> {
   const batches = batchesByEvent.get(eventId)
-  if (!batches) return
-  const updated = batches.map((batch) => (batch.id === batchId ? { ...batch, ...info } : batch))
-  batchesByEvent.set(eventId, updated)
+  const target = batches?.find((batch) => batch.id === batchId)
+  if (!batches || !target) return false
+
+  const updatedBatch = { ...target, ...info }
+  if (!(await persistBatchToSupabase(eventId, updatedBatch))) return false
+
+  batchesByEvent.set(eventId, batches.map((batch) => (batch.id === batchId ? updatedBatch : batch)))
   publish()
+  return true
 }
 
 const VEHICLE_TYPES = ['Truck Alpha (6-Ton)', 'Van Beta (Transit)', 'Truck Gamma (4-Ton)', 'Van Delta (Transit)']

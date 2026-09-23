@@ -449,7 +449,9 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
           onAdvanceStage={() => advanceBatchStage(activeNav.eventId, activeNav.batch.id)}
           onStall={(reason) => markBatchStalled(activeNav.eventId, activeNav.batch.id, reason)}
           onResume={() => resolveBatchStall(activeNav.eventId, activeNav.batch.id)}
-          onUpdateInfo={(info) => updateBatchInfo(activeNav.eventId, activeNav.batch.id, info)}
+          availableVehicles={summaries.flatMap((summary) => summary.batches).map((candidate) => ({ vehicleType: candidate.vehicleType, plateNumber: candidate.plateNumber }))}
+  availableDrivers={Array.from(new Set(summaries.flatMap((summary) => summary.batches.map((candidate) => candidate.driverName).filter(Boolean) as string[])))}
+  onUpdateInfo={(info) => updateBatchInfo(activeNav.eventId, activeNav.batch.id, info)}
           onExportPdf={() => {
             const ev = events.find((e) => e.id === activeNav.eventId)
             exportBatchPdf({ eventTitle: activeNav.eventTitle, venue: ev?.venue || '', targetDate: ev?.targetDate || '' }, activeNav.batch)
