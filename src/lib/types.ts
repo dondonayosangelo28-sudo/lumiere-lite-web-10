@@ -131,8 +131,11 @@ export interface NewStaffDraft {
 export interface NewEmployeeRecordDraft {
   firstName: string
   surname: string
+  middleName: string
   contact: string
   employmentType: EmploymentType
+  onCallAssignment: 'Warehouse' | 'Other'
+  otherRole: string
 }
 
 /* ---------- Events ---------- */

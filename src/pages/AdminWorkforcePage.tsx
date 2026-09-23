@@ -103,7 +103,7 @@ export function AdminWorkforcePage() {
   const lockedIds = useMemo(() => new Set(userActions.filter((a) => a.type === 'account-locked' && a.status === 'pending').map((a) => a.user)), [userActions])
   const rows = useMemo(() => {
     const filtered = staff.filter((s) => {
-      const text = `${s.firstName} ${s.surname} ${s.employeeId} ${s.email}`.toLowerCase()
+      const text = `${s.firstName} ${s.middleName ?? ''} ${s.surname} ${s.employeeId} ${s.email}`.toLowerCase()
       return (!query || text.includes(query.toLowerCase())) && (role === 'All Roles' || s.role === role) && (status === 'All' || statusFor(s, lockedIds) === status)
     })
     const sorted = [...filtered]

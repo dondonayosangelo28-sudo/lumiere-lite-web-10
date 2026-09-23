@@ -119,7 +119,7 @@ export function WorkforceTable({
                   </td>
                   <td className="px-4 py-3.5">
                     <p className="text-sm font-medium text-card-foreground">
-                      {s.firstName} {s.surname}
+                      {s.firstName} {s.middleName?.trim() ? `${s.middleName.trim()} ` : ''}{s.surname}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {isRecord ? (s.employmentType ?? 'Employee Record') : s.email}
@@ -142,7 +142,7 @@ export function WorkforceTable({
                           setMenuId((prev) => (prev === s.id ? null : s.id))
                         }}
                         className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                        aria-label={`Actions for ${s.firstName} ${s.surname}`}
+                        aria-label={`Actions for ${s.firstName} ${s.middleName?.trim() ? `${s.middleName.trim()} ` : ''}${s.surname}`}
                         aria-haspopup="menu"
                         aria-expanded={menuId === s.id}
                       >

@@ -1600,7 +1600,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   const addStaff = useCallback(
     async (draft: NewStaffDraft) => {
       const role = STAFF_ROLES.includes(draft.role as StaffRole) ? (draft.role as StaffRole) : 'Executive'
-      const fullName = `${draft.firstName} ${draft.surname}`.trim()
+      const fullName = `${draft.firstName} ${draft.middleName} ${draft.surname}`.replace(/\s+/g, ' ').trim()
       const email = draft.email.trim().toLowerCase()
 
       // Persist the account to the database so it can authenticate at the login page.
@@ -1819,16 +1819,16 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     (draft: NewEmployeeRecordDraft) => {
       const seq = staff.filter((s) => s.recordKind === 'employee-record').length + 1
       const employeeId = `EMP-${String(seq).padStart(4, '0')}`
-      const fullName = `${draft.firstName} ${draft.surname}`.trim()
+      const fullName = `${draft.firstName} ${draft.middleName} ${draft.surname}`.replace(/\s+/g, ' ').trim()
       const record: Staff = {
         id: `er-${Date.now()}`,
         employeeId,
         surname: draft.surname,
         firstName: draft.firstName,
-        middleName: '',
-        email: '',
-        contact: draft.contact,
-        role: 'WOM',
+middleName: draft.middleName,
+  email: '',
+  contact: draft.contact,
+  role: (draft.onCallAssignment === 'Warehouse' ? 'WOM' : draft.otherRole.trim()) as StaffRole,
         sessionStatus: 'Offline Session',
         lastAccess: '—',
         recordKind: 'employee-record',
@@ -1863,9 +1863,10 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       void supabase
         .from('portal_accounts')
         .update({
-          first_name: updated.firstName,
-          surname: updated.surname,
-          contact: updated.contact,
+first_name: updated.firstName,
+  middle_name: updated.middleName ?? '',
+  surname: updated.surname,
+  contact: updated.contact,
           email: updated.email,
           role: updated.role,
         })
