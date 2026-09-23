@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, Archive, ArrowDown, ArrowUp, ChevronDown, ChevronRight, Download, Package, Search, SlidersHorizontal, Truck, User, X } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
