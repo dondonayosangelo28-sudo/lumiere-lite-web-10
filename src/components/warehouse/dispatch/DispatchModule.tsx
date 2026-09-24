@@ -730,62 +730,65 @@ function EventBatchLevel({
         <ul className="flex flex-col gap-3">
           {summary.batches.map((batch) => (
             <li key={batch.id} className="rounded-xl border border-border bg-card p-4 shadow-xs space-y-3">
-              <div
-                onClick={() => onOpenBatch(batch.id)}
-                className="flex w-full flex-wrap items-center gap-4 cursor-pointer hover:opacity-95"
-              >
-                <span
-                  className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary"
-                  aria-label={batch.direction === 'outbound' ? 'Outbound / egress' : 'Return / ingress'}
+                <div
+                  onClick={() => onOpenBatch(batch.id)}
+                  className="flex w-full flex-col gap-3 cursor-pointer hover:opacity-95 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
                 >
-                  {batch.direction === 'outbound' ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
-                </span>
-                <div className="min-w-0 shrink-0">
-                  <p className="truncate text-sm font-bold text-card-foreground">{batch.vehicleType}</p>
-                  <p className="truncate text-[0.62rem] uppercase tracking-[0.06em] text-muted-foreground">
-                    {batch.plateNumber} · Driver: <span className="font-semibold text-foreground">{batch.driverName || 'Unassigned'}</span>
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  {batch.crew.length === 0 ? (
-                    <span className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                      <User className="size-3.5" />
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary"
+                      aria-label={batch.direction === 'outbound' ? 'Outbound / egress' : 'Return / ingress'}
+                    >
+                      {batch.direction === 'outbound' ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
                     </span>
-                  ) : (
-                    batch.crew.slice(0, 3).map((member) => <Avatar key={member.id} name={member.name} />)
-                  )}
-                </div>
-
-                <div className="ml-auto flex items-center gap-2 max-md:w-full max-md:flex-wrap max-md:justify-start max-md:ml-0">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      exportBatchPdf({ eventTitle: summary.eventTitle, venue: summary.venue, targetDate: summary.targetDate }, batch)
-                    }}
-                    className="inline-flex items-center gap-1 rounded border border-border bg-background px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent"
-                  >
-                    <Download className="size-3" />
-                    PDF
-                  </button>
-
-                  {batch.direction === 'outbound' && batch.stage === 'Delivered' && (
+                    <div className="min-w-0 shrink-0">
+                      <p className="truncate text-sm font-bold text-card-foreground">{batch.vehicleType}</p>
+                      <p className="truncate text-[0.62rem] uppercase tracking-[0.06em] text-muted-foreground">
+                        {batch.plateNumber} · Driver: <span className="font-semibold text-foreground">{batch.driverName || 'Unassigned'}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {batch.crew.length === 0 ? (
+                      <span className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                        <User className="size-3.5" />
+                      </span>
+                    ) : (
+                      batch.crew.slice(0, 3).map((member) => <Avatar key={member.id} name={member.name} />)
+                    )}
+                  </div>
+  
+                  <div className="flex items-center gap-2 sm:ml-auto">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
-                        createReturnBatchFromDelivered(summary.eventId, batch)
+                        exportBatchPdf({ eventTitle: summary.eventTitle, venue: summary.venue, targetDate: summary.targetDate }, batch)
                       }}
-                      className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-white hover:bg-emerald-700"
+                      className="inline-flex items-center gap-1 rounded border border-border bg-background px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent"
                     >
-                      + Return Batch
+                      <Download className="size-3" />
+                      PDF
                     </button>
-                  )}
+  
+                    {batch.direction === 'outbound' && batch.stage === 'Delivered' && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          createReturnBatchFromDelivered(summary.eventId, batch)
+                        }}
+                        className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-white hover:bg-emerald-700"
+                      >
+                        + Return Batch
+                      </button>
+                    )}
+                  </div>
 
-                  <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
+                  <div className="flex w-full sm:w-auto">
+                    <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
+                  </div>
                 </div>
-              </div>
-
               {/* Contained Assets Summary Row */}
               <div className="flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-2.5">
                 <span className="text-[0.58rem] font-bold uppercase tracking-wider text-muted-foreground">
