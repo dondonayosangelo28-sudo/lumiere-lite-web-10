@@ -102,7 +102,7 @@ export function BatchDetailView({
         className="flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
+        <div className="relative flex flex-col gap-3 border-b border-border px-6 py-5 max-sm:pr-12 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div>
             <p className="text-[0.58rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Batch detail
@@ -119,12 +119,12 @@ export function BatchDetailView({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             {onExportPdf && (
               <button
                 type="button"
                 onClick={onExportPdf}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent max-sm:w-full max-sm:justify-center"
               >
                 Export Manifest (PDF)
               </button>
@@ -133,7 +133,7 @@ export function BatchDetailView({
               <button
                 type="button"
                 onClick={() => setConfirmDeleteModal(true)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-destructive hover:bg-destructive/20"
+                className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-destructive hover:bg-destructive/20 max-sm:w-full max-sm:justify-center"
               >
                 Cancel / Delete Batch
               </button>
@@ -142,7 +142,7 @@ export function BatchDetailView({
               type="button"
               onClick={onClose}
               aria-label="Close batch detail"
-              className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-sm:absolute max-sm:top-4 max-sm:right-4"
             >
               <X className="size-4" aria-hidden="true" />
             </button>
@@ -403,8 +403,8 @@ export function BatchDetailView({
             <p className="mb-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-foreground">
               Item reconciliation
             </p>
-            <div className="overflow-hidden rounded-lg border border-border">
-              <table className="w-full text-left">
+            <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-lg border border-border">
+              <table className="w-full min-w-[480px] text-left">
                 <thead>
                   <tr className="bg-background">
                     <th className="px-4 py-2.5 text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">
@@ -436,7 +436,7 @@ export function BatchDetailView({
                     return (
                       <Fragment key={row.id}>
                         <tr className="border-t border-border bg-card">
-                          <td className="px-4 py-3 text-sm text-card-foreground">{row.itemName}</td>
+                          <td className="whitespace-nowrap px-4 py-3 text-sm text-card-foreground">{row.itemName}</td>
                           <td className="px-4 py-3 text-sm text-muted-foreground">{row.planned}</td>
                           <td className="px-4 py-3 text-sm text-muted-foreground">{row.actual ?? '—'}</td>
                           <td className="px-4 py-3 text-sm text-muted-foreground">
