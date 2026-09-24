@@ -748,41 +748,42 @@ function EventBatchLevel({
                       </p>
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-1.5">
-                    {batch.crew.length === 0 ? (
-                      <span className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                        <User className="size-3.5" />
-                      </span>
-                    ) : (
-                      batch.crew.slice(0, 3).map((member) => <Avatar key={member.id} name={member.name} />)
-                    )}
-                  </div>
-  
-                  <div className="flex items-center gap-2 sm:ml-auto">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        exportBatchPdf({ eventTitle: summary.eventTitle, venue: summary.venue, targetDate: summary.targetDate }, batch)
-                      }}
-                      className="inline-flex items-center gap-1 rounded border border-border bg-background px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent"
-                    >
-                      <Download className="size-3" />
-                      PDF
-                    </button>
-  
-                    {batch.direction === 'outbound' && batch.stage === 'Delivered' && (
+                  <div className="flex w-full items-center justify-between gap-2 sm:ml-auto sm:w-auto sm:justify-start">
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      {batch.crew.length === 0 ? (
+                        <span className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                          <User className="size-3.5" />
+                        </span>
+                      ) : (
+                        batch.crew.slice(0, 3).map((member) => <Avatar key={member.id} name={member.name} />)
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
-                          createReturnBatchFromDelivered(summary.eventId, batch)
+                          exportBatchPdf({ eventTitle: summary.eventTitle, venue: summary.venue, targetDate: summary.targetDate }, batch)
                         }}
-                        className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-white hover:bg-emerald-700"
+                        className="inline-flex items-center gap-1 rounded border border-border bg-background px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent"
                       >
-                        + Return Batch
+                        <Download className="size-3" />
+                        PDF
                       </button>
-                    )}
+
+                      {batch.direction === 'outbound' && batch.stage === 'Delivered' && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            createReturnBatchFromDelivered(summary.eventId, batch)
+                          }}
+                          className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-wider text-white hover:bg-emerald-700"
+                        >
+                          + Return Batch
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex w-full sm:w-auto">
