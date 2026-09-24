@@ -694,11 +694,11 @@ function EventBatchLevel({
           Handshake rate <span className="font-semibold text-card-foreground">{summary.handshakePercent}%</span> across{' '}
           {summary.batches.length} batch{summary.batches.length === 1 ? '' : 'es'}.
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-md:w-full max-md:flex-wrap max-md:justify-stretch">
           <button
             type="button"
             onClick={onExportManifest}
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:flex-1 max-md:justify-center"
           >
             <Download className="size-3.5" />
             Export Manifest (PDF)
@@ -707,14 +707,14 @@ function EventBatchLevel({
             <button
               type="button"
               onClick={() => onNewBatch('outbound')}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-primary-foreground transition hover:opacity-90 max-md:flex-1 max-md:justify-center"
             >
               + New Outbound Batch
             </button>
             <button
               type="button"
               onClick={() => onNewBatch('return')}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-border bg-background px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-border bg-background px-3.5 py-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:flex-1 max-md:justify-center"
             >
               + New Return Batch
             </button>
@@ -756,7 +756,7 @@ function EventBatchLevel({
                   )}
                 </div>
 
-                <div className="ml-auto flex items-center gap-2">
+                <div className="ml-auto flex items-center gap-2 max-md:w-full max-md:flex-wrap max-md:justify-start max-md:ml-0">
                   <button
                     type="button"
                     onClick={(e) => {
