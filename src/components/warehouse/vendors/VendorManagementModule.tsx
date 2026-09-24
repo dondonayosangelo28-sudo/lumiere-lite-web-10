@@ -116,14 +116,17 @@ export function VendorManagementModule() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border">
-        <table className="w-full text-left">
+      <div className="overflow-hidden rounded-lg border border-border max-md:overflow-x-auto max-md:overscroll-x-contain max-md:[-webkit-overflow-scrolling:touch] max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden max-md:touch-pan-x">
+        <table className="w-full text-left max-md:min-w-[720px] max-md:table-auto">
           <thead>
             <tr className="bg-background">
               {['Vendor', 'Specialty', 'Contact', 'Lead time', 'Status'].map((heading) => (
                 <th
                   key={heading}
-                  className="px-4 py-3 text-[0.58rem] font-bold uppercase tracking-[0.1em] text-muted-foreground"
+                  className={cn(
+                    'px-4 py-3 text-[0.58rem] font-bold uppercase tracking-[0.1em] text-muted-foreground',
+                    heading === 'Vendor' && 'max-md:sticky max-md:left-0 max-md:z-10 max-md:bg-background max-md:shadow-[2px_0_0_0_hsl(var(--border))]',
+                  )}
                 >
                   {heading}
                 </th>
@@ -144,12 +147,12 @@ export function VendorManagementModule() {
                 onClick={() => setSelectedVendorId(vendor.id)}
                 className="cursor-pointer border-t border-border bg-card transition-colors hover:bg-accent/60"
               >
-                <td className="px-4 py-3.5">
+                <td className="px-4 py-3.5 max-md:sticky max-md:left-0 max-md:z-10 max-md:bg-card max-md:shadow-[2px_0_0_0_hsl(var(--border))]">
                   <p className="text-sm font-medium text-card-foreground">{vendor.name}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{vendor.contactName}</p>
                 </td>
-                <td className="px-4 py-3.5 text-sm text-muted-foreground">{vendor.specialty}</td>
-                <td className="px-4 py-3.5">
+                <td className="px-4 py-3.5 text-sm text-muted-foreground max-md:min-w-[180px]">{vendor.specialty}</td>
+                <td className="px-4 py-3.5 max-md:whitespace-nowrap">
                   <p className="text-xs text-muted-foreground">{vendor.email}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{vendor.phone}</p>
                 </td>
