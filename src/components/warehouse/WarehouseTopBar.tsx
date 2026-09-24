@@ -70,7 +70,7 @@ export function WarehouseTopBar() {
 
   return (
     <>
-    <header className="max-md:sticky max-md:top-0 max-md:z-30 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 pt-[env(safe-area-inset-top)] sm:px-8">
+    <header className="max-md:sticky max-md:top-0 max-md:z-30 max-md:backdrop-blur-none flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-5 pt-[env(safe-area-inset-top)] sm:px-8">
       <div className="flex min-w-0 items-center gap-3">
         <WarehouseMobileMenu />
         <p className="truncate text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground sm:text-xs sm:tracking-[0.15em]">

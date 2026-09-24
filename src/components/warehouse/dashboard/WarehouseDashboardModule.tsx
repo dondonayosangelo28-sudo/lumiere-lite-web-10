@@ -30,7 +30,7 @@ export function WarehouseDashboardModule({ onSelectModule, onOpenEventDetail }: 
   return (
     <div className="flex min-w-0 flex-1 flex-col bg-background max-md:static max-md:h-auto max-md:min-h-[100dvh]">
       <WarehouseTopBar />
-      <div className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+6rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:h-auto max-md:overflow-visible max-md:overflow-x-visible">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+6rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:h-auto max-md:overflow-y-visible max-md:overflow-x-clip">
         <WarehouseHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} searchInHeader hideTopBar />
         <div className="flex w-full flex-col gap-8 px-5 py-6 sm:gap-10 sm:px-8">
           <WarehouseKpiRow events={events} onOpenModule={onSelectModule} />
