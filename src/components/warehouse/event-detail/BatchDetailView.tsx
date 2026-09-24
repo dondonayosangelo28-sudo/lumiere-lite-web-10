@@ -191,7 +191,7 @@ export function BatchDetailView({
           <div className="flex flex-col gap-5 px-6 py-5">
           {/* Automated Ingress / Return Batch Prompt Banner */}
           {batch.direction === 'outbound' && batch.stage === 'Delivered' && onCreateReturnBatch && (
-            <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 flex items-center justify-between">
+            <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                   Outbound Batch Delivered
@@ -203,7 +203,7 @@ export function BatchDetailView({
               <button
                 type="button"
                 onClick={onCreateReturnBatch}
-                className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-emerald-700 shadow-sm"
+                className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-emerald-700 shadow-sm max-sm:w-full max-sm:whitespace-nowrap max-sm:justify-center max-sm:flex max-sm:items-center max-sm:gap-1.5"
               >
                 + Create Return Batch
               </button>
