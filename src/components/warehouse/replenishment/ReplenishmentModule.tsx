@@ -194,7 +194,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
   return (
     <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:min-w-0 max-md:max-w-full">
       <WarehouseTopBar />
-      <div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-7 sm:px-10 max-md:contents">
+      <div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-7 sm:px-10 max-md:contents max-md:mt-3">
         <div className="flex items-start justify-between gap-4 max-md:contents">
           <div className="max-md:order-1 max-md:px-6 max-md:pt-7 max-md:pb-5 max-md:border-b max-md:border-border">
             <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
@@ -233,8 +233,8 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             </button>
           </div>
 
-          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap max-md:w-full max-md:shrink max-md:flex-col max-md:items-stretch">
-            <div className="relative h-10 max-md:w-full">
+          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap max-md:w-full max-md:shrink max-md:grid max-md:grid-cols-2 max-md:gap-2">
+            <div className="relative h-10 max-md:w-full max-md:col-span-2 max-md:mt-2">
               <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
@@ -246,22 +246,22 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:justify-center"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:min-w-0 max-md:justify-center max-md:px-2"
             >
               Add Item
             </button>
             <button
               type="button"
               onClick={exportReport}
-              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:justify-center"
+              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:min-w-0 max-md:justify-center max-md:px-2"
             >
               <Download className="size-3.5" />
-              Export Report (PDF)
+              <span className="max-md:hidden">Export Report (PDF)</span><span className="hidden max-md:inline">Export (PDF)</span>
             </button>
             <button
               type="button"
               onClick={() => setViewMode('draft')}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90 max-md:w-full max-md:justify-center"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90 max-md:w-full max-md:col-span-2 max-md:justify-center"
             >
               Prepare Order ({openCandidates.length})
             </button>
@@ -270,7 +270,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
       </div>
 
       <div className="flex-1 px-6 py-6 sm:px-10 max-md:contents">
-        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 max-md:grid-cols-2 max-md:order-2 max-md:px-6 max-md:mt-4">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 max-md:mb-0 max-md:grid-cols-2 max-md:order-2 max-md:px-6 max-md:mt-4">
           {SUMMARY_FILTERS.map(({ id, label, dot }) => {
             const value = lines.filter((line) => matchesDeficitFilter(line, id)).length
             return (
@@ -386,7 +386,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
                         {group.lines.length} deficit item{group.lines.length === 1 ? '' : 's'} · {criticalCount} Critical · {highCount} High
                       </span>
                     </span>
-                    <span className="flex shrink-0 items-center gap-4 sm:text-right">
+                    <span className="flex shrink-0 items-center gap-4 sm:text-right max-md:w-full max-md:justify-between">
                       <span>
                         <span className="block text-[0.56rem] font-bold uppercase tracking-[0.1em] text-muted-foreground">Active deficit</span>
                         <span className="block text-sm font-semibold text-card-foreground">₱{totalCost.toLocaleString()}</span>
