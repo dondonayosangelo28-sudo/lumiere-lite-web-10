@@ -192,26 +192,26 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:min-w-0 max-md:max-w-full">
       <WarehouseTopBar />
-<div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-7 sm:px-10">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
-              <h1 className="mt-1 pb-1 font-serif text-4xl font-medium leading-tight text-foreground">Replenishment / Deficits</h1>
+      <div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-7 sm:px-10 max-md:contents">
+        <div className="flex items-start justify-between gap-4 max-md:contents">
+          <div className="max-md:order-1 max-md:px-6 max-md:pt-7 max-md:pb-5 max-md:border-b max-md:border-border">
+            <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>
+            <h1 className="mt-1 pb-1 font-serif text-4xl font-medium leading-tight text-foreground max-md:text-3xl">Replenishment / Deficits</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Automated deficit detection, inventory replenishment alerts, and order preparation.
             </p>
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between lg:gap-2">
-          <div className="flex shrink-0 rounded-lg border border-border bg-card p-1">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between lg:gap-2 max-md:order-3 max-md:px-6 max-md:mt-4">
+          <div className="flex shrink-0 rounded-lg border border-border bg-card p-1 max-md:w-full max-md:shrink max-md:flex-col max-md:gap-1">
             <button
               type="button"
               onClick={() => setViewMode('grouped')}
               className={cn(
-                'shrink-0 whitespace-nowrap rounded-md px-2.5 py-2 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition',
+                'shrink-0 whitespace-nowrap rounded-md px-2.5 py-2 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition max-md:w-full max-md:shrink max-md:whitespace-normal max-md:text-center',
                 viewMode === 'grouped'
                   ? 'bg-foreground text-background shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -223,7 +223,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
               type="button"
               onClick={() => setViewMode('consolidated')}
               className={cn(
-                'shrink-0 whitespace-nowrap rounded-md px-2.5 py-2 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition',
+                'shrink-0 whitespace-nowrap rounded-md px-2.5 py-2 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition max-md:w-full max-md:shrink max-md:whitespace-normal max-md:text-center',
                 viewMode === 'consolidated'
                   ? 'bg-foreground text-background shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -233,27 +233,27 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             </button>
           </div>
 
-          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap">
-            <div className="relative h-10">
+          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap max-md:w-full max-md:shrink max-md:flex-col max-md:items-stretch">
+            <div className="relative h-10 max-md:w-full">
               <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search items or events…"
-                className="h-10 w-44 md:w-72 rounded-md border border-input bg-background pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30"
+                className="h-10 w-44 md:w-72 rounded-md border border-input bg-background pl-9 pr-3 text-xs text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/30 max-md:w-full"
               />
             </div>
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:justify-center"
             >
               Add Item
             </button>
             <button
               type="button"
               onClick={exportReport}
-              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent"
+              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:justify-center"
             >
               <Download className="size-3.5" />
               Export Report (PDF)
@@ -261,7 +261,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             <button
               type="button"
               onClick={() => setViewMode('draft')}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90 max-md:w-full max-md:justify-center"
             >
               Prepare Order ({openCandidates.length})
             </button>
@@ -269,8 +269,8 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
         </div>
       </div>
 
-      <div className="flex-1 px-6 py-6 sm:px-10">
-        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="flex-1 px-6 py-6 sm:px-10 max-md:contents">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 max-md:grid-cols-2 max-md:order-2 max-md:px-6 max-md:mt-4">
           {SUMMARY_FILTERS.map(({ id, label, dot }) => {
             const value = lines.filter((line) => matchesDeficitFilter(line, id)).length
             return (
@@ -281,7 +281,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
                   setQuery('')
                   setSummaryFilter(id)
                 }}
-                className="group rounded-lg border border-border bg-card px-4 py-3 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/50 hover:shadow-md active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="group rounded-lg border border-border bg-card px-4 py-3 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/50 hover:shadow-md active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring max-md:min-w-0"
                 aria-label={`View ${label}`}
               >
                 <span className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
         </div>
 
         {viewMode === 'consolidated' ? (
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="overflow-hidden rounded-xl border border-border bg-card max-md:order-4 max-md:px-6 max-md:mt-6 max-md:pb-6">
             <div className="flex flex-col gap-2 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="font-serif text-lg font-medium text-card-foreground">Consolidated Register</h2>
@@ -317,7 +317,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             />
           </div>
         ) : viewMode === 'draft' ? (
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="overflow-hidden rounded-xl border border-border bg-card max-md:order-4 max-md:px-6 max-md:mt-6 max-md:pb-6">
             <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="font-serif text-lg font-medium text-card-foreground">Draft Purchase Orders</h2>
@@ -357,7 +357,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 max-md:order-4 max-md:px-6 max-md:mt-6 max-md:pb-6">
             {grouped.groups.length === 0 && grouped.general.length === 0 && (
               <p className="text-sm text-muted-foreground">No deficit lines match the current search.</p>
             )}
