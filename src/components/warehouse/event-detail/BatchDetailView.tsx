@@ -119,12 +119,12 @@ export function BatchDetailView({
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-2">
             {onExportPdf && (
               <button
                 type="button"
                 onClick={onExportPdf}
-                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent max-sm:w-full max-sm:justify-center"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-card-foreground hover:bg-accent max-sm:flex-1 max-sm:justify-center max-sm:whitespace-normal max-sm:text-center max-sm:px-2"
               >
                 Export Manifest (PDF)
               </button>
@@ -133,7 +133,7 @@ export function BatchDetailView({
               <button
                 type="button"
                 onClick={() => setConfirmDeleteModal(true)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-destructive hover:bg-destructive/20 max-sm:w-full max-sm:justify-center"
+                className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-destructive hover:bg-destructive/20 max-sm:flex-1 max-sm:justify-center max-sm:whitespace-normal max-sm:text-center max-sm:px-2"
               >
                 Cancel / Delete Batch
               </button>
@@ -294,7 +294,7 @@ export function BatchDetailView({
                 </div>
               </div>
             )}
-            <div className="mt-3 flex justify-end">
+            <div className="mt-3 flex flex-col items-center gap-2 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
               <button
                 type="button"
                 onClick={() => {
@@ -317,7 +317,7 @@ export function BatchDetailView({
             </p>
             <DispatchStepper direction={batch.direction} stage={batch.stage} stalled={batch.stalled} />
             {!batch.stalled && !isFinal && (
-              <div className="flex justify-end">
+              <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   type="button"
                   onClick={() => setStallModalOpen(true)}
@@ -489,7 +489,7 @@ export function BatchDetailView({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-background/40 px-6 py-4">
+        <div className="flex flex-col items-center gap-3 border-t border-border bg-background/40 px-6 py-4 sm:flex-row sm:flex-wrap sm:justify-between">
           <div className="flex items-center gap-2">
             <button
               type="button"
