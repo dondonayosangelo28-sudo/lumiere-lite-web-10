@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { AlertTriangle, Archive, ArrowDown, ArrowUp, ChevronDown, ChevronRight, Download, Package, Search, SlidersHorizontal, Truck, User, X } from 'lucide-react'
 import { WarehouseTopBar } from '@/components/warehouse/WarehouseTopBar'
 import { usePortal } from '@/lib/store'
@@ -100,6 +100,29 @@ interface NavigableBatch {
   batch: DispatchBatch
 }
 
+function MobileStickySearchBar({ query, onChange, originalRef }: { query: string; onChange: (value: string) => void; originalRef: React.RefObject<HTMLLabelElement | null> }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const original = originalRef.current
+    if (!original) return
+    const observer = new IntersectionObserver(([entry]) => {
+      setVisible(!entry.isIntersecting && entry.boundingClientRect.bottom <= 64)
+    }, { root: null, rootMargin: '-64px 0px 0px 0px', threshold: 0 })
+    observer.observe(original)
+    return () => observer.disconnect()
+  }, [originalRef])
+
+  return (
+    <div className={`md:hidden sticky max-md:top-[calc(4rem+env(safe-area-inset-top))] max-md:z-20 max-md:bg-background max-md:border-b max-md:border-border max-md:px-6 max-md:py-2 max-md:transition-[max-height,opacity] max-md:duration-150 ${visible ? 'max-md:max-h-16 max-md:opacity-100' : 'max-md:pointer-events-none max-md:max-h-0 max-md:overflow-hidden max-md:opacity-0'}`} aria-hidden={!visible}>
+      <label className="max-md:flex max-md:min-w-0 max-md:items-center max-md:gap-2 max-md:rounded-md max-md:border max-md:border-input max-md:bg-background max-md:px-3 max-md:py-2">
+        <Search className="max-md:size-4 max-md:shrink-0 max-md:text-muted-foreground" aria-hidden="true" />
+        <input value={query} onChange={(event) => onChange(event.target.value)} placeholder="Search events, vehicles, batch IDs..." tabIndex={visible ? 0 : -1} className="max-md:min-w-0 max-md:flex-1 max-md:bg-transparent max-md:text-sm max-md:text-foreground max-md:outline-none" aria-label="Search events, vehicles, batch IDs" />
+      </label>
+    </div>
+  )
+}
+
 function Avatar({ name }: { name: string }) {
   const initials = name
     .split(' ')
@@ -140,6 +163,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   const [newBatchModal, setNewBatchModal] = useState<{ eventId: string; direction: BatchDirection } | null>(null)
   const [archiveBatchTarget, setArchiveBatchTarget] = useState<{ eventId: string; batch: DispatchBatch } | null>(null)
   const [search, setSearch] = useState('')
+  const originalSearchRef = useRef<HTMLLabelElement>(null)
   const [stageFilter, setStageFilter] = useState('all')
   const [directionFilter, setDirectionFilter] = useState('all')
   const [reconciliationFilter, setReconciliationFilter] = useState('all')
@@ -268,7 +292,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:h-auto max-md:min-h-[100dvh] max-md:min-w-0 max-md:overflow-visible">
       <WarehouseTopBar />
 <div className="flex flex-col gap-4 border-b border-border px-6 pb-5 pt-6 sm:px-10">
           <div className="flex items-start justify-between gap-4">
@@ -348,7 +372,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
             </div>
           ) : (
           <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
-            <label className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
+            <label ref={originalSearchRef} className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
               <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
               <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search events, vehicles, batch IDs..." className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" aria-label="Search events, vehicles, batch IDs" />
             </label>
@@ -377,6 +401,7 @@ export function DispatchModule({ onClose }: DispatchModuleProps) {
           </div>
         )}
       </div>
+      <MobileStickySearchBar query={search} onChange={setSearch} originalRef={originalSearchRef} />
 
       <div className="flex-1 px-6 py-6 sm:px-10">
         {viewMode === 'consolidated' ? (

@@ -37,7 +37,7 @@ export function CompanionPanel({ moduleId, replenishmentFilter, onClose, onSelec
 
   if (moduleId === 'vendors') {
     return (
-      <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:h-auto max-md:min-h-[100dvh] max-md:min-w-0 max-md:overflow-visible">
         <WarehouseTopBar />
 <div className="flex items-start justify-between gap-4 border-b border-border px-6 pb-5 pt-7 sm:px-10">
           <div>
@@ -54,7 +54,7 @@ export function CompanionPanel({ moduleId, replenishmentFilter, onClose, onSelec
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-y-auto">
+    <div className="flex h-full flex-1 flex-col overflow-y-auto max-md:h-auto max-md:min-h-[100dvh] max-md:min-w-0 max-md:overflow-visible">
       <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5 sm:px-10">
         <div>
           <p className="text-[0.6rem] font-bold uppercase tracking-[0.24em] text-primary">Warehouse module</p>

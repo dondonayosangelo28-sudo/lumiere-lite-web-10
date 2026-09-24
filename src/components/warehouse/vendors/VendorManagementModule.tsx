@@ -80,7 +80,7 @@ export function VendorManagementModule() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-xs">
+        <div className="relative w-full sm:max-w-xs max-md:sticky max-md:top-[calc(4rem+env(safe-area-inset-top))] max-md:z-20 max-md:bg-background max-md:py-2 max-md:border-b max-md:border-border">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <input
             value={query}
