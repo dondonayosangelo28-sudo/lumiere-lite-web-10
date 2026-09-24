@@ -149,7 +149,7 @@ export function AssetCatalogModule({ onClose }: AssetCatalogModuleProps) {
   }
 
   return (
-    <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="relative flex h-full flex-1 flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:h-auto max-md:min-h-[100dvh] max-md:min-w-0 max-md:overflow-visible">
       <WarehouseTopBar />
       {/* Header controls & filters */}
       <WarehouseModuleHeader
