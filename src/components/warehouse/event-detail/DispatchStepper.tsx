@@ -18,14 +18,14 @@ export function DispatchStepper({ direction, stage, stalled = false }: DispatchS
 
   return (
     <div
-      className="flex items-center gap-1.5 gap-y-1.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:overscroll-x-contain max-sm:[-webkit-overflow-scrolling:touch] sm:flex-wrap"
+      className="flex flex-wrap items-center gap-1.5 gap-y-1.5"
       aria-label={`Batch stage: ${stage}${stalled ? ' — stalled in transit' : ''}`}
     >
       {sequence.map((step, index) => (
         <div key={step} className="flex items-center gap-1.5">
           <span
             className={cn(
-              'flex items-center gap-1.5 rounded-full px-2 py-1 text-[0.55rem] font-bold uppercase tracking-[0.04em] transition-colors max-sm:shrink-0',
+              'flex items-center gap-1.5 rounded-full px-2 py-1 text-[0.55rem] font-bold uppercase tracking-[0.04em] transition-colors',
               index === activeIndex
                 ? stalled
                   ? 'border border-amber-400/50 bg-amber-500 text-white dark:bg-amber-600'
