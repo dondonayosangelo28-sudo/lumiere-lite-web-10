@@ -205,8 +205,8 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between lg:gap-2 max-md:order-3 max-md:px-6 max-md:mt-3 max-md:grid max-md:grid-cols-2 max-md:gap-2">
-          <div className="flex shrink-0 rounded-lg border border-border bg-card p-1 max-md:col-span-2 max-md:w-full max-md:shrink max-md:flex-col max-md:gap-1">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between lg:gap-2 max-md:order-3 max-md:px-6 max-md:mt-4">
+          <div className="flex shrink-0 rounded-lg border border-border bg-card p-1 max-md:w-full max-md:shrink max-md:flex-col max-md:gap-1">
             <button
               type="button"
               onClick={() => setViewMode('grouped')}
@@ -233,8 +233,8 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             </button>
           </div>
 
-          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap max-md:contents">
-            <div className="relative h-10 max-md:col-span-2 max-md:sticky max-md:top-16 max-md:z-20 max-md:w-full max-md:bg-background max-md:py-2 max-md:-mx-6 max-md:px-6 max-md:border-b max-md:border-border">
+          <div className="flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:ml-auto lg:flex-wrap max-md:w-full max-md:shrink max-md:flex-col max-md:items-stretch">
+            <div className="relative h-10 max-md:w-full">
               <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
@@ -246,14 +246,14 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:min-w-0 max-md:justify-center"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:justify-center"
             >
               Add Item
             </button>
             <button
               type="button"
               onClick={exportReport}
-              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:min-w-0 max-md:justify-center max-md:whitespace-normal max-md:text-center max-md:leading-tight"
+              className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.1em] text-card-foreground transition hover:bg-accent max-md:w-full max-md:justify-center"
             >
               <Download className="size-3.5" />
               Export Report (PDF)
@@ -261,7 +261,7 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
             <button
               type="button"
               onClick={() => setViewMode('draft')}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90 max-md:col-span-2 max-md:w-full max-md:justify-center"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[0.6rem] font-bold uppercase tracking-[0.08em] text-primary-foreground transition hover:opacity-90 max-md:w-full max-md:justify-center"
             >
               Prepare Order ({openCandidates.length})
             </button>
@@ -269,8 +269,8 @@ export function ReplenishmentModule({ onClose, initialFilter }: ReplenishmentMod
         </div>
       </div>
 
-      <div className="flex-1 px-6 py-6 sm:px-10 max-md:contents max-md:py-3">
-        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 max-md:grid-cols-2 max-md:order-2 max-md:px-6 max-md:mb-0 max-md:mt-3">
+      <div className="flex-1 px-6 py-6 sm:px-10 max-md:contents">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 max-md:grid-cols-2 max-md:order-2 max-md:px-6 max-md:mt-4">
           {SUMMARY_FILTERS.map(({ id, label, dot }) => {
             const value = lines.filter((line) => matchesDeficitFilter(line, id)).length
             return (
